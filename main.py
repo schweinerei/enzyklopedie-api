@@ -21,16 +21,31 @@ async def klangchat_webhook(request: Request):
         payload = await request.json()
         roher_text = payload.get("text", "")
         
+        # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
+        # 2. Das Passwort entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
-        embed_res = embed_client.embeddings.create(input=nutzer_frage, model="text-embedding-3-small")
+        # 3. Embedding für die Nutzerfrage erzeugen
+        embed_res = embed_client.embeddings.create(
+            input=nutzer_frage, 
+            model="text-embedding-3-small"
+        )
         frage_vektor = embed_res.data[0].embedding
 
-        ziel_namespace = "roman"
+        # 4. Intelligente Weiche: Wenn nach Figuren, Kapiteln, Geschichten oder Tieren gefragt wird, 
+        # suchen wir im Roman-Namespace, ansonsten im Standard-Bereich (Physik).
+        roman_schluesselwoerter = [
+            "roman", "figur", "figuren", "geschichte", "szene", "erzähl", 
+            "handlung", "kapitel", "wolf", "schweine", "schwein", "wölfe"
+        ]
+        ist_roman_frage = any(wort in nutzer_frage.lower() for wort in roman_schluesselwoerter)
+        
+        ziel_namespace = "roman" if ist_roman_frage else ""
 
+        # 5. Pinecone abfragen
         suche = index.query(
             vector=frage_vektor, 
             top_k=5, 
@@ -38,6 +53,7 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
+        # 6. Kontext sauber extrahieren
         kontext_texte = []
         for match in suche.matches:
             if match.metadata:
@@ -46,14 +62,18 @@ async def klangchat_webhook(request: Request):
                     kontext_texte.append(text_inhalt)
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
+        print(f"Namespace: '{ziel_namespace}' | Extrahierte Zeichen: {len(geballtes_wissen)}")
 
-        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. 
-        Hier ist der Kontext aus dem Speicher:
-        ---
-        {geballtes_wissen}
-        ---
-        Beantworte die Frage des Nutzers streng basierend auf diesem Text. Wenn der Text physikalische Formeln oder astronomische Daten enthält, nimm sie hin, aber suche nach dem literarischen Zusammenhang."""
+        # 7. System-Prompt für DeepSeek
+        system_prompt = f"""Du bist die Enzyklopädie und die erzählende Stimme. Du sprichst in der ersten Person, bist präzise und warm.
+        
+Hier ist der Kontext aus dem Speicher:
+---
+{geballtes_wissen}
+---
+Beantworte die Frage des Nutzers ausschließlich basierend auf diesem Kontext. Wenn die Antwort dort nicht enthalten ist, sage es offen."""
 
+        # 8. OpenRouter (DeepSeek) anfragen
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
