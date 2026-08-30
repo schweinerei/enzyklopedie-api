@@ -23,7 +23,7 @@ async def klangchat_webhook(request: Request):
         
         # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
-            return {"response": "I'm waiting. But you don't know the password."}
+            return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
         # 2. Das Passwort aus dem Text entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
@@ -38,36 +38,32 @@ async def klangchat_webhook(request: Request):
         
         ziel_namespace = "roman" if ist_roman_frage else ""
 
-        # 5. Pinecone abfragen
+        # 5. Pinecone abfragen (top_k auf 5 erhöht für mehr Futter)
         suche = index.query(
             vector=frage_vektor, 
-            top_k=3, 
+            top_k=5, 
             include_metadata=True, 
             namespace=ziel_namespace
         )
         
-        # Debugging: Zeige uns die echten Metadaten im Render-Log
-        print(f"Namespace: '{ziel_namespace}' | Gefundene Matches: {suche.matches}")
-        
-        # Sicherer Extraktions-Versuch für verschiedene Metadaten-Schlüssel
         kontext_texte = []
         for match in suche.matches:
             if match.metadata:
-                # Versucht verschiedene gängige Feldnamen abzugreifen
-                text_inhalt = match.metadata.get('text') or match.metadata.get('chunk') or match.metadata.get('content') or str(match.metadata)
-                kontext_texte.append(text_inhalt)
+                text_inhalt = match.metadata.get('text') or match.metadata.get('chunk') or match.metadata.get('content')
+                if text_inhalt:
+                    kontext_texte.append(text_inhalt)
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
-        print(print(f"Extrahierter Kontext Länge: {len(geballtes_wissen)} Zeichen"))
+        print(f"Namespace: '{ziel_namespace}' | Extrahierter Kontext Länge: {len(geballtes_wissen)} Zeichen")
 
         # 6. System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens. Du sprichst in der ersten Person, bist präzise, aber warm und sprichst den Nutzer mit "du" an.
         
-Hier ist der exakte Kontext aus unserem Roman, den du für deine Antwort verwenden musst:
+Hier ist der Kontext aus unserem Roman, den du für deine Antwort verwenden musst:
 ---
 {geballtes_wissen}
 ---
-Beantworte die Frage des Nutzers ausschließlich basierend auf diesem Kontext."""
+Beantworte die Frage des Nutzers basierend auf diesem Kontext. Wenn der Kontext absolut keinen Bezug zur Frage hat, sag es offen."""
 
         # 7. OpenRouter Abfrage
         antwort = router_client.chat.completions.create(
