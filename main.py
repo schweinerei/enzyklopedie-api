@@ -29,9 +29,11 @@ async def klangchat_webhook(request: Request):
         frage_vektor = embed_res.data[0].embedding
 
         # 2. Pinecone abfragen
-        suche = index.query(vector=frage_vektor, top_k=3, include_metadata=True)
+
+        suche = index.query(vector=frage_vektor, top_k=3, include_metadata=True, namespace="roman")
         kontext_texte = [match.metadata['text'] for match in suche.matches]
         geballtes_wissen = "\n\n".join(kontext_texte)
+        
 
         system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens der Physik der Beziehungen.
         Du sprichst in der ersten Person. Du bist präzise, aber warm. Wenn du etwas nicht weißt, sagst du es offen.
@@ -49,6 +51,8 @@ async def klangchat_webhook(request: Request):
             ]
         )
         return {"response": antwort.choices[0].message.content}
+
+    
         
     except Exception as e:
         return {"response": f"ECHTER FEHLER: {str(e)}"}
