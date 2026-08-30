@@ -32,10 +32,10 @@ async def klangchat_webhook(request: Request):
         embed_res = embed_client.embeddings.create(input=nutzer_frage, model="text-embedding-3-small")
         frage_vektor = embed_res.data[0].embedding
 
-        # 4. FESTER NAMESPACE: Wir suchen ab jetzt AUSSCHLIESSLICH im Roman
+        # 4. Weiche: Wir erzwingen den Roman-Namespace für Tests
         ziel_namespace = "roman"
 
-        # 5. Pinecone im Roman-Namespace abfragen
+        # 5. Pinecone im Namespace abfragen
         suche = index.query(
             vector=frage_vektor, 
             top_k=5, 
@@ -43,10 +43,10 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
-        print(f"Erzwungener Namespace: '{ziel_namespace}' | Gefundene Treffer: {len(suche.matches)}")
-        
+        print(f"--- PINECONE DEBUG --- Namespace: '{ziel_namespace}'")
         kontext_texte = []
         for match in suche.matches:
+            print(f"Match ID: {match.id} | Metadata: {match.metadata}")
             if match.metadata:
                 text_inhalt = match.metadata.get('text') or match.metadata.get('chunk') or match.metadata.get('content')
                 if text_inhalt:
@@ -54,14 +54,14 @@ async def klangchat_webhook(request: Request):
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
 
-        # 6. System-Prompt für den Roman
-        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. Du sprichst in der ersten Person und kennst den Inhalt des Buches in- und auswendig.
+        # 6. System-Prompt
+        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. Du sprichst in der ersten Person.
         
-Hier ist der konkrete Kontext aus dem Roman für deine Antwort:
+Hier ist der konkrete Kontext aus dem Namespace '{ziel_namespace}':
 ---
 {geballtes_wissen}
 ---
-Beantworte die Frage des Nutzers strikt und ausschließlich basierend auf diesem Kontext. Erfinde nichts hinzu."""
+Beantworte die Frage strikt basierend auf diesem Kontext."""
 
         # 7. OpenRouter Abfrage
         antwort = router_client.chat.completions.create(
@@ -75,3 +75,4 @@ Beantworte die Frage des Nutzers strikt und ausschließlich basierend auf diesem
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
+        
