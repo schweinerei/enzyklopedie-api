@@ -84,7 +84,14 @@ Verhalte dich gemäß den folgenden Prinzipien:
                 {"role": "user", "content": nutzer_frage}
             ]
         )
-        return {"response": antwort.choices[0].message.content}
+        
+        # Das genaue Modell für die Transparenz auslesen
+        verwendetes_modell = getattr(antwort, "model", "deepseek/deepseek-chat")
+        
+        return {
+            "response": antwort.choices[0].message.content,
+            "modell_info": verwendetes_modell
+        }
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
