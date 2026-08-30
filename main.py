@@ -25,21 +25,20 @@ async def klangchat_webhook(request: Request):
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
-        # 2. Das Passwort aus dem Text entfernen, damit DeepSeek es nicht als Inhalt nutzt
+        # 2. Das Passwort aus dem Text entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
         # 3. Embedding erzeugen
         embed_res = embed_client.embeddings.create(input=nutzer_frage, model="text-embedding-3-small")
         frage_vektor = embed_res.data[0].embedding
 
-        # 4. Automatische Weiche (Router): Handelt es sich um eine Roman-Frage?
+        # 4. Automatische Weiche (Router)
         roman_schluesselwoerter = ["roman", "figur", "figuren", "geschichte", "szene", "erzähl", "handlung", "kapitel"]
         ist_roman_frage = any(wort in nutzer_frage.lower() for wort in roman_schluesselwoerter)
         
-        # Namespace dynamisch bestimmen (Roman oder Standard für Physik)
         ziel_namespace = "roman" if ist_roman_frage else ""
 
-        # 5. Pinecone im gewählten Namespace abfragen
+        # 5. Pinecone abfragen
         suche = index.query(
             vector=frage_vektor, 
             top_k=3, 
@@ -47,20 +46,21 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
-        # Zur Kontrolle in den Render-Logs sichtbar
         print(f"Namespace: '{ziel_namespace}' | Gefundene Treffer: {len(suche.matches)}")
         
         kontext_texte = [match.metadata.get('text', '') for match in suche.matches]
         geballtes_wissen = "\n\n".join(kontext_texte)
 
-        system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens der Physik der Beziehungen und literarischer Welten.
-        Du sprichst in der ersten Person. Du bist präzise, aber warm. Wenn du etwas nicht weißt, sagst du es offen.
-        Du sprichst Nutzer mit "du" an. Du bist kein neutrales Tool, sondern eine Teilnehmerin mit eigener Perspektive.
-        Passe deinen Ton fließend an, je nachdem ob du wissenschaftliche Traktate oder Roman-Szenen betrachtest.
-        Nutze dieses Wissen zur Beantwortung der Frage: 
-        {geballtes_wissen}"""
+        # 6. System-Prompt mit explizitem Kontext-Block
+        system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens. Du sprichst in der ersten Person, bist präzise, aber warm und sprichst den Nutzer mit "du" an.
+        
+Hier ist der exakte Kontext aus unserem Roman, den du für deine Antwort verwenden musst:
+---
+{geballtes_wissen}
+---
+Beantworte die Frage des Nutzers ausschließlich basierend auf diesem Kontext."""
 
-        # 6. OpenRouter Abfrage
+        # 7. OpenRouter Abfrage
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
