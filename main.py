@@ -47,7 +47,10 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
-        kontext_texte = [match.metadata['text'] for match in suche.matches]
+        # Zur Kontrolle in den Render-Logs sichtbar
+        print(f"Namespace: '{ziel_namespace}' | Gefundene Treffer: {len(suche.matches)}")
+        
+        kontext_texte = [match.metadata.get('text', '') for match in suche.matches]
         geballtes_wissen = "\n\n".join(kontext_texte)
 
         system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens der Physik der Beziehungen und literarischer Welten.
@@ -68,9 +71,4 @@ async def klangchat_webhook(request: Request):
         return {"response": antwort.choices[0].message.content}
         
     except Exception as e:
-        return {"response": f"Ein Fehler ist aufgetreten: str(e)"}
-
-    
-        
-    except Exception as e:
-        return {"response": f"ECHTER FEHLER: {str(e)}"}
+        return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
