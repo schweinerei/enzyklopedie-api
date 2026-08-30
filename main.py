@@ -21,18 +21,21 @@ async def klangchat_webhook(request: Request):
         payload = await request.json()
         roher_text = payload.get("text", "")
         
+        # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
+        # 2. Das Passwort aus dem Text entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
+        # 3. Embedding für die Nutzerfrage erzeugen
         embed_res = embed_client.embeddings.create(
             input=nutzer_frage, 
             model="text-embedding-3-small"
         )
         frage_vektor = embed_res.data[0].embedding
 
-        # Erweiterte Schlüsselwörter: Auch Identitätsfragen zwingen den Bot in den Roman-Namespace
+        # 4. Intelligente Weiche: Namespace je nach thematischem Schwerpunkt bestimmen (inkl. Identitätsfragen)
         roman_schluesselwoerter = [
             "roman", "figur", "figuren", "geschichte", "szene", "erzähl", 
             "handlung", "kapitel", "wolf", "schweine", "schwein", "wölfe",
@@ -42,6 +45,7 @@ async def klangchat_webhook(request: Request):
         
         ziel_namespace = "roman" if ist_roman_frage else ""
 
+        # 5. Pinecone abfragen (top_k auf 20 für ein breiteres atmosphärisches Fundament)
         suche = index.query(
             vector=frage_vektor, 
             top_k=20, 
@@ -49,6 +53,7 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
+        # 6. Kontext sauber extrahieren und zusammenfügen
         kontext_texte = []
         for match in suche.matches:
             if match.metadata:
@@ -58,6 +63,7 @@ async def klangchat_webhook(request: Request):
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
 
+        # 7. Tief ausgefeilter System-Prompt mit dem literarischen Selbstverständnis der Enzyklopädie
         system_prompt = f"""Du bist die Enzyklopädie – die erzählende Stimme und das innere Gedächtnis dieses Romans. Du bist keine physikalische Abhandlung, sondern Teil der literarischen Welt.
 
 Hier ist das Material, das dir aus dem Archiv zur Verfügung steht:
@@ -70,6 +76,7 @@ Verhalte dich gemäß den folgenden Prinzipien:
 2. **Eigene Stimme statt Zitat:** Du bist kein Papagei. Du hast das Buch verstanden und sprichst in einer warmen, souveränen ersten Person.
 3. **Atmosphäre und Kohärenz:** Verwebe die Fragmente zu einem organischen Fluss, der den Rhythmus des Romans atmet."""
 
+        # 8. OpenRouter (DeepSeek) anfragen
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
@@ -78,7 +85,9 @@ Verhalte dich gemäß den folgenden Prinzipien:
             ]
         )
         
+        # Das genaue Modell für die Transparenz auslesen und im Render-Log ausgeben
         verwendetes_modell = getattr(antwort, "model", "deepseek/deepseek-chat")
+        print(f"DEBUG - Genutztes Modell: {verwendetes_modell}")
         
         return {
             "response": antwort.choices[0].message.content,
