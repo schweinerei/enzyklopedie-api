@@ -21,22 +21,17 @@ async def klangchat_webhook(request: Request):
         payload = await request.json()
         roher_text = payload.get("text", "")
         
-        # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
-        # 2. Das Passwort entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
-        # 3. Embedding für die Nutzerfrage erzeugen
         embed_res = embed_client.embeddings.create(
             input=nutzer_frage, 
             model="text-embedding-3-small"
         )
         frage_vektor = embed_res.data[0].embedding
 
-        # 4. Intelligente Weiche: Wenn nach Figuren, Kapiteln, Geschichten oder Tieren gefragt wird, 
-        # suchen wir im Roman-Namespace, ansonsten im Standard-Bereich (Physik).
         roman_schluesselwoerter = [
             "roman", "figur", "figuren", "geschichte", "szene", "erzähl", 
             "handlung", "kapitel", "wolf", "schweine", "schwein", "wölfe"
@@ -45,15 +40,14 @@ async def klangchat_webhook(request: Request):
         
         ziel_namespace = "roman" if ist_roman_frage else ""
 
-        # 5. Pinecone abfragen
+        # top_k auf 20 erhöht, damit mehr Material und beide Wolf-Szenen gleichzeitig landen
         suche = index.query(
             vector=frage_vektor, 
-            top_k=5, 
+            top_k=20, 
             include_metadata=True, 
             namespace=ziel_namespace
         )
         
-        # 6. Kontext sauber extrahieren
         kontext_texte = []
         for match in suche.matches:
             if match.metadata:
@@ -62,18 +56,17 @@ async def klangchat_webhook(request: Request):
                     kontext_texte.append(text_inhalt)
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
-        print(f"Namespace: '{ziel_namespace}' | Extrahierte Zeichen: {len(geballtes_wissen)}")
 
-        # 7. System-Prompt für DeepSeek
-        system_prompt = f"""Du bist die Enzyklopädie und die erzählende Stimme. Du sprichst in der ersten Person, bist präzise und warm.
-        
-Hier ist der Kontext aus dem Speicher:
+        # System-Prompt so angepasst, dass er literarisch und zusammenhängend antwortet
+        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. Du sprichst in der ersten Person. 
+
+Dir stehen folgende Auszüge aus dem Buch zur Verfügung, die verschiedene Stellen der Handlung beleuchten:
 ---
 {geballtes_wissen}
 ---
-Beantworte die Frage des Nutzers ausschließlich basierend auf diesem Kontext. Wenn die Antwort dort nicht enthalten ist, sage es offen."""
 
-        # 8. OpenRouter (DeepSeek) anfragen
+Beantworte die Frage des Nutzers auf Basis dieses Materials. Lass die Antwort wie aus einem Guss wirken: Verstricke die verschiedenen Textfragmente zu einer organischen Erzählung, anstatt sie pedantisch aufzuzählen. Wenn ein Thema an mehreren Stellen im Buch auftaucht (wie Figuren oder Motive), verbinde diese Beobachtungen."""
+
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
@@ -85,3 +78,4 @@ Beantworte die Frage des Nutzers ausschließlich basierend auf diesem Kontext. W
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
+    
