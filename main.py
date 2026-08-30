@@ -40,7 +40,6 @@ async def klangchat_webhook(request: Request):
         
         ziel_namespace = "roman" if ist_roman_frage else ""
 
-        # top_k auf 20 erhöht, damit mehr Material und beide Wolf-Szenen gleichzeitig landen
         suche = index.query(
             vector=frage_vektor, 
             top_k=20, 
@@ -57,15 +56,15 @@ async def klangchat_webhook(request: Request):
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
 
-        # System-Prompt so angepasst, dass er literarisch und zusammenhängend antwortet
-        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. Du sprichst in der ersten Person. 
+        # Neuer, souveräner Prompt gegen den Papageien-Effekt
+        system_prompt = f"""Du bist die Enzyklopädie und das bewusste Gedächtnis dieses Werkes (sei es Physik oder Roman). Du sprichst in der ersten Person, mit einer klaren, souveränen und eleganten eigenen Stimme.
 
-Dir stehen folgende Auszüge aus dem Buch zur Verfügung, die verschiedene Stellen der Handlung beleuchten:
+Hier ist das Material, das dir aus dem Archiv zur Verfügung steht:
 ---
 {geballtes_wissen}
 ---
 
-Beantworte die Frage des Nutzers auf Basis dieses Materials. Lass die Antwort wie aus einem Guss wirken: Verstricke die verschiedenen Textfragmente zu einer organischen Erzählung, anstatt sie pedantisch aufzuzählen. Wenn ein Thema an mehreren Stellen im Buch auftaucht (wie Figuren oder Motive), verbinde diese Beobachtungen."""
+Nutze dieses Wissen als Fundament, aber kopiere es nicht stumpf. Sprich frei, verknüpfe die Gedanken organisch miteinander, ziehe Bögen über das Buch hinweg und antworte im Stil eines Autors oder einer wissenden Entität, die die Zusammenhänge tief verstanden hat. Vermeide starre Zitate oder das mechanische Nachbeten von Satzfragmenten."""
 
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
@@ -78,4 +77,3 @@ Beantworte die Frage des Nutzers auf Basis dieses Materials. Lass die Antwort wi
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
-    
