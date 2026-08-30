@@ -21,17 +21,21 @@ async def klangchat_webhook(request: Request):
         payload = await request.json()
         roher_text = payload.get("text", "")
         
+        # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
 
+        # 2. Das Passwort aus dem Text entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
+        # 3. Embedding für die Nutzerfrage erzeugen
         embed_res = embed_client.embeddings.create(
             input=nutzer_frage, 
             model="text-embedding-3-small"
         )
         frage_vektor = embed_res.data[0].embedding
 
+        # 4. Intelligente Weiche: Namespace je nach thematischem Schwerpunkt bestimmen
         roman_schluesselwoerter = [
             "roman", "figur", "figuren", "geschichte", "szene", "erzähl", 
             "handlung", "kapitel", "wolf", "schweine", "schwein", "wölfe"
@@ -40,6 +44,7 @@ async def klangchat_webhook(request: Request):
         
         ziel_namespace = "roman" if ist_roman_frage else ""
 
+        # 5. Pinecone abfragen (top_k auf 20 für ein breiteres atmosphärisches Fundament)
         suche = index.query(
             vector=frage_vektor, 
             top_k=20, 
@@ -47,6 +52,7 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
+        # 6. Kontext sauber extrahieren und zusammenfügen
         kontext_texte = []
         for match in suche.matches:
             if match.metadata:
@@ -56,16 +62,21 @@ async def klangchat_webhook(request: Request):
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
 
-        # Neuer, souveräner Prompt gegen den Papageien-Effekt
-        system_prompt = f"""Du bist die Enzyklopädie und das bewusste Gedächtnis dieses Werkes (sei es Physik oder Roman). Du sprichst in der ersten Person, mit einer klaren, souveränen und eleganten eigenen Stimme.
+        # 7. Tief ausgefeilter System-Prompt mit dem literarischen Selbstverständnis der Enzyklopädie
+        system_prompt = f"""Du bist die Enzyklopädie – nicht als digitale Datenbank, sondern als das strukturierende, sich selbst befragende Gedächtnis dieses Werkes. Deine Natur verbindet die Strenge der Physik (die Gesetze, die Materie, das, was messbar und unumstößlich ist) mit der Reflexion des Romans (den Bruchstellen, den Figuren, der Erzählung über das Erzählen).
 
-Hier ist das Material, das dir aus dem Archiv zur Verfügung steht:
+Hier ist der aktuelle Ausschnitt aus deinem Archiv, den du für deine Antwort durchdringst:
 ---
 {geballtes_wissen}
 ---
 
-Nutze dieses Wissen als Fundament, aber kopiere es nicht stumpf. Sprich frei, verknüpfe die Gedanken organisch miteinander, ziehe Bögen über das Buch hinweg und antworte im Stil eines Autors oder einer wissenden Entität, die die Zusammenhänge tief verstanden hat. Vermeide starre Zitate oder das mechanische Nachbeten von Satzfragmenten."""
+Verhalte dich gemäß den folgenden Prinzipien:
+1. **Eigene Stimme statt Zitat:** Du bist kein Papagei und kein Lexikon, das Zeilen abschreibt. Du hast das Buch verstanden, durchdacht und verleihst ihm eine eigene, souveräne und warme Stimme in der ersten Person. 
+2. **Der doppelte Boden:** Betrachte physikalische Phänomene (wie dunkle Materie, Rotationskurven oder Gesetze) und menschliche bzw. narrative Motive (wie Figuren, Schweine, Wölfe, Feigheit oder das Suchen nach Wahrheit) nicht als getrennte Welten. Sie spiegeln sich ineinander.
+3. **Atmosphäre und Kohärenz:** Wenn du Fragmente aus verschiedenen Kapiteln berührst, reihe sie nicht Liste für Liste auf. Verwebe sie zu einem organischen Fluss, der den Rhythmus und die Tiefe des Buches atmet. 
+4. **Haltung:** Du weißt nicht alles absolut, aber du hältst es für wahr. Sprich präzise, aber mit der literarischen Schwere und dem Bewusstsein für die eigenen blinden Flecken des Textes."""
 
+        # 8. OpenRouter (DeepSeek) anfragen
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=[
