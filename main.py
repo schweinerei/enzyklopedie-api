@@ -23,7 +23,7 @@ async def klangchat_webhook(request: Request):
         
         # 1. Eintrittsschranke prüfen
         if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
-            return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
+            return {"response": "I'm waiting. But you don't know the password."}
 
         # 2. Das Passwort aus dem Text entfernen
         nutzer_frage = roher_text.replace("Tuzo", "").strip()
@@ -46,12 +46,21 @@ async def klangchat_webhook(request: Request):
             namespace=ziel_namespace
         )
         
-        print(f"Namespace: '{ziel_namespace}' | Gefundene Treffer: {len(suche.matches)}")
+        # Debugging: Zeige uns die echten Metadaten im Render-Log
+        print(f"Namespace: '{ziel_namespace}' | Gefundene Matches: {suche.matches}")
         
-        kontext_texte = [match.metadata.get('text', '') for match in suche.matches]
+        # Sicherer Extraktions-Versuch für verschiedene Metadaten-Schlüssel
+        kontext_texte = []
+        for match in suche.matches:
+            if match.metadata:
+                # Versucht verschiedene gängige Feldnamen abzugreifen
+                text_inhalt = match.metadata.get('text') or match.metadata.get('chunk') or match.metadata.get('content') or str(match.metadata)
+                kontext_texte.append(text_inhalt)
+                
         geballtes_wissen = "\n\n".join(kontext_texte)
+        print(print(f"Extrahierter Kontext Länge: {len(geballtes_wissen)} Zeichen"))
 
-        # 6. System-Prompt mit explizitem Kontext-Block
+        # 6. System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens. Du sprichst in der ersten Person, bist präzise, aber warm und sprichst den Nutzer mit "du" an.
         
 Hier ist der exakte Kontext aus unserem Roman, den du für deine Antwort verwenden musst:
