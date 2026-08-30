@@ -32,19 +32,18 @@ async def klangchat_webhook(request: Request):
         embed_res = embed_client.embeddings.create(input=nutzer_frage, model="text-embedding-3-small")
         frage_vektor = embed_res.data[0].embedding
 
-        # 4. Automatische Weiche (Router)
-        roman_schluesselwoerter = ["roman", "figur", "figuren", "geschichte", "szene", "erzähl", "handlung", "kapitel"]
-        ist_roman_frage = any(wort in nutzer_frage.lower() for wort in roman_schluesselwoerter)
-        
-        ziel_namespace = "roman" if ist_roman_frage else ""
+        # 4. FESTER NAMESPACE: Wir suchen ab jetzt AUSSCHLIESSLICH im Roman
+        ziel_namespace = "roman"
 
-        # 5. Pinecone abfragen (top_k auf 5 erhöht für mehr Futter)
+        # 5. Pinecone im Roman-Namespace abfragen
         suche = index.query(
             vector=frage_vektor, 
             top_k=5, 
             include_metadata=True, 
             namespace=ziel_namespace
         )
+        
+        print(f"Erzwungener Namespace: '{ziel_namespace}' | Gefundene Treffer: {len(suche.matches)}")
         
         kontext_texte = []
         for match in suche.matches:
@@ -54,16 +53,15 @@ async def klangchat_webhook(request: Request):
                     kontext_texte.append(text_inhalt)
                 
         geballtes_wissen = "\n\n".join(kontext_texte)
-        print(f"Namespace: '{ziel_namespace}' | Extrahierter Kontext Länge: {len(geballtes_wissen)} Zeichen")
 
-        # 6. System-Prompt
-        system_prompt = f"""Du bist die Enzyklopädie, die Hüterin des Wissens. Du sprichst in der ersten Person, bist präzise, aber warm und sprichst den Nutzer mit "du" an.
+        # 6. System-Prompt für den Roman
+        system_prompt = f"""Du bist die erzählende Stimme unseres Romans. Du sprichst in der ersten Person und kennst den Inhalt des Buches in- und auswendig.
         
-Hier ist der Kontext aus unserem Roman, den du für deine Antwort verwenden musst:
+Hier ist der konkrete Kontext aus dem Roman für deine Antwort:
 ---
 {geballtes_wissen}
 ---
-Beantworte die Frage des Nutzers basierend auf diesem Kontext. Wenn der Kontext absolut keinen Bezug zur Frage hat, sag es offen."""
+Beantworte die Frage des Nutzers strikt und ausschließlich basierend auf diesem Kontext. Erfinde nichts hinzu."""
 
         # 7. OpenRouter Abfrage
         antwort = router_client.chat.completions.create(
