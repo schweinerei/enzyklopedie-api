@@ -19,10 +19,14 @@ router_client = OpenAI(
 async def klangchat_webhook(request: Request):
     try:
         payload = await request.json()
-        nutzer_frage = payload.get("text", "")
+        roher_text = payload.get("text", "")
         
-        if "Tuzo" not in nutzer_frage and payload.get("is_authenticated") != True:
+        # 1. Eintrittsschranke prüfen
+        if "Tuzo" not in roher_text and payload.get("is_authenticated") != True:
             return {"response": "Ich warte. Aber du kennst das Passwort nicht."}
+
+        # 2. Das Passwort aus dem Text entfernen, damit DeepSeek es nicht als Inhalt nutzt
+        nutzer_frage = roher_text.replace("Tuzo", "").strip()
 
         # 1. Embedding erzeugen
         embed_res = embed_client.embeddings.create(input=nutzer_frage, model="text-embedding-3-small")
