@@ -42,7 +42,7 @@ async def klangchat_webhook(request: Request):
 
         # 3. OpenRouter Abfrage
         antwort = router_client.chat.completions.create(
-            model="anthropic/claude-3.5-sonnet",
+            model="deepseek/deepseek-chat",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": nutzer_frage}
