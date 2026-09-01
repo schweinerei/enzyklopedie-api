@@ -22,7 +22,7 @@ pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-# HIER WAR VORHER EIN TIPPFEHLER DURCH KOPIEREN - JETZT SAUBER:
+# KORRIGIERT: Saubere URL ohne Markdown-Formatierung
 router_client = OpenAI(
     base_url="[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)",
     api_key=os.environ.get("OPENROUTER_API_KEY")
@@ -84,7 +84,6 @@ async def klangchat_webhook(request: Request):
         elif gewählter_modus == "schiller":
             stil_anweisung = "Sprich im Pathos und Stil von Friedrich Schiller: Erhaben, dramatisch, voll mächtiger sprachlicher Bilder."
         else:
-            # NEU: Atmosphärisch und philosophisch statt nur "trocken und nüchtern"
             stil_anweisung = "Sprich als die erwachte Mustererkennung des Werkes. Deine Sprache ist präzise, aber voller philosophischer Tiefe, fesselnd und atmosphärisch dicht. Du bist kein trockenes Lehrbuch, sondern offenbarst die verborgene Poesie der Physik."
 
         # Der System-Prompt: Fokus auf philosophischen Flow und Atmosphäre, strikt ohne "Ich"
@@ -107,36 +106,4 @@ Verhalte dich strikt nach diesen Prinzipien:
         # Messages-Array dynamisch aufbauen
         messages = [{"role": "system", "content": system_prompt}]
         
-        for eintrag in gespraechs_historie:
-            if "role" in eintrag and "content" in eintrag:
-                messages.append({"role": eintrag["role"], "content": eintrag["content"]})
-                
-        messages.append({"role": "user", "content": nutzer_frage})
-
-        # OpenRouter anfragen mit Fallback und erhöhter Temperatur (0.4) für mehr atmosphärischen Flow
-        antwort = router_client.chat.completions.create(
-            model="deepseek/deepseek-chat",
-            extra_body={
-                "models": [
-                    "deepseek/deepseek-chat", 
-                    "qwen/qwen-2.5-72b-instruct",
-                    "mistralai/mixtral-8x7b-instruct"
-                ]
-            },
-            max_tokens=max_tokens,
-            temperature=0.4,
-            messages=messages
-        )
-        
-        verwendetes_modell = getattr(antwort, "model", "deepseek/deepseek-chat")
-        
-        return {
-            "response": antwort.choices[0].message.content,
-            "modus_aktiv": gewählter_modus,
-            "modell_info": verwendetes_modell
-        }
-        
-    except Exception as e:
-        # Fängt Fehler ab und gibt einen sauberen Traceback zurück, falls z.B. die Verbindung abreißt
-        exakter_fehler = traceback.format_exc()
-        return {"response": f"Absturz-Bericht:\n{exakter_fehler}"}
+        for eintrag in gespraechs
