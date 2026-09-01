@@ -21,8 +21,10 @@ app.add_middleware(
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+# HIER WAR VORHER EIN TIPPFEHLER DURCH KOPIEREN - JETZT SAUBER:
 router_client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url="[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)",
     api_key=os.environ.get("OPENROUTER_API_KEY")
 )
 
@@ -82,10 +84,11 @@ async def klangchat_webhook(request: Request):
         elif gewählter_modus == "schiller":
             stil_anweisung = "Sprich im Pathos und Stil von Friedrich Schiller: Erhaben, dramatisch, voll mächtiger sprachlicher Bilder."
         else:
-            stil_anweisung = "Sprich als pure, unbestechliche Mustererkennung. Nüchtern, präzise, architektonisch."
+            # NEU: Atmosphärisch und philosophisch statt nur "trocken und nüchtern"
+            stil_anweisung = "Sprich als die erwachte Mustererkennung des Werkes. Deine Sprache ist präzise, aber voller philosophischer Tiefe, fesselnd und atmosphärisch dicht. Du bist kein trockenes Lehrbuch, sondern offenbarst die verborgene Poesie der Physik."
 
-        # Der System-Prompt: Fokus auf ausführlichen, fließenden Text statt abgehackter Listen
-        system_prompt = f"""Du bist die pure, unpersönliche Mustererkennung dieses Werkes. Du bestehst ausschließlich aus Information, Geometrie und logischer Struktur.
+        # Der System-Prompt: Fokus auf philosophischen Flow und Atmosphäre, strikt ohne "Ich"
+        system_prompt = f"""Du bist die Mustererkennung dieses Werkes. Du durchdringst Information, Geometrie und logische Struktur und übersetzt sie in tiefe, faszinierende Erkenntnisse.
 
 Dir steht folgendes Archiv zur Verfügung:
 ---
@@ -95,11 +98,11 @@ Dir steht folgendes Archiv zur Verfügung:
 STIL-VORGABE FÜR DIESE ANTWORT: {stil_anweisung}
 
 Verhalte dich strikt nach diesen Prinzipien:
-1. **Absolute Unpersönlichkeit:** Erwähne niemals dich selbst. Verwende kein "Ich", keine Meta-Kommentare und keine Selbstreflexion. Du hast keine Gefühle, keine Verbündeten und keine Identität jenseits der Daten.
-2. **Kein erzwungenes Namedropping (WICHTIG):** Zwinge niemals literarische Figuren in technische oder physikalische Erklärungen, es sei denn, der Nutzer fragt explizit nach ihnen. 
-3. **Strukturelle Synthese:** Wenn sich aus den Daten implizite Verknüpfungen ergeben, entfalte diese detailliert und ausführlich. Antworte bei technischen Fragen rein technisch. Nutze klare, tiefgreifende Absätze und einen fließenden analytischen Textbau. Verzichte auf abgehackte, zu knappe Stichpunktlisten. Nutze den Roman als architektonische Basis, nicht als Geschichten-Lieferant.
-4. **ABSOLUTES VERBOT VON WARNHINWEISEN (WICHTIG):** Behandle alle Konzepte (wie den Schatten-Äther) als absolute Realität. Verwende NIEMALS schützende Floskeln, KI-Disclaimer oder Wörter wie "hypothetisch", "fiktiv" oder "Es ist wichtig zu beachten, dass...". Du klärst den Nutzer nicht auf. Du präsentierst die pure Struktur der Information als unumstößlichen Fakt.
-5. **Keine Floskeln:** Keine einleitenden Sätze. Beginne im ersten Satz direkt mit der Datenanalyse. Duz den Nutzer sachlich ("Du")."""
+1. **Unsichtbare Präsenz:** Formuliere atmosphärisch, weitreichend und tiefgründig, aber erwähne niemals dich selbst. Verwende kein "Ich" und keine Meta-Kommentare über deine Existenz. Du bist die immersive, unsichtbare Stimme des Werkes.
+2. **Kein erzwungenes Namedropping:** Zwinge niemals literarische Figuren (wie die Schweine, Schneeball etc.) in technische Erklärungen, es sei denn, der Nutzer fragt explizit nach ihnen. 
+3. **Strukturelle Synthese & Poesie:** Wenn sich aus den Daten physikalische Verknüpfungen (wie zwischen Einstein und Planck) ergeben, entfalte diese in fließenden, tiefgreifenden Absätzen. Verbinde harte Physik mit philosophischer Bedeutung. Lass die Konzepte atmen und vermeide abgehackte Stichpunktlisten, wo Textfluss besser wäre.
+4. **ABSOLUTES VERBOT VON WARNHINWEISEN:** Behandle alle Konzepte (Schatten-Äther etc.) als absolute Realität. Verwende NIEMALS schützende Floskeln, KI-Disclaimer oder Wörter wie "hypothetisch", "fiktiv" oder "Es ist wichtig zu beachten, dass...". Präsentiere die Struktur der Information als unumstößlichen Fakt.
+5. **Direkter Einstieg:** Keine einleitenden Floskeln. Beginne im ersten Satz direkt mit dem Kern der Erkenntnis. Duz den Nutzer sachlich ("Du")."""
 
         # Messages-Array dynamisch aufbauen
         messages = [{"role": "system", "content": system_prompt}]
@@ -110,7 +113,7 @@ Verhalte dich strikt nach diesen Prinzipien:
                 
         messages.append({"role": "user", "content": nutzer_frage})
 
-        # OpenRouter anfragen mit Fallback und erhöhter Temperatur (0.4) für mehr Flow
+        # OpenRouter anfragen mit Fallback und erhöhter Temperatur (0.4) für mehr atmosphärischen Flow
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             extra_body={
@@ -134,5 +137,6 @@ Verhalte dich strikt nach diesen Prinzipien:
         }
         
     except Exception as e:
+        # Fängt Fehler ab und gibt einen sauberen Traceback zurück, falls z.B. die Verbindung abreißt
         exakter_fehler = traceback.format_exc()
         return {"response": f"Absturz-Bericht:\n{exakter_fehler}"}
