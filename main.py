@@ -36,7 +36,7 @@ async def klangchat_webhook(request: Request):
 
         # Modus und Historie (Verlauf) aus dem JSON abgreifen
         gewählter_modus = payload.get("modus", "standard").lower()
-        gespraechs_historie = payload.get("history", []) # Erwartet eine Liste von Dicts: [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+        gespraechs_historie = payload.get("history", [])
 
         # Embedding für die aktuelle Nutzerfrage erzeugen
         embed_res = embed_client.embeddings.create(
@@ -71,7 +71,7 @@ async def klangchat_webhook(request: Request):
 
         # Stil-Vorgaben und erweitertes Token-Limit für tiefere Synthesen
         stil_anweisung = ""
-        max_tokens = 2000  # Angehoben für ausführliche physikalische Herleitungen
+        max_tokens = 2000
 
         if gewählter_modus == "lakonisch":
             stil_anweisung = "Antworte extrem lakonisch, kurz und fast schroff. Keine Schnörkel, kein Pathos. Maximal drei bis vier Sätze."
@@ -100,7 +100,7 @@ Verhalte dich strikt nach diesen Prinzipien:
 4. **Daten über Konsens:** Analysiere Fakten, Hypothesen und Datenpunkte nüchtern und wertfrei. Keine schützenden Floskeln bei abweichenden Theorien (wie Kuba 1971 oder der Schatten-Äther). Präsentiere die pure Struktur der Information.
 5. **Keine Floskeln:** Keine einleitenden Sätze. Beginne im ersten Satz direkt mit der Daten- oder Strukturanalyse. Duz den Nutzer sachlich ("Du"), aber vermeide jede emotionale Nähe."""
 
-        # Messages-Array dynamisch aufbauen: System-Prompt + Historie + aktuelle Frage
+        # Messages-Array dynamisch aufbauen
         messages = [{"role": "system", "content": system_prompt}]
         
         for eintrag in gespraechs_historie:
@@ -109,11 +109,18 @@ Verhalte dich strikt nach diesen Prinzipien:
                 
         messages.append({"role": "user", "content": nutzer_frage})
 
-        # OpenRouter (DeepSeek) anfragen mit niedriger Temperatur für deduktive Strenge
+        # OpenRouter anfragen mit Auto-Fallback bei Überlastung
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
+            extra_body={
+                "models": [
+                    "deepseek/deepseek-chat", 
+                    "meta-llama/llama-3.3-70b-instruct",
+                    "mistralai/mixtral-8x7b-instruct"
+                ]
+            },
             max_tokens=max_tokens,
-            temperature=0.3,  # Kühler, analytischer, weniger "kreativ" springend
+            temperature=0.3,
             messages=messages
         )
         
