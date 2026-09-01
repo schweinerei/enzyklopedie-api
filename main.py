@@ -1,4 +1,3 @@
-```python
 import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -135,5 +134,3 @@ Verhalte dich strikt nach diesen Prinzipien:
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
-
-```
