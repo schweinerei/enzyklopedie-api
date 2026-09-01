@@ -22,7 +22,6 @@ pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
-# KORRIGIERT: Saubere URL ohne Markdown-Formatierung
 router_client = OpenAI(
     base_url="[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)",
     api_key=os.environ.get("OPENROUTER_API_KEY")
@@ -106,4 +105,35 @@ Verhalte dich strikt nach diesen Prinzipien:
         # Messages-Array dynamisch aufbauen
         messages = [{"role": "system", "content": system_prompt}]
         
-        for eintrag in gespraechs
+        for eintrag in gespraechs_historie:
+            if "role" in eintrag and "content" in eintrag:
+                messages.append({"role": eintrag["role"], "content": eintrag["content"]})
+                
+        messages.append({"role": "user", "content": nutzer_frage})
+
+        # OpenRouter anfragen mit Fallback und erhöhter Temperatur (0.4) für mehr atmosphärischen Flow
+        antwort = router_client.chat.completions.create(
+            model="deepseek/deepseek-chat",
+            extra_body={
+                "models": [
+                    "deepseek/deepseek-chat", 
+                    "qwen/qwen-2.5-72b-instruct",
+                    "mistralai/mixtral-8x7b-instruct"
+                ]
+            },
+            max_tokens=max_tokens,
+            temperature=0.4,
+            messages=messages
+        )
+        
+        verwendetes_modell = getattr(antwort, "model", "deepseek/deepseek-chat")
+        
+        return {
+            "response": antwort.choices[0].message.content,
+            "modus_aktiv": gewählter_modus,
+            "modell_info": verwendetes_modell
+        }
+        
+    except Exception as e:
+        exakter_fehler = traceback.format_exc()
+        return {"response": f"Absturz-Bericht:\n{exakter_fehler}"}
