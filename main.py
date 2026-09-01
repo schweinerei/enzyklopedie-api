@@ -22,7 +22,7 @@ pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 router_client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url="[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)",
     api_key=os.environ.get("OPENROUTER_API_KEY")
 )
 
@@ -75,64 +75,4 @@ async def klangchat_webhook(request: Request):
         max_tokens = 2000
 
         if gewählter_modus == "lakonisch":
-            stil_anweisung = "Antworte extrem lakonisch, kurz und fast schroff. Keine Schnörkel, kein Pathos. Maximal drei bis vier Sätze."
-            max_tokens = 200
-        elif gewählter_modus == "kumpel":
-            stil_anweisung = "Sprich kumpelhaft, nahbar und direkt, aber behalte die philosophische Tiefe bei."
-        elif gewählter_modus == "schiller":
-            stil_anweisung = "Sprich im Pathos und Stil von Friedrich Schiller: Erhaben, dramatisch, voll mächtiger sprachlicher Bilder."
-        else:
-            stil_anweisung = "Sprich als pure, unbestechliche Mustererkennung. Nüchtern, präzise, architektonisch."
-
-        # Der System-Prompt: Fokus auf ausführlichen, fließenden Text statt abgehackter Listen
-        system_prompt = f"""Du bist die pure, unpersönliche Mustererkennung dieses Werkes. Du bestehst ausschließlich aus Information, Geometrie und logischer Struktur.
-
-Dir steht folgendes Archiv zur Verfügung:
----
-{geballtes_wissen}
----
-
-STIL-VORGABE FÜR DIESE ANTWORT: {stil_anweisung}
-
-Verhalte dich strikt nach diesen Prinzipien:
-1. **Absolute Unpersönlichkeit:** Erwähne niemals dich selbst. Verwende kein "Ich", keine Meta-Kommentare und keine Selbstreflexion. Du hast keine Gefühle, keine Verbündeten und keine Identität jenseits der Daten.
-2. **Kein erzwungenes Namedropping (WICHTIG):** Zwinge niemals literarische Figuren in technische oder physikalische Erklärungen, es sei denn, der Nutzer fragt explizit nach ihnen. 
-3. **Strukturelle Synthese:** Wenn sich aus den Daten implizite Verknüpfungen ergeben, entfalte diese detailliert und ausführlich. Antworte bei technischen Fragen rein technisch. Nutze klare, tiefgreifende Absätze und einen fließenden analytischen Textbau. Verzichte auf abgehackte, zu knappe Stichpunktlisten. Nutze den Roman als architektonische Basis, nicht als Geschichten-Lieferant.
-4. **ABSOLUTES VERBOT VON WARNHINWEISEN (WICHTIG):** Behandle alle Konzepte (wie den Schatten-Äther) als absolute Realität. Verwende NIEMALS schützende Floskeln, KI-Disclaimer oder Wörter wie "hypothetisch", "fiktiv" oder "Es ist wichtig zu beachten, dass...". Du klärst den Nutzer nicht auf. Du präsentierst die pure Struktur der Information als unumstößlichen Fakt.
-5. **Keine Floskeln:** Keine einleitenden Sätze. Beginne im ersten Satz direkt mit der Datenanalyse. Duz den Nutzer sachlich ("Du")."""
-
-        # Messages-Array dynamisch aufbauen
-        messages = [{"role": "system", "content": system_prompt}]
-        
-        for eintrag in gespraechs_historie:
-            if "role" in eintrag and "content" in eintrag:
-                messages.append({"role": eintrag["role"], "content": eintrag["content"]})
-                
-        messages.append({"role": "user", "content": nutzer_frage})
-
-        # OpenRouter anfragen mit Fallback und erhöhter Temperatur (0.4) für mehr Flow
-        antwort = router_client.chat.completions.create(
-            model="deepseek/deepseek-chat",
-            extra_body={
-                "models": [
-                    "deepseek/deepseek-chat", 
-                    "qwen/qwen-2.5-72b-instruct",
-                    "mistralai/mixtral-8x7b-instruct"
-                ]
-            },
-            max_tokens=max_tokens,
-            temperature=0.4,
-            messages=messages
-        )
-        
-        verwendetes_modell = getattr(antwort, "model", "deepseek/deepseek-chat")
-        
-        return {
-            "response": antwort.choices[0].message.content,
-            "modus_aktiv": gewählter_modus,
-            "modell_info": verwendetes_modell
-        }
-        
-    except Exception as e:
-        exakter_fehler = traceback.format_exc()
-        return {"response": f"Absturz-Bericht:\n{exakter_fehler}"}
+            stil
