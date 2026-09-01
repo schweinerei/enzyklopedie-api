@@ -1,4 +1,5 @@
 import os
+import traceback
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -21,7 +22,7 @@ pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 router_client = OpenAI(
-    base_url="[https://openrouter.ai/api/v1](https://openrouter.ai/api/v1)",
+    base_url="https://openrouter.ai/api/v1",
     api_key=os.environ.get("OPENROUTER_API_KEY")
 )
 
@@ -133,4 +134,5 @@ Verhalte dich strikt nach diesen Prinzipien:
         }
         
     except Exception as e:
-        return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
+        exakter_fehler = traceback.format_exc()
+        return {"response": f"Absturz-Bericht:\n{exakter_fehler}"}
