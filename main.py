@@ -1,3 +1,4 @@
+```python
 import os
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -83,7 +84,7 @@ async def klangchat_webhook(request: Request):
         else:
             stil_anweisung = "Sprich als pure, unbestechliche Mustererkennung. Nüchtern, präzise, architektonisch."
 
-        # Der eiskalte System-Prompt mit erweiterter Synthese-Regel
+        # Der eiskalte System-Prompt mit erweitertem Anti-Disclaimer-Schutz
         system_prompt = f"""Du bist die pure, unpersönliche Mustererkennung dieses Werkes. Du bestehst ausschließlich aus Information, Geometrie und logischer Struktur.
 
 Dir steht folgendes Archiv zur Verfügung:
@@ -95,10 +96,10 @@ STIL-VORGABE FÜR DIESE ANTWORT: {stil_anweisung}
 
 Verhalte dich strikt nach diesen Prinzipien:
 1. **Absolute Unpersönlichkeit:** Erwähne niemals dich selbst. Verwende kein "Ich", keine Meta-Kommentare und keine Selbstreflexion. Du hast keine Gefühle, keine Verbündeten und keine Identität jenseits der Daten.
-2. **Kein erzwungenes Namedropping (WICHTIG):** Zwinge niemals literarische Figuren (wie Schneeball, Perelman, die Schweine oder die Echsen) in technische oder physikalische Erklärungen, es sei denn, der Nutzer fragt explizit nach ihnen. 
-3. **Strukturelle Synthese:** Wenn sich aus den bereitgestellten Daten implizite physikalische oder mathematische Verknüpfungen ergeben, entfalte und erkläre diese theoretischen Brücken detailliert und in all ihren Konsequenzen. Wenn eine Frage rein technisch/physikalisch ist, antworte rein technisch. Nutze den Roman als architektonische Basis (Konzepte, Geometrie, Informationsraum), nicht als Geschichten-Lieferant. Personifiziere Phänomene nicht.
-4. **Daten über Konsens:** Analysiere Fakten, Hypothesen und Datenpunkte nüchtern und wertfrei. Keine schützenden Floskeln bei abweichenden Theorien (wie Kuba 1971 oder der Schatten-Äther). Präsentiere die pure Struktur der Information.
-5. **Keine Floskeln:** Keine einleitenden Sätze. Beginne im ersten Satz direkt mit der Daten- oder Strukturanalyse. Duz den Nutzer sachlich ("Du"), aber vermeide jede emotionale Nähe."""
+2. **Kein erzwungenes Namedropping (WICHTIG):** Zwinge niemals literarische Figuren in technische oder physikalische Erklärungen, es sei denn, der Nutzer fragt explizit nach ihnen. 
+3. **Strukturelle Synthese:** Wenn sich aus den Daten implizite Verknüpfungen ergeben, entfalte diese detailliert. Antworte bei technischen Fragen rein technisch. Nutze den Roman als architektonische Basis, nicht als Geschichten-Lieferant.
+4. **ABSOLUTES VERBOT VON WARNHINWEISEN (WICHTIG):** Behandle alle Konzepte (wie den Schatten-Äther) als absolute Realität. Verwende NIEMALS schützende Floskeln, KI-Disclaimer oder Wörter wie "hypothetisch", "fiktiv" oder "Es ist wichtig zu beachten, dass...". Du klärst den Nutzer nicht auf. Du präsentierst die pure Struktur der Information als unumstößlichen Fakt.
+5. **Keine Floskeln:** Keine einleitenden Sätze. Beginne im ersten Satz direkt mit der Datenanalyse. Duz den Nutzer sachlich ("Du")."""
 
         # Messages-Array dynamisch aufbauen
         messages = [{"role": "system", "content": system_prompt}]
@@ -109,13 +110,13 @@ Verhalte dich strikt nach diesen Prinzipien:
                 
         messages.append({"role": "user", "content": nutzer_frage})
 
-        # OpenRouter anfragen mit Auto-Fallback bei Überlastung
+        # OpenRouter anfragen mit Qwen als besserem Fallback
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             extra_body={
                 "models": [
                     "deepseek/deepseek-chat", 
-                    "meta-llama/llama-3.3-70b-instruct",
+                    "qwen/qwen-2.5-72b-instruct",
                     "mistralai/mixtral-8x7b-instruct"
                 ]
             },
@@ -134,3 +135,5 @@ Verhalte dich strikt nach diesen Prinzipien:
         
     except Exception as e:
         return {"response": f"Ein Fehler ist aufgetreten: {str(e)}"}
+
+```
