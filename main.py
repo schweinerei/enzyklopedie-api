@@ -117,10 +117,9 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "'VERBINDUNG GETRENNT. ANOMALE DATENSTRUKTUR ERKANNT.' (if the input was German)."
         )
 
-        # Modus-spezifische Logik (Komplett frei von US-Geo-Blocks)
+        # Modus-spezifische Logik 
         if payload.modus == "hardcore":
-            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
-            # Qwen 72B ist extrem fähig, hoch analytisch und hat minimale Guardrails
+            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor. Structure your response meticulously using clear headings, bullet points, and numbered lists to organize complex information logically. Avoid unbroken walls of text."
             ki_modell = "qwen/qwen-2.5-72b-instruct"
             fallback_modelle = ["deepseek/deepseek-chat"]
             
@@ -143,7 +142,7 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             messages.append(msg)
         messages.append({"role": "user", "content": payload.text})
 
-        # F. Streaming-Anfrage (Modell ist jetzt dynamisch und Geo-Block-sicher)
+        # F. Streaming-Anfrage 
         antwort = router_client.chat.completions.create(
             model=ki_modell,
             messages=messages,
@@ -154,7 +153,11 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             }
         )
 
+        # Generator-Funktion streamt Token ans Frontend
         def generate():
+            # NEU: Diese Zeile sendet den Namen des Modells vorab in den Chat!
+            yield f"[SYSTEM-INFO: Modell aktiv = {ki_modell}]\n\n"
+            
             for chunk in antwort:
                 if chunk.choices[0].delta.content is not None:
                     yield chunk.choices[0].delta.content
