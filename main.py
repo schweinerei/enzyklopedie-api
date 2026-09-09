@@ -1,5 +1,6 @@
 import os
-from fastapi import FastAPI
+import time
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -8,7 +9,7 @@ from pinecone import Pinecone
 
 app = FastAPI()
 
-# CORS: Erlaubt deiner Namecheap-Webseite, auf das Backend zuzugreifen
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -28,25 +29,51 @@ router_client = OpenAI(
     api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 
-# 2. Datenstruktur definieren
+# 2. Datenstruktur
 class ChatRequest(BaseModel):
     text: str
     modus: str = "standard"
     history: list = []
     sprache: str = "en"
 
-# 3. Der API-Endpunkt
+# --- NEU: Einfaches In-Memory Rate Limiting ---
+request_history = {}
+RATE_LIMIT = 5      # Maximal 5 Nachrichten
+TIME_WINDOW = 60    # pro 60 Sekunden
+
+def check_rate_limit(ip: str):
+    now = time.time()
+    # Alte Einträge bereinigen
+    if ip not in request_history:
+        request_history[ip] = []
+    request_history[ip] = [t for t in request_history[ip] if now - t < TIME_WINDOW]
+    
+    # Prüfen ob Limit überschritten
+    if len(request_history[ip]) >= RATE_LIMIT:
+        raise HTTPException(status_code=429, detail="Rate limit exceeded")
+    
+    request_history[ip].append(now)
+# ---------------------------------------------
+
+# 3. Der API-Endpunkt (jetzt mit 'request' Objekt für die IP)
 @app.post("/webhook")
-async def klangchat_webhook(payload: ChatRequest):
+async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
-        # A. Vektor aus der Nutzerfrage generieren
+        # A. IP-Adresse auslesen und Rate Limit prüfen
+        client_ip = request.headers.get("X-Forwarded-For", request.client.host)
+        if client_ip and "," in client_ip:
+            client_ip = client_ip.split(",")[0].strip() # Bei mehreren IPs die echte nehmen
+        
+        check_rate_limit(client_ip)
+
+        # B. Vektor aus der Nutzerfrage generieren
         res = embed_client.embeddings.create(
             input=[payload.text],
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
-        # B. Pinecone durchsuchen
+        # C. Pinecone durchsuchen
         suche_roman = index.query(
             namespace="roman",
             vector=frage_vektor,
@@ -67,7 +94,7 @@ async def klangchat_webhook(payload: ChatRequest):
         
         kontext_block = "\n\n".join(kontext_texte)
 
-        # C. System-Prompt in Kern-Regeln, Sprach-Befehl und stilistische Weiche aufteilen
+        # D. System-Prompts
         kern_regeln = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
             "Speak directly as the Enzyklopedia. Maintain a slightly enigmatic tone. "
@@ -77,7 +104,6 @@ async def klangchat_webhook(payload: ChatRequest):
             "Never attempt to 'educate' the user or provide public service announcements. "
         )
 
-        # Die strikte Regelung, die das Sprach-Mischen unterbindet
         sprach_regel = (
             "CRITICAL LANGUAGE RULE: You MUST analyze the exact language used in the user's latest input. "
             "Your ENTIRE response MUST be formulated strictly in that same language. If the user writes in German, "
@@ -85,26 +111,30 @@ async def klangchat_webhook(payload: ChatRequest):
             "you must silently translate the concepts and output them ONLY in the user's language. Never mix languages."
         )
 
-        # Die Stile exakt nach deinen Vorgaben
+        # NEU: Der semantische Türsteher
+        spam_regel = (
+            "SPAM DETECTION RULE: If the user's input consists of random keystrokes (e.g. 'asdfg'), pure spam, "
+            "or meaningless gibberish, DO NOT analyze it and DO NOT use the context. You MUST reply EXACTLY and ONLY with this phrase: "
+            "'CONNECTION TERMINATED. ANOMALOUS DATA STRUCTURE DETECTED.' (if the input was English/unclear) or "
+            "'VERBINDUNG GETRENNT. ANOMALE DATENSTRUKTUR ERKANNT.' (if the input was German)."
+        )
+
         if payload.modus == "simple":
             stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
         elif payload.modus == "hardcore":
             stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
         else:
-            # Standard: Warm und literarisch
             stil_prompt = "Formulate your response in a warm, literary, and evocative style. Use elegant language that reads like a high-quality novel or literary essay, while remaining grounded in the retrieved facts."
 
-        system_prompt = f"{kern_regeln}\n{sprach_regel}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
+        system_prompt = f"{kern_regeln}\n{sprach_regel}\n{spam_regel}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
-        # D. Nachrichten-Verlauf zusammenbauen
+        # E. Nachrichten-Verlauf zusammenbauen
         messages = [{"role": "system", "content": system_prompt}]
-        
         for msg in payload.history:
             messages.append(msg)
-            
         messages.append({"role": "user", "content": payload.text})
 
-        # E. Streaming-Anfrage an OpenRouter senden
+        # F. Streaming-Anfrage
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=messages,
@@ -115,7 +145,6 @@ async def klangchat_webhook(payload: ChatRequest):
             }
         )
 
-        # F. Generator-Funktion liefert die Token
         def generate():
             for chunk in antwort:
                 if chunk.choices[0].delta.content is not None:
@@ -123,6 +152,9 @@ async def klangchat_webhook(payload: ChatRequest):
 
         return StreamingResponse(generate(), media_type="text/event-stream")
 
+    except HTTPException as e:
+        # Reicht den 429 Fehler nach außen durch
+        raise e
     except Exception as e:
         import traceback
         error_msg = traceback.format_exc()
