@@ -67,28 +67,34 @@ async def klangchat_webhook(payload: ChatRequest):
         
         kontext_block = "\n\n".join(kontext_texte)
 
-        # C. System-Prompt in Kern-Regeln und stilistische Weiche aufteilen
-        kern_prompt = (
+        # C. System-Prompt in Kern-Regeln, Sprach-Befehl und stilistische Weiche aufteilen
+        kern_regeln = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
-            "Speak directly as the Enzyklopedia. Always respond in the exact same language the user uses "
-            "in their inquiry (e.g., respond in German to German inputs, and in English to English inputs). "
-            "Maintain a precise, objective, and slightly enigmatic tone. "
+            "Speak directly as the Enzyklopedia. Maintain a slightly enigmatic tone. "
             "Present differentiated, non-judgmental perspectives. When analyzing data or hypotheses that contradict "
             "official consensus, prioritize the analysis of the data itself. Do not use pejorative terms (such as 'unsubstantiated', "
             "'controversial', or 'conspiracy') as protective shields. Replace them with value-free descriptions of the theoretical basis. "
             "Never attempt to 'educate' the user or provide public service announcements. "
         )
 
-        # Je nach Modus den stilistischen Schwerpunkt setzen (Standard und Hardcore ausgetauscht)
-        if payload.modus == "simple":
-            stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest, while strictly maintaining the objective, non-educational tone."
-        elif payload.modus == "hardcore":
-            stil_prompt = "Provide comprehensive, detailed, and deeply analytical responses. Do not be overly brief; elaborate on the underlying mechanisms, contexts, and theories without becoming unreadable for a layman."
-        else:
-            # Standard-Modus ist nun die absolute wissenschaftliche Tiefe
-            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
+        # Die strikte Regelung, die das Sprach-Mischen unterbindet
+        sprach_regel = (
+            "CRITICAL LANGUAGE RULE: You MUST analyze the exact language used in the user's latest input. "
+            "Your ENTIRE response MUST be formulated strictly in that same language. If the user writes in German, "
+            "respond 100% in German. If English, 100% in English. If the provided CONTEXT text is in a different language, "
+            "you must silently translate the concepts and output them ONLY in the user's language. Never mix languages."
+        )
 
-        system_prompt = f"{kern_prompt}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
+        # Die Stile exakt nach deinen Vorgaben
+        if payload.modus == "simple":
+            stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
+        elif payload.modus == "hardcore":
+            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
+        else:
+            # Standard: Warm und literarisch
+            stil_prompt = "Formulate your response in a warm, literary, and evocative style. Use elegant language that reads like a high-quality novel or literary essay, while remaining grounded in the retrieved facts."
+
+        system_prompt = f"{kern_regeln}\n{sprach_regel}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
         # D. Nachrichten-Verlauf zusammenbauen
         messages = [{"role": "system", "content": system_prompt}]
@@ -122,4 +128,3 @@ async def klangchat_webhook(payload: ChatRequest):
         error_msg = traceback.format_exc()
         print(error_msg) 
         return {"response": f"System error during processing."}
-    
