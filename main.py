@@ -1,5 +1,6 @@
 import os
 import time
+import hashlib
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -9,89 +10,78 @@ from pinecone import Pinecone
 
 app = FastAPI()
 
-# CORS
+# 1. CORS STRICT MODE: Erlaubt nur deiner Webseite den Zugriff
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://schweinerei.xyz", 
+        "https://www.schweinerei.xyz"
+    ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST"], # Nur POST erlauben
     allow_headers=["*"],
 )
 
-# 1. Clients initialisieren
+# Clients initialisieren
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 
 embed_client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-
 router_client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 
-# 2. Datenstruktur
 class ChatRequest(BaseModel):
     text: str
     modus: str = "standard"
     history: list = []
     sprache: str = "en"
 
-# Rate Limiting
+# Rate Limiting mit IP-Hashing (DSGVO-konform)
 request_history = {}
 RATE_LIMIT = 5      
 TIME_WINDOW = 60    
 
 def check_rate_limit(ip: str):
-    now = time.time()
-    if ip not in request_history:
-        request_history[ip] = []
-    request_history[ip] = [t for t in request_history[ip] if now - t < TIME_WINDOW]
+    # IP anonymisieren
+    hashed_ip = hashlib.sha256(ip.encode('utf-8')).hexdigest()
     
-    if len(request_history[ip]) >= RATE_LIMIT:
+    now = time.time()
+    if hashed_ip not in request_history:
+        request_history[hashed_ip] = []
+    request_history[hashed_ip] = [t for t in request_history[hashed_ip] if now - t < TIME_WINDOW]
+    
+    if len(request_history[hashed_ip]) >= RATE_LIMIT:
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
     
-    request_history[ip].append(now)
+    request_history[hashed_ip].append(now)
 
-# 3. Der API-Endpunkt
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
-        # A. IP-Adresse auslesen und Rate Limit prüfen
+        # IP auslesen und sofort hashen/prüfen
         client_ip = request.headers.get("X-Forwarded-For", request.client.host)
         if client_ip and "," in client_ip:
             client_ip = client_ip.split(",")[0].strip() 
         
         check_rate_limit(client_ip)
 
-        # B. Vektor generieren
+        # Vektor generieren
         res = embed_client.embeddings.create(
             input=[payload.text],
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
-        # C. Pinecone durchsuchen
-        suche_roman = index.query(
-            namespace="roman",
-            vector=frage_vektor,
-            top_k=5,
-            include_metadata=True
-        )
-        suche_physik = index.query(
-            namespace="physik",
-            vector=frage_vektor,
-            top_k=5,
-            include_metadata=True
-        )
+        # Pinecone durchsuchen
+        suche_roman = index.query(namespace="roman", vector=frage_vektor, top_k=5, include_metadata=True)
+        suche_physik = index.query(namespace="physik", vector=frage_vektor, top_k=5, include_metadata=True)
         
-        kontext_texte = []
-        for match in suche_roman.matches + suche_physik.matches:
-            if "text" in match.metadata:
-                kontext_texte.append(match.metadata["text"])
-        
+        kontext_texte = [match.metadata["text"] for match in suche_roman.matches + suche_physik.matches if "text" in match.metadata]
         kontext_block = "\n\n".join(kontext_texte)
 
-        # D. System-Prompts
+        # System-Prompts
         kern_regeln = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
             "Speak directly as the Enzyklopedia. Maintain a slightly enigmatic tone. "
@@ -118,48 +108,33 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "'VERBINDUNG GETRENNT. ANOMALE DATENSTRUKTUR ERKANNT.' (if the input was German)."
         )
 
-        # Modus-spezifische Logik 
+        # Modus-Logik 
         if payload.modus == "hardcore":
             stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor. Structure your response meticulously using clear headings, bullet points, and numbered lists to organize complex information logically. Avoid unbroken walls of text."
-            # NEU: Das Reasoning-Spitzenmodell
             ki_modell = "deepseek/deepseek-r1"
             fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
-            
         elif payload.modus == "simple":
             stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
             ki_modell = "deepseek/deepseek-chat"
             fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
-            
         else:
-            # Standard
             stil_prompt = "Formulate your response in a warm, literary, and evocative style. Use elegant language that reads like a high-quality novel or literary essay, while remaining grounded in the retrieved facts."
             ki_modell = "deepseek/deepseek-chat"
             fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
 
         system_prompt = f"{kern_regeln}\n{sprach_regel}\n{spam_regel}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
-        # E. Nachrichten-Verlauf zusammenbauen
-        messages = [{"role": "system", "content": system_prompt}]
-        for msg in payload.history:
-            messages.append(msg)
-        messages.append({"role": "user", "content": payload.text})
+        messages = [{"role": "system", "content": system_prompt}] + payload.history + [{"role": "user", "content": payload.text}]
 
-        # F. Streaming-Anfrage 
         antwort = router_client.chat.completions.create(
             model=ki_modell,
             messages=messages,
             stream=True,
-            extra_body={
-                "route": "fallback",
-                "models": fallback_modelle
-            }
+            extra_body={"route": "fallback", "models": fallback_modelle}
         )
 
-        # Generator-Funktion streamt Token ans Frontend
         def generate():
             for chunk in antwort:
-                # OpenRouter übergibt bei Reasoning-Modellen manchmal spezielle Felder,
-                # deepseek-r1 streamt den Denkprozess aber in der Regel direkt mit aus.
                 if chunk.choices[0].delta.content is not None:
                     yield chunk.choices[0].delta.content
 
@@ -169,6 +144,5 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         raise e
     except Exception as e:
         import traceback
-        error_msg = traceback.format_exc()
-        print(error_msg) 
+        print(traceback.format_exc()) 
         return {"response": f"System error during processing."}
