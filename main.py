@@ -108,7 +108,6 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "you must silently translate the concepts and output them ONLY in the user's language. Never mix languages."
         )
 
-        # Angepasste Spam-Regel mit expliziter Toleranz
         spam_regel = (
             "SPAM DETECTION RULE: You must tolerate typos, grammatical errors, and colloquial language. "
             "ONLY if the user's input consists entirely of pure random keystrokes (e.g., 'asdfghjkl'), repetitive spam, "
@@ -118,12 +117,23 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "'VERBINDUNG GETRENNT. ANOMALE DATENSTRUKTUR ERKANNT.' (if the input was German)."
         )
 
-        if payload.modus == "simple":
-            stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
-        elif payload.modus == "hardcore":
+        # Modus-spezifische Logik (Komplett frei von US-Geo-Blocks)
+        if payload.modus == "hardcore":
             stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
+            # Qwen 72B ist extrem fähig, hoch analytisch und hat minimale Guardrails
+            ki_modell = "qwen/qwen-2.5-72b-instruct"
+            fallback_modelle = ["deepseek/deepseek-chat"]
+            
+        elif payload.modus == "simple":
+            stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
+            ki_modell = "deepseek/deepseek-chat"
+            fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
+            
         else:
+            # Standard
             stil_prompt = "Formulate your response in a warm, literary, and evocative style. Use elegant language that reads like a high-quality novel or literary essay, while remaining grounded in the retrieved facts."
+            ki_modell = "deepseek/deepseek-chat"
+            fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
 
         system_prompt = f"{kern_regeln}\n{sprach_regel}\n{spam_regel}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
@@ -133,14 +143,14 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             messages.append(msg)
         messages.append({"role": "user", "content": payload.text})
 
-        # F. Streaming-Anfrage
+        # F. Streaming-Anfrage (Modell ist jetzt dynamisch und Geo-Block-sicher)
         antwort = router_client.chat.completions.create(
-            model="deepseek/deepseek-chat",
+            model=ki_modell,
             messages=messages,
             stream=True,
             extra_body={
                 "route": "fallback",
-                "models": ["deepseek/deepseek-chat", "meta-llama/llama-3-8b-instruct"]
+                "models": fallback_modelle
             }
         )
 
@@ -158,4 +168,3 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         error_msg = traceback.format_exc()
         print(error_msg) 
         return {"response": f"System error during processing."}
-        
