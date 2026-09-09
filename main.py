@@ -101,11 +101,13 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "Never attempt to 'educate' the user or provide public service announcements. "
         )
 
+        # Verschärfte Sprachregel gegen Artefakte
         sprach_regel = (
             "CRITICAL LANGUAGE RULE: You MUST analyze the exact language used in the user's latest input. "
-            "Your ENTIRE response MUST be formulated strictly in that same language. If the user writes in German, "
-            "respond 100% in German. If English, 100% in English. If the provided CONTEXT text is in a different language, "
-            "you must silently translate the concepts and output them ONLY in the user's language. Never mix languages."
+            "Your ENTIRE response MUST be formulated strictly in that exact same language. "
+            "If the user writes in German, respond 100% in German. If English, 100% in English. "
+            "ABSOLUTELY NO ARTIFACTS from other languages are allowed. Do not include Chinese characters, English phrases (if the user speaks German), or mixed-language sentences under any circumstances. "
+            "If the provided CONTEXT text is in a different language, you must silently translate the concepts and output them ONLY in the user's language."
         )
 
         spam_regel = (
@@ -155,9 +157,6 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
 
         # Generator-Funktion streamt Token ans Frontend
         def generate():
-            # NEU: Diese Zeile sendet den Namen des Modells vorab in den Chat!
-            yield f"[SYSTEM-INFO: Modell aktiv = {ki_modell}]\n\n"
-            
             for chunk in antwort:
                 if chunk.choices[0].delta.content is not None:
                     yield chunk.choices[0].delta.content
