@@ -36,37 +36,34 @@ class ChatRequest(BaseModel):
     history: list = []
     sprache: str = "en"
 
-# --- NEU: Einfaches In-Memory Rate Limiting ---
+# Rate Limiting
 request_history = {}
-RATE_LIMIT = 5      # Maximal 5 Nachrichten
-TIME_WINDOW = 60    # pro 60 Sekunden
+RATE_LIMIT = 5      
+TIME_WINDOW = 60    
 
 def check_rate_limit(ip: str):
     now = time.time()
-    # Alte Einträge bereinigen
     if ip not in request_history:
         request_history[ip] = []
     request_history[ip] = [t for t in request_history[ip] if now - t < TIME_WINDOW]
     
-    # Prüfen ob Limit überschritten
     if len(request_history[ip]) >= RATE_LIMIT:
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
     
     request_history[ip].append(now)
-# ---------------------------------------------
 
-# 3. Der API-Endpunkt (jetzt mit 'request' Objekt für die IP)
+# 3. Der API-Endpunkt
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
         # A. IP-Adresse auslesen und Rate Limit prüfen
         client_ip = request.headers.get("X-Forwarded-For", request.client.host)
         if client_ip and "," in client_ip:
-            client_ip = client_ip.split(",")[0].strip() # Bei mehreren IPs die echte nehmen
+            client_ip = client_ip.split(",")[0].strip() 
         
         check_rate_limit(client_ip)
 
-        # B. Vektor aus der Nutzerfrage generieren
+        # B. Vektor generieren
         res = embed_client.embeddings.create(
             input=[payload.text],
             model="text-embedding-3-small"
@@ -111,10 +108,12 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "you must silently translate the concepts and output them ONLY in the user's language. Never mix languages."
         )
 
-        # NEU: Der semantische Türsteher
+        # Angepasste Spam-Regel mit expliziter Toleranz
         spam_regel = (
-            "SPAM DETECTION RULE: If the user's input consists of random keystrokes (e.g. 'asdfg'), pure spam, "
-            "or meaningless gibberish, DO NOT analyze it and DO NOT use the context. You MUST reply EXACTLY and ONLY with this phrase: "
+            "SPAM DETECTION RULE: You must tolerate typos, grammatical errors, and colloquial language. "
+            "ONLY if the user's input consists entirely of pure random keystrokes (e.g., 'asdfghjkl'), repetitive spam, "
+            "or absolute non-words without any semantic meaning, you must reject it. In that specific case of pure spam, DO NOT analyze it and DO NOT use the context. "
+            "Instead, reply EXACTLY and ONLY with this phrase: "
             "'CONNECTION TERMINATED. ANOMALOUS DATA STRUCTURE DETECTED.' (if the input was English/unclear) or "
             "'VERBINDUNG GETRENNT. ANOMALE DATENSTRUKTUR ERKANNT.' (if the input was German)."
         )
@@ -153,10 +152,10 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         return StreamingResponse(generate(), media_type="text/event-stream")
 
     except HTTPException as e:
-        # Reicht den 429 Fehler nach außen durch
         raise e
     except Exception as e:
         import traceback
         error_msg = traceback.format_exc()
         print(error_msg) 
         return {"response": f"System error during processing."}
+        
