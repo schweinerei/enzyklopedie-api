@@ -47,6 +47,18 @@ TIME_WINDOW = 60
 def get_hashed_ip(ip: str):
     return hashlib.sha256(ip.encode('utf-8')).hexdigest()
 
+# NEU: Funktion zur DSGVO-konformen IP-Maskierung
+def mask_ip(ip: str):
+    if "." in ip: # IPv4
+        parts = ip.split(".")
+        if len(parts) == 4:
+            return f"{parts[0]}.{parts[1]}.{parts[2]}.xxx"
+    elif ":" in ip: # IPv6
+        parts = ip.split(":")
+        if len(parts) >= 3:
+            return f"{parts[0]}:{parts[1]}:{parts[2]}:...:xxx"
+    return "unknown"
+
 def check_rate_limit(hashed_ip: str):
     now = time.time()
     if hashed_ip not in request_history:
@@ -63,16 +75,17 @@ def check_rate_limit(hashed_ip: str):
 # ---------------------------------------------------------
 @app.get("/wakeup")
 async def wakeup_server(request: Request):
-    # IP auslesen und hashen für das Logbuch
     client_ip = request.headers.get("X-Forwarded-For", request.client.host)
     if client_ip and "," in client_ip:
         client_ip = client_ip.split(",")[0].strip() 
         
     hashed_ip = get_hashed_ip(client_ip)
     short_hash = hashed_ip[:8]
+    masked = mask_ip(client_ip) # IP maskieren
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    print(f"[SEITENAUFRUF] {timestamp} | Pre-Warming ausgelöst von User-Hash: {short_hash}")
+    # Ausgabe jetzt mit Region/Masked-IP
+    print(f"[SEITENAUFRUF] {timestamp} | IP-Region: {masked} | User-Hash: {short_hash}")
     return {"status": "System initialized and ready."}
 
 # ---------------------------------------------------------
@@ -81,7 +94,6 @@ async def wakeup_server(request: Request):
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
-        # IP auslesen und hashen
         client_ip = request.headers.get("X-Forwarded-For", request.client.host)
         if client_ip and "," in client_ip:
             client_ip = client_ip.split(",")[0].strip() 
@@ -89,10 +101,12 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         hashed_ip = get_hashed_ip(client_ip)
         check_rate_limit(hashed_ip)
 
-        # DSGVO-konformes Live-Monitoring für das Render-Log
+        # DSGVO-konformes Live-Monitoring mit maskierter IP
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         short_hash = hashed_ip[:8]
-        print(f"[ZUGRIFF] {timestamp} | Modus: {payload.modus.upper()} | User-Hash: {short_hash} | Input: \"{payload.text}\"")
+        masked = mask_ip(client_ip)
+        
+        print(f"[ZUGRIFF] {timestamp} | Modus: {payload.modus.upper()} | IP-Region: {masked} | User-Hash: {short_hash} | Input: \"{payload.text}\"")
 
         # Vektor generieren
         res = embed_client.embeddings.create(
