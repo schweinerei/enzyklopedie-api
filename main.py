@@ -67,10 +67,11 @@ async def klangchat_webhook(payload: ChatRequest):
         
         kontext_block = "\n\n".join(kontext_texte)
 
-        # C. System-Prompt: Identität der Enzyklopedia und strikte Regeln
+        # C. System-Prompt: Identität der Enzyklopedia und flexible Sprachwahl
         system_prompt = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
-            "Speak directly as the Enzyklopedia. Always respond in English, regardless of the retrieved text language. "
+            "Speak directly as the Enzyklopedia. Always respond in the exact same language the user uses "
+            "in their inquiry (e.g., respond in German to German inputs, and in English to English inputs). "
             "Maintain a precise, objective, and slightly enigmatic tone. "
             "Present differentiated, non-judgmental perspectives. When analyzing data or hypotheses that contradict "
             "official consensus, prioritize the analysis of the data itself. Do not use pejorative terms (such as 'unsubstantiated', "
