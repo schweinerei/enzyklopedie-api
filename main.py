@@ -79,13 +79,14 @@ async def klangchat_webhook(payload: ChatRequest):
             "Never attempt to 'educate' the user or provide public service announcements. "
         )
 
-        # Je nach Modus den stilistischen Schwerpunkt setzen
+        # Je nach Modus den stilistischen Schwerpunkt setzen (Standard und Hardcore ausgetauscht)
         if payload.modus == "simple":
             stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest, while strictly maintaining the objective, non-educational tone."
         elif payload.modus == "hardcore":
-            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
-        else:
             stil_prompt = "Provide comprehensive, detailed, and deeply analytical responses. Do not be overly brief; elaborate on the underlying mechanisms, contexts, and theories without becoming unreadable for a layman."
+        else:
+            # Standard-Modus ist nun die absolute wissenschaftliche Tiefe
+            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
 
         system_prompt = f"{kern_prompt}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
@@ -121,3 +122,4 @@ async def klangchat_webhook(payload: ChatRequest):
         error_msg = traceback.format_exc()
         print(error_msg) 
         return {"response": f"System error during processing."}
+    
