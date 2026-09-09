@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
 from pinecone import Pinecone
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
