@@ -1,6 +1,7 @@
 import os
 import time
 import hashlib
+from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
@@ -10,7 +11,7 @@ from pinecone import Pinecone
 
 app = FastAPI()
 
-# 1. CORS STRICT MODE: Erlaubt nur deiner Webseite den Zugriff
+# 1. CORS STRICT MODE
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -18,7 +19,7 @@ app.add_middleware(
         "https://www.schweinerei.xyz"
     ],
     allow_credentials=True,
-    allow_methods=["POST"], # Nur POST erlauben
+    allow_methods=["POST"], 
     allow_headers=["*"],
 )
 
@@ -38,15 +39,15 @@ class ChatRequest(BaseModel):
     history: list = []
     sprache: str = "en"
 
-# Rate Limiting mit IP-Hashing (DSGVO-konform)
+# Rate Limiting 
 request_history = {}
 RATE_LIMIT = 5      
 TIME_WINDOW = 60    
 
-def check_rate_limit(ip: str):
-    # IP anonymisieren
-    hashed_ip = hashlib.sha256(ip.encode('utf-8')).hexdigest()
-    
+def get_hashed_ip(ip: str):
+    return hashlib.sha256(ip.encode('utf-8')).hexdigest()
+
+def check_rate_limit(hashed_ip: str):
     now = time.time()
     if hashed_ip not in request_history:
         request_history[hashed_ip] = []
@@ -60,12 +61,21 @@ def check_rate_limit(ip: str):
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
-        # IP auslesen und sofort hashen/prüfen
+        # IP auslesen und hashen
         client_ip = request.headers.get("X-Forwarded-For", request.client.host)
         if client_ip and "," in client_ip:
             client_ip = client_ip.split(",")[0].strip() 
         
-        check_rate_limit(client_ip)
+        hashed_ip = get_hashed_ip(client_ip)
+        check_rate_limit(hashed_ip)
+
+        # ---------------------------------------------------------
+        # NEU: DSGVO-konformes Live-Monitoring für das Render-Log
+        # ---------------------------------------------------------
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        short_hash = hashed_ip[:8] # Zeigt nur die ersten 8 Zeichen des Hashes zur Wiedererkennung
+        print(f"[ZUGRIFF] {timestamp} | Modus: {payload.modus.upper()} | User-Hash: {short_hash} | Input: \"{payload.text}\"")
+        # ---------------------------------------------------------
 
         # Vektor generieren
         res = embed_client.embeddings.create(
