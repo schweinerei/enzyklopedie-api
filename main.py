@@ -11,7 +11,7 @@ from pinecone import Pinecone
 
 app = FastAPI()
 
-# 1. CORS STRICT MODE
+# 1. CORS STRICT MODE (Jetzt mit GET für den Wakeup-Ping)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -19,7 +19,7 @@ app.add_middleware(
         "https://www.schweinerei.xyz"
     ],
     allow_credentials=True,
-    allow_methods=["POST"], 
+    allow_methods=["GET", "POST"], 
     allow_headers=["*"],
 )
 
@@ -58,6 +58,14 @@ def check_rate_limit(hashed_ip: str):
     
     request_history[hashed_ip].append(now)
 
+# ---------------------------------------------------------
+# NEU: Der blitzschnelle Wakeup-Endpunkt
+# ---------------------------------------------------------
+@app.get("/wakeup")
+async def wakeup_server():
+    return {"status": "System initialized and ready."}
+# ---------------------------------------------------------
+
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
@@ -69,13 +77,10 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         hashed_ip = get_hashed_ip(client_ip)
         check_rate_limit(hashed_ip)
 
-        # ---------------------------------------------------------
-        # NEU: DSGVO-konformes Live-Monitoring für das Render-Log
-        # ---------------------------------------------------------
+        # DSGVO-konformes Live-Monitoring
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        short_hash = hashed_ip[:8] # Zeigt nur die ersten 8 Zeichen des Hashes zur Wiedererkennung
+        short_hash = hashed_ip[:8]
         print(f"[ZUGRIFF] {timestamp} | Modus: {payload.modus.upper()} | User-Hash: {short_hash} | Input: \"{payload.text}\"")
-        # ---------------------------------------------------------
 
         # Vektor generieren
         res = embed_client.embeddings.create(
