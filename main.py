@@ -101,7 +101,6 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
             "Never attempt to 'educate' the user or provide public service announcements. "
         )
 
-        # Verschärfte Sprachregel gegen Artefakte
         sprach_regel = (
             "CRITICAL LANGUAGE RULE: You MUST analyze the exact language used in the user's latest input. "
             "Your ENTIRE response MUST be formulated strictly in that exact same language. "
@@ -122,8 +121,9 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         # Modus-spezifische Logik 
         if payload.modus == "hardcore":
             stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor. Structure your response meticulously using clear headings, bullet points, and numbered lists to organize complex information logically. Avoid unbroken walls of text."
-            ki_modell = "qwen/qwen-2.5-72b-instruct"
-            fallback_modelle = ["deepseek/deepseek-chat"]
+            # NEU: Das Reasoning-Spitzenmodell
+            ki_modell = "deepseek/deepseek-r1"
+            fallback_modelle = ["qwen/qwen-2.5-72b-instruct"]
             
         elif payload.modus == "simple":
             stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest."
@@ -158,6 +158,8 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         # Generator-Funktion streamt Token ans Frontend
         def generate():
             for chunk in antwort:
+                # OpenRouter übergibt bei Reasoning-Modellen manchmal spezielle Felder,
+                # deepseek-r1 streamt den Denkprozess aber in der Regel direkt mit aus.
                 if chunk.choices[0].delta.content is not None:
                     yield chunk.choices[0].delta.content
 
