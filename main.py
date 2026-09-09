@@ -1,10 +1,10 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from openai import OpenAI
 from pinecone import Pinecone
-from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 1. Clients initialisieren (API-Keys zieht Render automatisch aus den Environment Variables)
+# 1. Clients initialisieren
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("enzyklopaedie")
 
@@ -28,14 +28,14 @@ router_client = OpenAI(
     api_key=os.environ.get("OPENROUTER_API_KEY"),
 )
 
-# 2. Datenstruktur definieren, die das Widget an den Server schickt
+# 2. Datenstruktur definieren
 class ChatRequest(BaseModel):
     text: str
     modus: str = "standard"
     history: list = []
     sprache: str = "en"
 
-# 3. Der eigentliche API-Endpunkt
+# 3. Der API-Endpunkt
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest):
     try:
@@ -46,7 +46,7 @@ async def klangchat_webhook(payload: ChatRequest):
         )
         frage_vektor = res.data[0].embedding
 
-        # B. Pinecone durchsuchen (Aktueller Stand mit Namespaces)
+        # B. Pinecone durchsuchen (Namespace-Struktur)
         suche_roman = index.query(
             namespace="roman",
             vector=frage_vektor,
@@ -67,7 +67,7 @@ async def klangchat_webhook(payload: ChatRequest):
         
         kontext_block = "\n\n".join(kontext_texte)
 
-        # C. Die exakte Identität und Logik der Enzyklopedia definieren
+        # C. System-Prompt: Identität der Enzyklopedia und strikte Regeln
         system_prompt = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
             "Speak directly as the Enzyklopedia. Always respond in English, regardless of the retrieved text language. "
@@ -80,7 +80,7 @@ async def klangchat_webhook(payload: ChatRequest):
             f"--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
         )
 
-        # D. Den Nachrichten-Verlauf für OpenRouter zusammenbauen
+        # D. Nachrichten-Verlauf zusammenbauen
         messages = [{"role": "system", "content": system_prompt}]
         
         for msg in payload.history:
@@ -88,20 +88,27 @@ async def klangchat_webhook(payload: ChatRequest):
             
         messages.append({"role": "user", "content": payload.text})
 
-        # E. Anfrage an DeepSeek senden
+        # E. Streaming-Anfrage an OpenRouter senden
         antwort = router_client.chat.completions.create(
             model="deepseek/deepseek-chat",
             messages=messages,
+            stream=True,
             extra_body={
                 "route": "fallback",
                 "models": ["deepseek/deepseek-chat", "meta-llama/llama-3-8b-instruct"]
             }
         )
 
-        return {"response": antwort.choices[0].message.content}
+        # F. Generator-Funktion liefert die Token in Echtzeit an das Frontend
+        def generate():
+            for chunk in antwort:
+                if chunk.choices[0].delta.content is not None:
+                    yield chunk.choices[0].delta.content
+
+        return StreamingResponse(generate(), media_type="text/event-stream")
 
     except Exception as e:
         import traceback
         error_msg = traceback.format_exc()
-        print(error_msg) # Schreibt den Fehler in die Render-Logs
+        print(error_msg) 
         return {"response": f"System error during processing."}
