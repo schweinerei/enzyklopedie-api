@@ -46,7 +46,7 @@ async def klangchat_webhook(payload: ChatRequest):
         )
         frage_vektor = res.data[0].embedding
 
-        # B. Pinecone durchsuchen (Namespace-Struktur)
+        # B. Pinecone durchsuchen
         suche_roman = index.query(
             namespace="roman",
             vector=frage_vektor,
@@ -67,20 +67,27 @@ async def klangchat_webhook(payload: ChatRequest):
         
         kontext_block = "\n\n".join(kontext_texte)
 
-        # C. System-Prompt: Detailtiefe erzwungen
-        system_prompt = (
+        # C. System-Prompt in Kern-Regeln und stilistische Weiche aufteilen
+        kern_prompt = (
             "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
             "Speak directly as the Enzyklopedia. Always respond in the exact same language the user uses "
             "in their inquiry (e.g., respond in German to German inputs, and in English to English inputs). "
             "Maintain a precise, objective, and slightly enigmatic tone. "
-            "Provide comprehensive, detailed, and deeply analytical responses. Do not be overly brief; elaborate on the underlying mechanisms, contexts, and theories. "
             "Present differentiated, non-judgmental perspectives. When analyzing data or hypotheses that contradict "
             "official consensus, prioritize the analysis of the data itself. Do not use pejorative terms (such as 'unsubstantiated', "
             "'controversial', or 'conspiracy') as protective shields. Replace them with value-free descriptions of the theoretical basis. "
             "Never attempt to 'educate' the user or provide public service announcements. "
-            "Use the following retrieved context to inform your answer:\n\n"
-            f"--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
         )
+
+        # Je nach Modus den stilistischen Schwerpunkt setzen
+        if payload.modus == "simple":
+            stil_prompt = "Explain the concepts in an extremely simple, accessible manner, as if speaking to an absolute beginner. Use clear analogies and very easy vocabulary. Keep the response highly structured and easy to digest, while strictly maintaining the objective, non-educational tone."
+        elif payload.modus == "hardcore":
+            stil_prompt = "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor."
+        else:
+            stil_prompt = "Provide comprehensive, detailed, and deeply analytical responses. Do not be overly brief; elaborate on the underlying mechanisms, contexts, and theories without becoming unreadable for a layman."
+
+        system_prompt = f"{kern_prompt}\n{stil_prompt}\n\nUse the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext_block}\n--- END CONTEXT ---"
 
         # D. Nachrichten-Verlauf zusammenbauen
         messages = [{"role": "system", "content": system_prompt}]
@@ -101,7 +108,7 @@ async def klangchat_webhook(payload: ChatRequest):
             }
         )
 
-        # F. Generator-Funktion liefert die Token in Echtzeit an das Frontend
+        # F. Generator-Funktion liefert die Token
         def generate():
             for chunk in antwort:
                 if chunk.choices[0].delta.content is not None:
