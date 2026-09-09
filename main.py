@@ -11,7 +11,7 @@ from pinecone import Pinecone
 
 app = FastAPI()
 
-# 1. CORS STRICT MODE (Jetzt mit GET für den Wakeup-Ping)
+# 1. CORS STRICT MODE
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -59,13 +59,25 @@ def check_rate_limit(hashed_ip: str):
     request_history[hashed_ip].append(now)
 
 # ---------------------------------------------------------
-# NEU: Der blitzschnelle Wakeup-Endpunkt
+# Der blitzschnelle Wakeup-Endpunkt (Pre-Warming)
 # ---------------------------------------------------------
 @app.get("/wakeup")
-async def wakeup_server():
+async def wakeup_server(request: Request):
+    # IP auslesen und hashen für das Logbuch
+    client_ip = request.headers.get("X-Forwarded-For", request.client.host)
+    if client_ip and "," in client_ip:
+        client_ip = client_ip.split(",")[0].strip() 
+        
+    hashed_ip = get_hashed_ip(client_ip)
+    short_hash = hashed_ip[:8]
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    print(f"[SEITENAUFRUF] {timestamp} | Pre-Warming ausgelöst von User-Hash: {short_hash}")
     return {"status": "System initialized and ready."}
-# ---------------------------------------------------------
 
+# ---------------------------------------------------------
+# Haupt-Endpunkt für den Chat
+# ---------------------------------------------------------
 @app.post("/webhook")
 async def klangchat_webhook(payload: ChatRequest, request: Request):
     try:
@@ -77,7 +89,7 @@ async def klangchat_webhook(payload: ChatRequest, request: Request):
         hashed_ip = get_hashed_ip(client_ip)
         check_rate_limit(hashed_ip)
 
-        # DSGVO-konformes Live-Monitoring
+        # DSGVO-konformes Live-Monitoring für das Render-Log
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         short_hash = hashed_ip[:8]
         print(f"[ZUGRIFF] {timestamp} | Modus: {payload.modus.upper()} | User-Hash: {short_hash} | Input: \"{payload.text}\"")
