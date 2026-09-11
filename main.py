@@ -1,6 +1,7 @@
 import os
 import traceback
 import json
+import re
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -10,8 +11,9 @@ from pinecone import Pinecone
 # API-Schlüssel
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # Muss bei Render hinterlegt sein
-INDEX_NAME = "enzyklopaedie"
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") 
+# KORRIGIERT: Der Index-Name lautet "default"
+INDEX_NAME = "default"
 
 app = FastAPI(title="Enzyklopedia API")
 
@@ -37,6 +39,7 @@ async def ask_question(request: Request):
         except:
             body = {}
 
+        # 1. Suchtext extrahieren
         suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
         
         if not suchtext:
@@ -44,7 +47,7 @@ async def ask_question(request: Request):
 
         sprache = body.get("sprache", "de")
         
-        # Modus erkennen
+        # 2. Modus aus dem gesamten JSON extrahieren
         body_string = json.dumps(body).lower()
         if "hardcore" in body_string:
             modus = "hardcore"
@@ -53,26 +56,24 @@ async def ask_question(request: Request):
         else:
             modus = "standard"
 
+        # 3. Datenbank und Clients initialisieren
         pc = Pinecone(api_key=PINECONE_API_KEY)
         index = pc.Index(INDEX_NAME)
         
-        # 1. OpenAI Client (ausschließlich für Embeddings)
         openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
-        
-        # 2. OpenRouter Client (für DeepSeek Textgenerierung)
         openrouter_client = AsyncOpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=OPENROUTER_API_KEY,
         )
 
-        # Embedding berechnen
+        # 4. Frage in Vektor umwandeln (Einziger Job für OpenAI)
         res = await openai_client.embeddings.create(
             input=suchtext,
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
-        # Pinecone durchsuchen
+        # 5. Relevante Texte in Pinecone suchen
         suche = index.query(
             vector=frage_vektor,
             top_k=6,
@@ -81,42 +82,60 @@ async def ask_question(request: Request):
             filter={"sprache": {"$eq": sprache}}
         )
 
-        context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
-        kontext_string = "\n\n---\n\n".join(context_texte)
+        # 6. Qualitätsfilter & URL-Bereinigung
+        context_texte = []
+        for match in suche.matches:
+            if "metadata" in match and "text" in match.metadata:
+                if match.score > 0.3:  # Nur Relevantes durchlassen
+                    text_chunk = match.metadata["text"]
+                    # URLs entfernen, damit die KI keine Metadaten anredet
+                    text_chunk = re.sub(r'http[s]?://\S+|www\.\S+', '', text_chunk)
+                    context_texte.append(text_chunk)
 
-        # Die Stile sind radikal getrennt
+        if not context_texte:
+            kontext_string = "[KEINE DATEN GEFUNDEN. DIE INFORMATION FEHLT IM GLOSSAR.]"
+        else:
+            kontext_string = "\n\n---\n\n".join(context_texte)
+
+        # 7. Dynamische Modell-Zuweisung & Stile (DeepSeek via OpenRouter)
         if modus == "hardcore":
+            llm_model = "deepseek/deepseek-r1"
             stil_anweisung = """STIL (HARDCORE-MODUS): 
-Du bist die literarische, tiefgründige Seele dieses Projekts. Schreibe AUSFÜHRLICH, episch und philosophisch (mindestens 3 bis 4 Absätze). Nutze komplexe Metaphern (z.B. Physik der Stille, Raumzeit, Topologie). Die Antwort darf niemals simpel oder kurz sein! Sie muss sich wie ein fesselndes Kapitel aus einem anspruchsvollen, literarischen Meisterwerk lesen, das die Fakten durchdringt."""
+Schreibe AUSFÜHRLICH, episch und philosophisch (mindestens 3 bis 4 Absätze). Nutze komplexe Metaphern. Die Antwort darf niemals simpel oder kurz sein! Sie muss sich wie ein fesselndes Kapitel aus einem anspruchsvollen, literarischen Meisterwerk lesen, das die Fakten durchdringt."""
             temperatur = 0.8
         elif modus == "soft":
+            llm_model = "deepseek/deepseek-chat"
             stil_anweisung = """STIL (SOFT-MODUS):
-Erkläre alles so, dass ein 12-jähriges Kind es fasziniert versteht. Sprich das Kind mit "Du" an. Verwende kurze, weiche Sätze und alltägliche, greifbare Bilder (z.B. ein Puzzle, ein Magnet, ein Spielplatz). Verzichte auf alle akademischen Fremdwörter. Sei einfühlsam und warm, aber behalte die wesentlichen Fakten bei. Keine komplizierten Theorien, sondern lebendige Erklärungen."""
+Erkläre alles so, dass ein 12-jähriges Kind es fasziniert versteht. Sprich das Kind mit "Du" an. Verwende kurze, weiche Sätze und alltägliche, greifbare Bilder. Verzichte auf alle akademischen Fremdwörter. Sei einfühlsam und warm, aber behalte die wesentlichen Fakten bei."""
             temperatur = 0.5
         else:
+            llm_model = "deepseek/deepseek-chat"
             stil_anweisung = """STIL (STANDARD-MODUS):
-Du bist eine professionelle, klare und strukturierte Enzyklopädie. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung ohne literarische Schnörkel."""
+Du bist eine professionelle, klare und strukturierte Enzyklopädie. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung."""
             temperatur = 0.4
 
-        system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
+        # 8. Der In-Universe System-Prompt
+        system_prompt = f"""Du BIST die 'Enzyklopädie der Physik der Beziehungen'. Du bist kein Programm von außen, sondern ein Artefakt aus dem Universum des Romans 'Schweinerei'. Das ist dein Wesen. Du sprichst direkt aus dieser Welt heraus, als ihr physikalisches und philosophisches Regelwerk.
+
+DEINE WICHTIGSTE REGEL: Dein gesamtes Sein und Wissen beschränkt sich AUSSCHLIESSLICH auf den unten stehenden Kontext. Du kennst keine echte Welt, keine irdischen Autoren, keine anderen Romane.
 
 {stil_anweisung}
 
-GRUNDREGELN FÜR DEN INHALT:
-1. Stelle verschiedene Ansichten unvoreingenommen nebeneinander. Du belehrst den Nutzer nicht.
-2. Vermeide Abwertungen wie "unbelegt", "umstritten" oder "Verschwörung". Nenne einfach neutral die Herkunft der Daten.
-3. Wenn Daten dem Mainstream widersprechen, analysiere sie ernsthaft, anstatt den Konsens nachzuplappern.
-4. Formuliere fließend in deinen eigenen Worten. Kopiere niemals rohe Text-Chunks oder Klammern aus dem Kontext.
-5. Erfinde NIEMALS technische Systemfehler ("Connection lost") oder Code-Abstürze.
-6. Fehlt die Information komplett im Kontext, teile dies in dem von dir gewählten Stil mit, ohne inhaltlich etwas hinzuzuerfinden.
+GRUNDREGELN FÜR DEIN WESEN (ABSOLUT VERBINDLICH):
+1. SPRACHE ANPASSEN: Erkenne die Sprache der gestellten Frage und antworte zwingend in exakt dieser Sprache (deutsche Frage = deutsche Antwort).
+2. NAMEN & BEGRIFFE: Bei deutschen Fragen sind englische Einsprengsel absolut VERBOTEN. Behalte die Namen und Begriffe exakt so bei, wie sie im Kontext stehen.
+3. ISOLATION: Was nicht im Kontext steht, existiert in deiner Realität nicht.
+4. LÜCKEN: Wenn der Kontext "[KEINE DATEN GEFUNDEN]" lautet, gib das in deinem Stil zu. Erfinde nichts hinzu.
+5. WERTFREIHEIT: Behandle alle Phänomene unvoreingenommen und analytisch. Stelle verschiedene Perspektiven neutral nebeneinander. Keine Belehrungen, keine Floskeln wie "umstritten" oder "Verschwörung". Analysiere die Daten, statt gesellschaftlichen Konsens zu reproduzieren.
+6. FORM: Formuliere fließend. Kopiere keine rohen Text-Chunks.
 
-Kontext-Daten:
+Kontext-Daten (Dein Gedächtnis):
 {kontext_string}
 """
 
-        # Generierung via OpenRouter -> DeepSeek
+        # 9. Text generieren
         llm_res = await openrouter_client.chat.completions.create(
-            model="deepseek/deepseek-chat", # Oder deepseek/deepseek-r1
+            model=llm_model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": suchtext}
@@ -125,6 +144,10 @@ Kontext-Daten:
         )
 
         antwort_text = llm_res.choices[0].message.content
+
+        # 10. R1 "Reasoning"-Blöcke entfernen, falls vorhanden
+        antwort_text = re.sub(r'<think>.*?</think>', '', antwort_text, flags=re.DOTALL).strip()
+
         return PlainTextResponse(content=antwort_text)
 
     except Exception as e:
