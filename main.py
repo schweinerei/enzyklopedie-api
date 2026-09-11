@@ -1,82 +1,100 @@
 import os
-from fastapi import FastAPI, HTTPException
+import traceback
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
-# 1. API-Schlüssel aus der Umgebung laden
+# API-Schlüssel aus der Umgebung laden
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 INDEX_NAME = "enzyklopaedie"
 
-# 2. Clients initialisieren
-pc = Pinecone(api_key=PINECONE_API_KEY)
-index = pc.Index(INDEX_NAME)
-openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
-
+# FastAPI initialisieren
 app = FastAPI(title="Enzyklopedia API")
 
-# 3. Datenmodelle für Input und Output definieren
+# CORS erlauben, damit externe Chatbots nicht geblockt werden (OPTIONS-Anfragen)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Dynamisches Datenmodell für den Input
 class QueryRequest(BaseModel):
-    frage: str
-    sprache: str = "de"  # Standardmäßig Deutsch, kann vom Frontend überschrieben werden
+    frage: str = None
+    query: str = None
+    sprache: str = "de"
 
 class QueryResponse(BaseModel):
     antwort: str
 
+# --- NEU: Wakeup-Endpunkt, damit das Frontend nicht ins Leere läuft ---
+@app.get("/")
+@app.get("/wakeup")
+async def wakeup():
+    return {"status": "Ich bin wach!"}
+
+# --- KORREKTUR: API hört jetzt auf /webhook UND /ask ---
+@app.post("/webhook", response_model=QueryResponse)
 @app.post("/ask", response_model=QueryResponse)
 async def ask_question(req: QueryRequest):
     try:
-        # 4. Frage in einen Vektor umwandeln
+        # 1. Sicherstellen, dass ein Suchtext existiert
+        suchtext = req.frage if req.frage else req.query
+        if not suchtext:
+            return QueryResponse(antwort="FEHLER: Keine Suchanfrage gefunden.")
+
+        # 2. Clients initialisieren
+        pc = Pinecone(api_key=PINECONE_API_KEY)
+        index = pc.Index(INDEX_NAME)
+        openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+
+        # 3. Embedding erstellen
         res = await openai_client.embeddings.create(
-            input=req.frage,
+            input=suchtext,
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
-        # 5. Pinecone-Abfrage im Default-Namespace (inkl. Sprachfilter)
+        # 4. Pinecone-Abfrage
         suche = index.query(
             vector=frage_vektor,
-            top_k=6,  # Holt die 6 relevantesten Chunks
+            top_k=6,
             namespace="",
             include_metadata=True,
             filter={"sprache": {"$eq": req.sprache}}
         )
 
-        # 6. Kontext aus den gefundenen Metadaten zusammenbauen
-        context_texte = []
-        for match in suche.matches:
-            if "metadata" in match and "text" in match.metadata:
-                context_texte.append(match.metadata["text"])
-        
+        # 5. Kontext zusammenbauen
+        context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Der System-Prompt (ohne harte Abbrüche)
+        # 6. Sachlicher System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
 Deine Aufgabe ist es, Fragen präzise und differenziert ausschließlich basierend auf dem bereitgestellten Kontext zu beantworten.
-
-Regeln:
-1. Fehlt die Information im Kontext, erfinde nichts. Sage klar: "Dazu liegen mir keine Informationen vor."
-2. Verfalle niemals in einen literarischen, erzählerischen oder esoterischen Ton, auch wenn der Kontext literarisch formuliert ist. Beschreibe die Daten und theoretischen Grundlagen wertfrei.
-3. Ignoriere standardisierte Floskeln.
+Wenn die Information fehlt, sage: "Dazu liegen mir keine Informationen vor."
+Beschreibe die Daten wertfrei und verzichte auf literarische Tonalität. Ignoriere Smalltalk.
 
 Kontext-Daten:
 {kontext_string}
 """
 
-        # 8. Anfrage an das LLM senden
+        # 7. LLM-Anfrage
         llm_res = await openai_client.chat.completions.create(
-            model="gpt-4o",  
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": req.frage}
+                {"role": "user", "content": suchtext}
             ],
             temperature=0.2
         )
 
-        antwort_text = llm_res.choices[0].message.content
-
-        return QueryResponse(antwort=antwort_text)
+        return QueryResponse(antwort=llm_res.choices[0].message.content)
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        fehler_details = traceback.format_exc()
+        return QueryResponse(antwort=f"Interner Fehler:\n\n{fehler_details}")
