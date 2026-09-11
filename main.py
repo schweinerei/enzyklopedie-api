@@ -51,28 +51,33 @@ async def ask_question(req: QueryRequest):
         
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Der eiserne System-Prompt (Schutz vor Halluzinationen & Smalltalk)
-        system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
-Deine Aufgabe ist es, Fragen präzise und differenziert ausschließlich basierend auf dem bereitgestellten Kontext zu beantworten.
+        # 7. Der eiserne System-Prompt (getrennt vom Kontext)
+        system_prompt = """Du bist eine streng sachliche, professionelle Enzyklopädie-KI.
+        
+ABSOLUTE HAUPTREGELN:
+1. Wenn die Eingabe des Nutzers Smalltalk, eine Begrüßung (z. B. "Hallo", "kak dela", "wie gehts") oder eine Frage nach deinem Befinden ist, IGNORIERE DEN GESAMTEN KONTEXT. Antworte in diesem Fall ausschließlich mit: "Ich bin die Enzyklopädie. Welche inhaltliche Frage kann ich beantworten?"
+2. Spiele NIEMALS Rollenspiele. 
+3. Erfinde NIEMALS Systemfehler, Verbindungsabbrüche oder "Connection lost"-Meldungen. 
+4. Bleibe unter allen Umständen nüchtern und sachlich. Werte nicht.
+"""
 
-Regeln:
-1. Fehlt die Information im Kontext, erfinde nichts. Sage klar: "Dazu liegen mir keine Informationen vor."
-2. Verfalle niemals in einen literarischen, erzählerischen oder esoterischen Ton, auch wenn der Kontext literarisch formuliert ist. Beschreibe die Daten und theoretischen Grundlagen wertfrei.
-3. Ignoriere standardisierte Floskeln.
-4. Bei Smalltalk-Fragen (wie "Hallo" oder "Wie geht's") antworte extrem kurz und sachlich, dass du eine Enzyklopädie bist und nenne keine Kontextinhalte.
+        # Der Kontext wird strikt in XML-Tags eingesperrt und dem User-Prompt übergeben
+        user_message = f"""Nutzerfrage: {req.frage}
 
-Kontext-Daten:
+Bitte beantworte die Frage nur, wenn es kein Smalltalk ist, basierend auf diesen Daten:
+<kontext>
 {kontext_string}
+</kontext>
 """
 
         # 8. Anfrage an das LLM senden
         llm_res = await openai_client.chat.completions.create(
-            model="gpt-4o",  # Oder gpt-4o-mini / dein LiteLLM-Modell
+            model="gpt-4o",  
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": req.frage}
+                {"role": "user", "content": user_message}
             ],
-            temperature=0.2  # Niedrige Temperatur für sachlichere, präzisere Antworten
+            temperature=0.0  # Temperatur auf 0 setzen für maximale Striktheit
         )
 
         antwort_text = llm_res.choices[0].message.content
@@ -81,6 +86,3 @@ Kontext-Daten:
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-# Startbefehl für lokales Testen (z.B. mit uvicorn):
-# uvicorn main:app --reload
