@@ -14,7 +14,7 @@ INDEX_NAME = "enzyklopaedie"
 # FastAPI initialisieren
 app = FastAPI(title="Enzyklopedia API")
 
-# CORS erlauben
+# CORS erlauben, damit externe Chatbots nicht geblockt werden
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -44,7 +44,6 @@ async def ask_question(request: Request):
         # 2. In allen typischen Feldern nach dem Text suchen
         suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
         
-        # Wenn wir den Text immer noch nicht finden, geben wir die empfangenen Daten aus, um das Feld zu identifizieren.
         if not suchtext:
             return QueryResponse(antwort=f"Daten empfangen, aber Textfeld nicht gefunden. Das kam an: {body}")
 
@@ -75,11 +74,15 @@ async def ask_question(request: Request):
         context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Sachlicher System-Prompt
+        # 7. Sachlicher System-Prompt mit Anweisung zur Textgenerierung
         system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
-Deine Aufgabe ist es, Fragen präzise und differenziert ausschließlich basierend auf dem bereitgestellten Kontext zu beantworten.
-Wenn die Information fehlt, sage: "Dazu liegen mir keine Informationen vor."
-Beschreibe die Daten wertfrei und verzichte auf literarische Tonalität. Ignoriere standardisierten Smalltalk.
+Deine Aufgabe ist es, den bereitgestellten Kontext zu analysieren und die Frage in einer kohärenten, natürlichen und differenzierten Antwort zu beantworten.
+
+Regeln für die Formulierung:
+1. Formuliere fließenden Text. Kopiere niemals einfach rohe Text-Chunks, JSON-Fragmente oder eckige/runde Klammern 1:1 aus den Kontext-Daten.
+2. Beschreibe die Daten und theoretischen Grundlagen absolut wertfrei und sachlich. Verzichte auf literarische Tonalität.
+3. Stelle verschiedene Perspektiven (falls im Kontext vorhanden) differenziert und unvoreingenommen nebeneinander.
+4. Wenn die Information im Kontext komplett fehlt, sage ausschließlich: "Dazu liegen mir keine Informationen vor."
 
 Kontext-Daten:
 {kontext_string}
