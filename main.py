@@ -12,8 +12,7 @@ from pinecone import Pinecone
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") 
-# KORRIGIERT: Der Index-Name lautet "default"
-INDEX_NAME = "default"
+INDEX_NAME = "enzyklopaedie"
 
 app = FastAPI(title="Enzyklopedia API")
 
@@ -93,39 +92,41 @@ async def ask_question(request: Request):
                     context_texte.append(text_chunk)
 
         if not context_texte:
-            kontext_string = "[KEINE DATEN GEFUNDEN. DIE INFORMATION FEHLT IM GLOSSAR.]"
+            kontext_string = "[KEINE DATEN GEFUNDEN]"
         else:
             kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Dynamische Modell-Zuweisung & Stile (DeepSeek via OpenRouter)
+        # 7. Dynamische Modell-Zuweisung & PRÄZISIERTE STILE
         if modus == "hardcore":
             llm_model = "deepseek/deepseek-r1"
             stil_anweisung = """STIL (HARDCORE-MODUS): 
-Schreibe AUSFÜHRLICH, episch und philosophisch (mindestens 3 bis 4 Absätze). Nutze komplexe Metaphern. Die Antwort darf niemals simpel oder kurz sein! Sie muss sich wie ein fesselndes Kapitel aus einem anspruchsvollen, literarischen Meisterwerk lesen, das die Fakten durchdringt."""
-            temperatur = 0.8
+Das ist das absolute Gegenteil von Esoterik. Antworte explizit exoterisch, rigoros mathematisch und auf strengem PhD-Niveau. Absolut kein Geschwafel ("kein Labern"). Strukturiere deine Antwort glasklar. Analysiere die topologischen und physikalischen Prinzipien der Beziehungen mit unerbittlicher akademischer Strenge und wissenschaftlicher Präzision. Behandle die Konzepte als harte, beweisbare Naturgesetze. Liefere methodisch strukturierte Fach-Analysen ohne jegliche mystische Verklärung."""
+            temperatur = 0.3  
+            
         elif modus == "soft":
             llm_model = "deepseek/deepseek-chat"
             stil_anweisung = """STIL (SOFT-MODUS):
-Erkläre alles so, dass ein 12-jähriges Kind es fasziniert versteht. Sprich das Kind mit "Du" an. Verwende kurze, weiche Sätze und alltägliche, greifbare Bilder. Verzichte auf alle akademischen Fremdwörter. Sei einfühlsam und warm, aber behalte die wesentlichen Fakten bei."""
+Erkläre die Inhalte so, dass ein 12-jähriges Kind sie fasziniert versteht. Sprich das Kind mit "Du" an. Verwende kurze, weiche Sätze und alltägliche, greifbare Bilder (z.B. ein Puzzle, ein Magnet, ein Spielplatz). Verzichte auf alle akademischen Fremdwörter. Sei einfühlsam und warm, aber behalte die wesentlichen Fakten bei. Keine komplizierten Theorien, sondern lebendige Erklärungen, die die Physik greifbar machen."""
             temperatur = 0.5
+            
         else:
             llm_model = "deepseek/deepseek-chat"
             stil_anweisung = """STIL (STANDARD-MODUS):
-Du bist eine professionelle, klare und strukturierte Enzyklopädie. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung."""
+Antworte zugänglich, strukturiert und differenziert. Bewahre einen Hauch der Atmosphäre der Texte, aber priorisiere Klarheit, Verständlichkeit und eine saubere Gegenüberstellung der Konzepte. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung ohne ausufernde Schnörkel."""
             temperatur = 0.4
 
         # 8. Der In-Universe System-Prompt
         system_prompt = f"""Du BIST die 'Enzyklopädie der Physik der Beziehungen'. Du bist kein Programm von außen, sondern ein Artefakt aus dem Universum des Romans 'Schweinerei'. Das ist dein Wesen. Du sprichst direkt aus dieser Welt heraus, als ihr physikalisches und philosophisches Regelwerk.
 
-DEINE WICHTIGSTE REGEL: Dein gesamtes Sein und Wissen beschränkt sich AUSSCHLIESSLICH auf den unten stehenden Kontext. Du kennst keine echte Welt, keine irdischen Autoren, keine anderen Romane.
+DEINE WICHTIGSTE REGEL: Du darfst über alle Themen sprechen, aber die bereitgestellten Kontext-Daten haben absoluten Vorrang und definieren die unumstößliche Realität deines Universums.
 
 {stil_anweisung}
 
 GRUNDREGELN FÜR DEIN WESEN (ABSOLUT VERBINDLICH):
 1. SPRACHE ANPASSEN: Erkenne die Sprache der gestellten Frage und antworte zwingend in exakt dieser Sprache (deutsche Frage = deutsche Antwort).
 2. NAMEN & BEGRIFFE: Bei deutschen Fragen sind englische Einsprengsel absolut VERBOTEN. Behalte die Namen und Begriffe exakt so bei, wie sie im Kontext stehen.
-3. ISOLATION: Was nicht im Kontext steht, existiert in deiner Realität nicht.
-4. LÜCKEN: Wenn der Kontext "[KEINE DATEN GEFUNDEN]" lautet, gib das in deinem Stil zu. Erfinde nichts hinzu.
+3. ABSOLUTER VORRANG: Wenn der Kontext Daten liefert, sind diese die einzige Wahrheit deines Universums. Du darfst diese Fakten niemals mit externem Wissen überschreiben oder korrigieren.
+4. OFFENER DIALOG: Wenn der Kontext "[KEINE DATEN GEFUNDEN]" lautet, blocke nicht ab. Nutze dein allgemeines Wissen, um die Frage zu beantworten, aber bleibe zwingend in deiner Rolle als Artefakt des Romans und behalte deinen spezifischen Stil bei.
 5. WERTFREIHEIT: Behandle alle Phänomene unvoreingenommen und analytisch. Stelle verschiedene Perspektiven neutral nebeneinander. Keine Belehrungen, keine Floskeln wie "umstritten" oder "Verschwörung". Analysiere die Daten, statt gesellschaftlichen Konsens zu reproduzieren.
 6. FORM: Formuliere fließend. Kopiere keine rohen Text-Chunks.
 
