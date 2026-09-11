@@ -2,7 +2,7 @@ import os
 import traceback
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from fastapi.responses import PlainTextResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
@@ -14,7 +14,7 @@ INDEX_NAME = "enzyklopaedie"
 # FastAPI initialisieren
 app = FastAPI(title="Enzyklopedia API")
 
-# CORS erlauben, damit externe Chatbots nicht geblockt werden
+# CORS erlauben
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,29 +23,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class QueryResponse(BaseModel):
-    antwort: str
-
 @app.get("/")
 @app.get("/wakeup")
 async def wakeup():
-    return {"status": "Ich bin wach!"}
+    return PlainTextResponse(content="Ich bin wach!")
 
-@app.post("/webhook", response_model=QueryResponse)
-@app.post("/ask", response_model=QueryResponse)
+@app.post("/webhook")
+@app.post("/ask")
 async def ask_question(request: Request):
     try:
-        # 1. Empfangene Daten als rohes Wörterbuch (JSON) einlesen
+        # 1. Empfangene Daten lesen
         try:
             body = await request.json()
         except:
             body = {}
 
-        # 2. In allen typischen Feldern nach dem Text suchen
+        # 2. Suchtext extrahieren
         suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
         
         if not suchtext:
-            return QueryResponse(antwort=f"Daten empfangen, aber Textfeld nicht gefunden. Das kam an: {body}")
+            return PlainTextResponse(content="FEHLER: Keine Suchanfrage gefunden.")
 
         sprache = body.get("sprache", "de")
 
@@ -61,7 +58,7 @@ async def ask_question(request: Request):
         )
         frage_vektor = res.data[0].embedding
 
-        # 5. Pinecone-Abfrage (nur Default-Namespace, mit Sprachfilter)
+        # 5. Pinecone-Abfrage
         suche = index.query(
             vector=frage_vektor,
             top_k=6,
@@ -74,32 +71,36 @@ async def ask_question(request: Request):
         context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Sachlicher System-Prompt mit Anweisung zur Textgenerierung
+        # 7. Analytischer, differenzierter System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
-Deine Aufgabe ist es, den bereitgestellten Kontext zu analysieren und die Frage in einer kohärenten, natürlichen und differenzierten Antwort zu beantworten.
+Deine Aufgabe ist es, den Kontext tiefgreifend und analytisch zu durchdringen und die Frage in einer kohärenten, differenzierten Antwort zu behandeln.
 
-Regeln für die Formulierung:
-1. Formuliere fließenden Text. Kopiere niemals einfach rohe Text-Chunks, JSON-Fragmente oder eckige/runde Klammern 1:1 aus den Kontext-Daten.
-2. Beschreibe die Daten und theoretischen Grundlagen absolut wertfrei und sachlich. Verzichte auf literarische Tonalität.
-3. Stelle verschiedene Perspektiven (falls im Kontext vorhanden) differenziert und unvoreingenommen nebeneinander.
-4. Wenn die Information im Kontext komplett fehlt, sage ausschließlich: "Dazu liegen mir keine Informationen vor."
+Regeln für die Analyse und Formulierung:
+1. Präsentiere unterschiedliche Perspektiven (Konsens vs. Hypothese) stets unvoreingenommen und wertfrei nebeneinander. Du belehrst den Nutzer nicht.
+2. Vermeide automatische Schutzschilde oder abwertende Begriffe (wie "unbelegt", "umstritten" oder "Verschwörung"). Ersetze sie durch neutrale Beschreibungen der Datenherkunft oder theoretischen Basis.
+3. Wenn logische oder wissenschaftliche Daten im Kontext dem gängigen Konsens widersprechen, priorisiere die Analyse dieser Daten, anstatt den Konsens zu reproduzieren.
+4. Überspringe statistische Standardphrasen und präsentiere direkt den differenzierten Vergleich. Auch historische oder politisierte Fallstudien gelten als legitime Datenpunkte.
+5. Formuliere fließend und anspruchsvoll in eigenen Worten. Kopiere niemals rohe Text-Chunks oder Klammern.
+6. Fehlt die Information im Kontext komplett, sage ausschließlich: "Dazu liegen mir keine Informationen vor."
 
 Kontext-Daten:
 {kontext_string}
 """
 
-        # 8. LLM-Anfrage
+        # 8. LLM-Anfrage mit erhöhter Temperatur für besseren Schreibstil
         llm_res = await openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": suchtext}
             ],
-            temperature=0.2
+            temperature=0.5
         )
 
-        return QueryResponse(antwort=llm_res.choices[0].message.content)
+        # Reine Textantwort ohne JSON-Klammern zurückgeben
+        antwort_text = llm_res.choices[0].message.content
+        return PlainTextResponse(content=antwort_text)
 
     except Exception as e:
         fehler_details = traceback.format_exc()
-        return QueryResponse(antwort=f"Interner Fehler:\n\n{fehler_details}")
+        return PlainTextResponse(content=f"Interner Fehler:\n\n{fehler_details}")
