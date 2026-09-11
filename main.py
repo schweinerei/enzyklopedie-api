@@ -14,7 +14,7 @@ INDEX_NAME = "enzyklopaedie"
 # FastAPI initialisieren
 app = FastAPI(title="Enzyklopedia API")
 
-# CORS erlauben, damit externe Chatbots nicht geblockt werden (OPTIONS-Anfragen)
+# CORS erlauben
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,67 +23,69 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Dynamisches Datenmodell für den Input
-class QueryRequest(BaseModel):
-    frage: str = None
-    query: str = None
-    sprache: str = "de"
-
 class QueryResponse(BaseModel):
     antwort: str
 
-# --- NEU: Wakeup-Endpunkt, damit das Frontend nicht ins Leere läuft ---
 @app.get("/")
 @app.get("/wakeup")
 async def wakeup():
     return {"status": "Ich bin wach!"}
 
-# --- KORREKTUR: API hört jetzt auf /webhook UND /ask ---
 @app.post("/webhook", response_model=QueryResponse)
 @app.post("/ask", response_model=QueryResponse)
-async def ask_question(req: QueryRequest):
+async def ask_question(request: Request):
     try:
-        # 1. Sicherstellen, dass ein Suchtext existiert
-        suchtext = req.frage if req.frage else req.query
-        if not suchtext:
-            return QueryResponse(antwort="FEHLER: Keine Suchanfrage gefunden.")
+        # 1. Empfangene Daten als rohes Wörterbuch (JSON) einlesen
+        try:
+            body = await request.json()
+        except:
+            body = {}
 
-        # 2. Clients initialisieren
+        # 2. In allen typischen Feldern nach dem Text suchen
+        suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
+        
+        # Wenn wir den Text immer noch nicht finden, geben wir die empfangenen Daten aus, um das Feld zu identifizieren.
+        if not suchtext:
+            return QueryResponse(antwort=f"Daten empfangen, aber Textfeld nicht gefunden. Das kam an: {body}")
+
+        sprache = body.get("sprache", "de")
+
+        # 3. Clients initialisieren
         pc = Pinecone(api_key=PINECONE_API_KEY)
         index = pc.Index(INDEX_NAME)
         openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 
-        # 3. Embedding erstellen
+        # 4. Embedding erstellen
         res = await openai_client.embeddings.create(
             input=suchtext,
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
-        # 4. Pinecone-Abfrage
+        # 5. Pinecone-Abfrage (nur Default-Namespace, mit Sprachfilter)
         suche = index.query(
             vector=frage_vektor,
             top_k=6,
             namespace="",
             include_metadata=True,
-            filter={"sprache": {"$eq": req.sprache}}
+            filter={"sprache": {"$eq": sprache}}
         )
 
-        # 5. Kontext zusammenbauen
+        # 6. Kontext zusammenbauen
         context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 6. Sachlicher System-Prompt
+        # 7. Sachlicher System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
 Deine Aufgabe ist es, Fragen präzise und differenziert ausschließlich basierend auf dem bereitgestellten Kontext zu beantworten.
 Wenn die Information fehlt, sage: "Dazu liegen mir keine Informationen vor."
-Beschreibe die Daten wertfrei und verzichte auf literarische Tonalität. Ignoriere Smalltalk.
+Beschreibe die Daten wertfrei und verzichte auf literarische Tonalität. Ignoriere standardisierten Smalltalk.
 
 Kontext-Daten:
 {kontext_string}
 """
 
-        # 7. LLM-Anfrage
+        # 8. LLM-Anfrage
         llm_res = await openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
