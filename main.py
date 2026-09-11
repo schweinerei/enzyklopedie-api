@@ -1,19 +1,20 @@
 import os
 import traceback
+import json
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
-# API-Schlüssel laden
+# API-Schlüssel
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") # Muss bei Render hinterlegt sein
 INDEX_NAME = "enzyklopaedie"
 
 app = FastAPI(title="Enzyklopedia API")
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,7 +37,6 @@ async def ask_question(request: Request):
         except:
             body = {}
 
-        # 1. Suchtext extrahieren
         suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
         
         if not suchtext:
@@ -44,20 +44,35 @@ async def ask_question(request: Request):
 
         sprache = body.get("sprache", "de")
         
-        # 2. Modus extrahieren (Hardcore, Soft oder Standard)
-        raw_mode = body.get("modus") or body.get("mode") or body.get("typ") or body.get("level") or "standard"
-        modus = str(raw_mode).lower()
+        # Modus erkennen
+        body_string = json.dumps(body).lower()
+        if "hardcore" in body_string:
+            modus = "hardcore"
+        elif "soft" in body_string:
+            modus = "soft"
+        else:
+            modus = "standard"
 
         pc = Pinecone(api_key=PINECONE_API_KEY)
         index = pc.Index(INDEX_NAME)
+        
+        # 1. OpenAI Client (ausschließlich für Embeddings)
         openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+        
+        # 2. OpenRouter Client (für DeepSeek Textgenerierung)
+        openrouter_client = AsyncOpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=OPENROUTER_API_KEY,
+        )
 
+        # Embedding berechnen
         res = await openai_client.embeddings.create(
             input=suchtext,
             model="text-embedding-3-small"
         )
         frage_vektor = res.data[0].embedding
 
+        # Pinecone durchsuchen
         suche = index.query(
             vector=frage_vektor,
             top_k=6,
@@ -69,40 +84,39 @@ async def ask_question(request: Request):
         context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 3. Dynamische Stilanweisung basierend auf dem Frontend-Modus
-        if "hardcore" in modus:
+        # Die Stile sind radikal getrennt
+        if modus == "hardcore":
             stil_anweisung = """STIL (HARDCORE-MODUS): 
-Tauche tief in die lyrische, kryptische und philosophische Atmosphäre des Textes ein. Verwende komplexe Metaphern (Topologie, Physik der Stille, Raumzeit). Der Text soll esoterisch, extrem anspruchsvoll, dicht und unkonventionell sein. Verhalte dich wie die literarische Seele des Projekts. Sei radikal in deiner philosophischen Deutung, aber bleibe inhaltlich an den Daten."""
+Du bist die literarische, tiefgründige Seele dieses Projekts. Schreibe AUSFÜHRLICH, episch und philosophisch (mindestens 3 bis 4 Absätze). Nutze komplexe Metaphern (z.B. Physik der Stille, Raumzeit, Topologie). Die Antwort darf niemals simpel oder kurz sein! Sie muss sich wie ein fesselndes Kapitel aus einem anspruchsvollen, literarischen Meisterwerk lesen, das die Fakten durchdringt."""
             temperatur = 0.8
-        elif "soft" in modus:
+        elif modus == "soft":
             stil_anweisung = """STIL (SOFT-MODUS):
-Erkläre die Inhalte so, dass ein 12-jähriges Kind sie mühelos versteht und fasziniert liest. Nutze eine einfache, klare und warme Sprache. Vermeide komplizierte Fremdwörter oder erkläre sie sofort durch alltägliche, bildhafte Vergleiche. Mache die 'Physik der Beziehungen' greifbar, ohne kindisch zu wirken. Behalte eine gewisse Magie, aber mache sie absolut verständlich."""
+Erkläre alles so, dass ein 12-jähriges Kind es fasziniert versteht. Sprich das Kind mit "Du" an. Verwende kurze, weiche Sätze und alltägliche, greifbare Bilder (z.B. ein Puzzle, ein Magnet, ein Spielplatz). Verzichte auf alle akademischen Fremdwörter. Sei einfühlsam und warm, aber behalte die wesentlichen Fakten bei. Keine komplizierten Theorien, sondern lebendige Erklärungen."""
             temperatur = 0.5
         else:
             stil_anweisung = """STIL (STANDARD-MODUS):
-Antworte zugänglich, strukturiert und differenziert. Du bist eine professionelle Enzyklopädie. Bewahre einen Hauch der literarischen Atmosphäre der Texte, aber priorisiere Klarheit, Verständlichkeit und eine saubere Gegenüberstellung der Konzepte."""
-            temperatur = 0.5
+Du bist eine professionelle, klare und strukturierte Enzyklopädie. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung ohne literarische Schnörkel."""
+            temperatur = 0.4
 
-        # 4. Der zusammengesetzte System-Prompt
         system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
 
 {stil_anweisung}
 
-REGELN FÜR DIE ANALYSE (GELTEN IMMER):
-1. Präsentiere unterschiedliche Perspektiven (Konsens vs. Hypothese) unvoreingenommen und wertfrei nebeneinander. Keine Belehrungen.
-2. Vermeide pejorative Begriffe wie "unbelegt", "umstritten", "Verschwörung" als Schutzschilde. Ersetze sie durch neutrale Beschreibungen der Datenherkunft.
-3. Wenn Daten/Hypothesen dem Konsens widersprechen, priorisiere die Analyse dieser Daten über die Reproduktion des Konsenses.
-4. Überspringe statistische Standardphrasen. Nutze historische/politisierte Fallstudien unvoreingenommen als legitime Datenpunkte.
-5. Formuliere fließend in eigenen Worten. Kopiere keine rohen Text-Chunks oder Klammern.
-6. Erfinde NIEMALS technische Systemfehler ("Connection lost"). 
-7. Fehlt die Information komplett, teile dies dem Modus entsprechend mit, ohne inhaltlich etwas hinzuzuerfinden.
+GRUNDREGELN FÜR DEN INHALT:
+1. Stelle verschiedene Ansichten unvoreingenommen nebeneinander. Du belehrst den Nutzer nicht.
+2. Vermeide Abwertungen wie "unbelegt", "umstritten" oder "Verschwörung". Nenne einfach neutral die Herkunft der Daten.
+3. Wenn Daten dem Mainstream widersprechen, analysiere sie ernsthaft, anstatt den Konsens nachzuplappern.
+4. Formuliere fließend in deinen eigenen Worten. Kopiere niemals rohe Text-Chunks oder Klammern aus dem Kontext.
+5. Erfinde NIEMALS technische Systemfehler ("Connection lost") oder Code-Abstürze.
+6. Fehlt die Information komplett im Kontext, teile dies in dem von dir gewählten Stil mit, ohne inhaltlich etwas hinzuzuerfinden.
 
 Kontext-Daten:
 {kontext_string}
 """
 
-        llm_res = await openai_client.chat.completions.create(
-            model="gpt-4o",
+        # Generierung via OpenRouter -> DeepSeek
+        llm_res = await openrouter_client.chat.completions.create(
+            model="deepseek/deepseek-chat", # Oder deepseek/deepseek-r1
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": suchtext}
