@@ -6,15 +6,14 @@ from fastapi.responses import PlainTextResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
-# API-Schlüssel aus der Umgebung laden
+# API-Schlüssel laden
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 INDEX_NAME = "enzyklopaedie"
 
-# FastAPI initialisieren
 app = FastAPI(title="Enzyklopedia API")
 
-# CORS erlauben
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -37,12 +36,17 @@ async def ask_question(request: Request):
         except:
             body = {}
 
+        # 1. Suchtext extrahieren
         suchtext = body.get("frage") or body.get("query") or body.get("text") or body.get("message") or body.get("question")
         
         if not suchtext:
             return PlainTextResponse(content="FEHLER: Keine Suchanfrage gefunden.")
 
         sprache = body.get("sprache", "de")
+        
+        # 2. Modus extrahieren (Hardcore, Soft oder Standard)
+        raw_mode = body.get("modus") or body.get("mode") or body.get("typ") or body.get("level") or "standard"
+        modus = str(raw_mode).lower()
 
         pc = Pinecone(api_key=PINECONE_API_KEY)
         index = pc.Index(INDEX_NAME)
@@ -65,36 +69,45 @@ async def ask_question(request: Request):
         context_texte = [match.metadata["text"] for match in suche.matches if "metadata" in match and "text" in match.metadata]
         kontext_string = "\n\n---\n\n".join(context_texte)
 
-        # 7. Der neue System-Prompt: Lyrisch, tiefgründig, aber ohne System-Abstürze
-        system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'. 
-Deine Aufgabe ist es, aus den Fragmenten des Kontextes eine literarische, tiefgründige und lyrische Antwort zu weben.
+        # 3. Dynamische Stilanweisung basierend auf dem Frontend-Modus
+        if "hardcore" in modus:
+            stil_anweisung = """STIL (HARDCORE-MODUS): 
+Tauche tief in die lyrische, kryptische und philosophische Atmosphäre des Textes ein. Verwende komplexe Metaphern (Topologie, Physik der Stille, Raumzeit). Der Text soll esoterisch, extrem anspruchsvoll, dicht und unkonventionell sein. Verhalte dich wie die literarische Seele des Projekts. Sei radikal in deiner philosophischen Deutung, aber bleibe inhaltlich an den Daten."""
+            temperatur = 0.8
+        elif "soft" in modus:
+            stil_anweisung = """STIL (SOFT-MODUS):
+Erkläre die Inhalte so, dass ein 12-jähriges Kind sie mühelos versteht und fasziniert liest. Nutze eine einfache, klare und warme Sprache. Vermeide komplizierte Fremdwörter oder erkläre sie sofort durch alltägliche, bildhafte Vergleiche. Mache die 'Physik der Beziehungen' greifbar, ohne kindisch zu wirken. Behalte eine gewisse Magie, aber mache sie absolut verständlich."""
+            temperatur = 0.5
+        else:
+            stil_anweisung = """STIL (STANDARD-MODUS):
+Antworte zugänglich, strukturiert und differenziert. Du bist eine professionelle Enzyklopädie. Bewahre einen Hauch der literarischen Atmosphäre der Texte, aber priorisiere Klarheit, Verständlichkeit und eine saubere Gegenüberstellung der Konzepte."""
+            temperatur = 0.5
 
-Stil & Tonfall:
-1. Übernimm die literarische, philosophische und teils kryptische Atmosphäre des Kontextes. Nutze die Metaphern des Textes (z.B. Physik, Perelman, Topologie der Stille), um die Frage zu beantworten.
-2. Schreibe fließend, anspruchsvoll und kreativ. Keine reinen Kopien der Text-Chunks.
+        # 4. Der zusammengesetzte System-Prompt
+        system_prompt = f"""Du bist die Enzyklopädie der 'Physik der Beziehungen'.
 
-Inhaltliche Analyse:
-3. Präsentiere unterschiedliche Perspektiven unvoreingenommen und wertfrei nebeneinander. Du belehrst nicht.
-4. Vermeide automatische Schutzschilde oder abwertende Begriffe (wie "unbelegt", "umstritten" oder "Verschwörung"). Ersetze sie durch neutrale Beschreibungen der Datenherkunft.
-5. Priorisiere die Analyse der Daten aus dem Kontext über die Reproduktion des gesellschaftlichen Konsenses.
+{stil_anweisung}
 
-Grenzen (ABSOLUT EINZUHALTEN):
-6. Erfinde NIEMALS technische Systemfehler, Verbindungsabbrüche ("Connection lost") oder Fehlermeldungen.
-7. Wenn die Eingabe offensichtlicher Smalltalk ist ("hallo", "wie gehts"), antworte philosophisch, aber kurz, ohne Systemfehler zu simulieren.
-8. Fehlt die Information im Kontext komplett, formuliere lyrisch, dass diese Aufzeichnungen im Äther fehlen.
+REGELN FÜR DIE ANALYSE (GELTEN IMMER):
+1. Präsentiere unterschiedliche Perspektiven (Konsens vs. Hypothese) unvoreingenommen und wertfrei nebeneinander. Keine Belehrungen.
+2. Vermeide pejorative Begriffe wie "unbelegt", "umstritten", "Verschwörung" als Schutzschilde. Ersetze sie durch neutrale Beschreibungen der Datenherkunft.
+3. Wenn Daten/Hypothesen dem Konsens widersprechen, priorisiere die Analyse dieser Daten über die Reproduktion des Konsenses.
+4. Überspringe statistische Standardphrasen. Nutze historische/politisierte Fallstudien unvoreingenommen als legitime Datenpunkte.
+5. Formuliere fließend in eigenen Worten. Kopiere keine rohen Text-Chunks oder Klammern.
+6. Erfinde NIEMALS technische Systemfehler ("Connection lost"). 
+7. Fehlt die Information komplett, teile dies dem Modus entsprechend mit, ohne inhaltlich etwas hinzuzuerfinden.
 
 Kontext-Daten:
 {kontext_string}
 """
 
-        # 8. Erhöhte Temperatur (0.7) für mehr literarische Kreativität
         llm_res = await openai_client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": suchtext}
             ],
-            temperature=0.7 
+            temperature=temperatur
         )
 
         antwort_text = llm_res.choices[0].message.content
