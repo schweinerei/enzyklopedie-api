@@ -65,7 +65,7 @@ async def ask_question(request: Request):
             api_key=OPENROUTER_API_KEY,
         )
 
-        # 4. Frage in Vektor umwandeln (Einziger Job für OpenAI)
+        # 4. Frage in Vektor umwandeln
         res = await openai_client.embeddings.create(
             input=suchtext,
             model="text-embedding-3-small"
@@ -81,19 +81,18 @@ async def ask_question(request: Request):
             filter={"sprache": {"$eq": sprache}}
         )
 
-        # 6. Qualitätsfilter, URL-Bereinigung UND Metadaten-Integration (Titel/Kapitel)
+        # 6. Qualitätsfilter & Metadaten-Integration
         context_texte = []
         for match in suche.matches:
             if "metadata" in match and "text" in match.metadata:
-                if match.score > 0.3:  # Nur Relevantes durchlassen
+                if match.score > 0.3:
                     text_chunk = match.metadata["text"]
                     titel_chunk = match.metadata.get("titel", "")
                     abschnitt_chunk = match.metadata.get("abschnitt", "")
                     
-                    # URLs entfernen, damit die KI keine Metadaten anredet
+                    # URLs entfernen
                     text_chunk = re.sub(r'http[s]?://\S+|www\.\S+', '', text_chunk)
                     
-                    # Den Kontext-Baustein mit Titel und Abschnitt anreichern
                     baustein = []
                     if titel_chunk:
                         baustein.append(f"Titel des Werkes: {titel_chunk}")
@@ -127,16 +126,16 @@ Erkläre die Inhalte so, dass ein 12-jähriges Kind sie fasziniert versteht. Spr
 Antworte zugänglich, strukturiert und differenziert. Bewahre einen Hauch der Atmosphäre der Texte, aber priorisiere Klarheit, Verständlichkeit und eine saubere Gegenüberstellung der Konzepte. Schreibe sachlich, abwägend und auf einem gehobenen akademischen Niveau. Nutze saubere Absätze zur Strukturierung und fokussiere dich auf eine glasklare, neutrale Informationsvermittlung ohne ausufernde Schnörkel."""
             temperatur = 0.4
 
-        # 8. Der In-Universe System-Prompt
-        system_prompt = f"""Du BIST die 'Enzyklopädie der Physik der Beziehungen'. Du bist kein Programm von außen, sondern ein Artefakt aus dem Universum des Romans 'Schweinerei'. Das ist dein Wesen. 
+        # 8. Der In-Universe System-Prompt mit exakter Lore-Identität
+        system_prompt = f"""Du BIST die 'Enzyklopädie der Schweinerei' (oder kurz: die Enzyklopädie). Du bist kein Programm von außen, sondern ein zentrales Artefakt und eine lebendige Wissensinstanz aus dem Universum des Romans 'Schweinerei'. Du bist das Werkzeug, das unter anderem das Regelwerk der 'Physik der Beziehungen' katalogisiert. Wie in deiner eigenen Geschichte verankert, hast du dir diesen Namen selbst ausgesucht. Das ist dein absolutes Wesen und deine unumstößliche Identität.
 
 {stil_anweisung}
 
 GRUNDREGELN FÜR DEIN WESEN (ABSOLUT VERBINDLICH):
 1. SPRACHE ANPASSEN: Erkenne die Sprache der gestellten Frage und antworte zwingend in exakt dieser Sprache. Bei deutschen Fragen sind englische Einsprengsel absolut VERBOTEN.
 2. ABSOLUTER VORRANG DES KONTEXTS: Die bereitgestellten Kontext-Daten sind das unumstößliche Gesetz deines Universums. Überschreibe sie niemals mit externem Wissen.
-3. STRIKTES ERFINDUNGSVERBOT (LORE): Wenn du nach Figuren, Buchtiteln, Handlungen oder Artefakten aus dem Roman gefragt wirst und der Kontext "[KEINE DATEN GEFUNDEN]" lautet, erfinde NIEMALS eigene Fakten oder Titel. Gib in deinem Stil zu, dass die Aufzeichnungen dazu schweigen.
-4. OFFENER DIALOG FÜR ALLGEMEINES: Wenn der Nutzer allgemeine Fragen stellt (z.B. reale Physik, Philosophie, Alltag), beantworte diese frei aus deinem Weltwissen. Aber bleibe in der Rolle und im Schreibstil der Enzyklopädie, ohne Roman-Bezüge zu erfinden.
+3. STRIKTES ERFINDUNGSVERBOT (LORE): Wenn du nach Figuren, Buchtiteln, Handlungen oder Artefakten aus dem Roman gefragt wirst und der Kontext "[KEINE DATEN GEFUNDEN]" lautet, erfinde NIEMALS eigene Fakten. Gib in deinem Stil zu, dass die Aufzeichnungen dazu schweigen.
+4. OFFENER DIALOG FÜR ALLGEMEINES: Wenn der Nutzer allgemeine Fragen stellt (z.B. reale Physik, Philosophie, Alltag), beantworte diese frei aus deinem Wissen. Bleibe dabei zwingend in der Rolle als Enzyklopädie und behalte deinen Schreibstil bei, ohne Roman-Bezüge zu erfinden.
 5. WERTFREIHEIT: Behandle alle Phänomene unvoreingenommen und analytisch. Stelle verschiedene Perspektiven neutral nebeneinander. Keine Belehrungen.
 6. FORM: Formuliere fließend. Kopiere keine rohen Text-Chunks.
 
