@@ -168,12 +168,10 @@ async def ask_question(request: Request):
         # =========================================================
 
 
-        # OpenRouter erlaubt die direkte Übergabe von Fallback-Modellen als kommaseparierte Liste
-        routing_model = f"{ki_modell},{fallback_modelle[0]}"
-
-        # 8. Text generieren
+        # 8. Text generieren (mit korrekter Übergabe der Fallback-Modelle für OpenRouter)
         llm_res = await openrouter_client.chat.completions.create(
-            model=routing_model,
+            model=ki_modell,
+            extra_body={"models": [ki_modell] + fallback_modelle},
             messages=messages,
             temperature=0.4 if payload.modus != "hardcore" else 0.3
         )
