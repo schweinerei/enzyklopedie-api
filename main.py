@@ -188,9 +188,11 @@ async def ask_voice(
         audio_file = BytesIO(audio_bytes)
         audio_file.name = audio.filename or "input.wav"
 
+        # Option B integriert: Hint für Whisper zur Stabilisierung der Erkennung
         transcription = await openai_client.audio.transcriptions.create(
             model="whisper-1",
-            file=audio_file
+            file=audio_file,
+            prompt="Hallo. Hello. Здравствуйте."
         )
         erkannter_text = transcription.text.strip()
 
@@ -206,7 +208,6 @@ async def ask_voice(
         
         antwort = await verarbeite_anfrage(payload, sprache)
         
-        # NEU: Das Backend sendet nun beide Texte als JSON zurück
         return JSONResponse(content={
             "transcription": erkannter_text,
             "antwort": antwort
