@@ -5,7 +5,7 @@ import re
 from io import BytesIO
 from fastapi import FastAPI, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, JSONResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
@@ -33,7 +33,6 @@ class PayloadData:
 
 async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
     """Zentrale Enzyklopädie-Pipeline für Text- und Sprach-Anfragen"""
-    # 1. Datenbank und Clients initialisieren
     pc = Pinecone(api_key=PINECONE_API_KEY)
     index = pc.Index(INDEX_NAME)
     
@@ -43,14 +42,12 @@ async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
         api_key=OPENROUTER_API_KEY,
     )
 
-    # 2. Frage in Vektor umwandeln
     res = await openai_client.embeddings.create(
         input=payload.text,
         model="text-embedding-3-small"
     )
     frage_vektor = res.data[0].embedding
 
-    # 3. Relevante Texte in Pinecone suchen
     suche = index.query(
         vector=frage_vektor,
         top_k=6,
@@ -59,7 +56,6 @@ async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
         filter={"sprache": {"$eq": sprache}}
     )
 
-    # 4. Qualitätsfilter & Metadaten-Integration
     context_texte = []
     for match in suche.matches:
         if "metadata" in match and "text" in match.metadata:
@@ -84,7 +80,6 @@ async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
     else:
         kontext_block = "\n\n---\n\n".join(context_texte)
 
-    # 5. System-Prompts & Modus-Logik
     kern_regeln = (
         "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
         "Speak directly as the Enzyklopedia. Maintain a slightly enigmatic tone. "
@@ -131,7 +126,6 @@ async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
 
     messages = [{"role": "system", "content": system_prompt}] + payload.history + [{"role": "user", "content": payload.text}]
 
-    # 6. LLM-Aufruf via OpenRouter
     llm_res = await openrouter_client.chat.completions.create(
         model=ki_modell,
         extra_body={"models": [ki_modell] + fallback_modelle},
@@ -188,14 +182,12 @@ async def ask_voice(
     sprache: str = Form("de"),
     history: str = Form("[]")
 ):
-    """Nimmt eine Audio-Datei entgegen, transkribiert sie und beantwortet sie als Text"""
     try:
         openai_client = AsyncOpenAI(api_key=OPENAI_API_KEY)
         audio_bytes = await audio.read()
         audio_file = BytesIO(audio_bytes)
         audio_file.name = audio.filename or "input.wav"
 
-        # 1. Transkription via Whisper API
         transcription = await openai_client.audio.transcriptions.create(
             model="whisper-1",
             file=audio_file
@@ -203,7 +195,7 @@ async def ask_voice(
         erkannter_text = transcription.text.strip()
 
         if not erkannter_text:
-            return PlainTextResponse(content="FEHLER: Keine Sprache erkannt.")
+            return JSONResponse(content={"transcription": "[No Speech Detected]", "antwort": "FEHLER: Keine Sprache erkannt."})
 
         try:
             parsed_history = json.loads(history)
@@ -212,10 +204,17 @@ async def ask_voice(
 
         payload = PayloadData(text=erkannter_text, modus=modus.lower(), history=parsed_history)
         
-        # 2. Durch dieselbe Enzyklopädie-Pipeline jagen
         antwort = await verarbeite_anfrage(payload, sprache)
-        return PlainTextResponse(content=antwort)
+        
+        # NEU: Das Backend sendet nun beide Texte als JSON zurück
+        return JSONResponse(content={
+            "transcription": erkannter_text,
+            "antwort": antwort
+        })
 
     except Exception as e:
         fehler_details = traceback.format_exc()
-        return PlainTextResponse(content=f"Interner Fehler:\n\n{fehler_details}")
+        return JSONResponse(content={
+            "transcription": "[Error Processing Audio]", 
+            "antwort": f"Interner Fehler:\n\n{fehler_details}"
+        }, status_code=500)
