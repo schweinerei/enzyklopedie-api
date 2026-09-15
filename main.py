@@ -2,17 +2,19 @@ import os
 import traceback
 import json
 import re
+import sqlite3
 from io import BytesIO
-from fastapi import FastAPI, Request, UploadFile, File, Form
+from fastapi import FastAPI, Request, UploadFile, File, Form, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, JSONResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 
-# API-Schlüssel
+# API-Schlüssel & Umgebungsvariablen
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 PINECONE_API_KEY = os.environ.get("PINECONE_API_KEY")
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY") 
+DATABASE_URL = os.environ.get("DATABASE_URL")
 INDEX_NAME = "enzyklopaedie"
 
 app = FastAPI(title="Enzyklopedia API")
@@ -30,6 +32,66 @@ class PayloadData:
         self.text = text
         self.modus = modus
         self.history = history
+
+def speichere_dialog_anonym(input_type: str, modus: str, sprache: str, frage: str, antwort: str):
+    """
+    Speichert Interaktionen anonymisiert ab.
+    Priorisiert PostgreSQL (falls DATABASE_URL existiert), sonst lokales SQLite.
+    """
+    # 1. Versuch: PostgreSQL (Render Managed Database)
+    if DATABASE_URL and "postgres" in DATABASE_URL:
+        try:
+            import psycopg2
+            # Render nutzt manchmal 'postgres://', psycopg2 verlangt 'postgresql://'
+            db_uri = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+            conn = psycopg2.connect(db_uri)
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS interactions (
+                    id SERIAL PRIMARY KEY,
+                    zeitstempel TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    input_type VARCHAR(20),
+                    modus VARCHAR(20),
+                    sprache VARCHAR(10),
+                    frage TEXT,
+                    antwort TEXT
+                );
+            """)
+            cur.execute("""
+                INSERT INTO interactions (input_type, modus, sprache, frage, antwort)
+                VALUES (%s, %s, %s, %s, %s);
+            """, (input_type, modus, sprache, frage, antwort))
+            conn.commit()
+            cur.close()
+            conn.close()
+            return
+        except Exception as pg_err:
+            print(f"[DB Warning] PostgreSQL Fehler, weiche auf SQLite aus: {pg_err}")
+
+    # 2. Versuch: Lokales SQLite (integriert, kein Setup nötig)
+    try:
+        conn = sqlite3.connect("dialogues.db")
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS interactions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                zeitstempel DATETIME DEFAULT CURRENT_TIMESTAMP,
+                input_type TEXT,
+                modus TEXT,
+                sprache TEXT,
+                frage TEXT,
+                antwort TEXT
+            );
+        """)
+        cur.execute("""
+            INSERT INTO interactions (input_type, modus, sprache, frage, antwort)
+            VALUES (?, ?, ?, ?, ?);
+        """, (input_type, modus, sprache, frage, antwort))
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as sq_err:
+        print(f"[DB Error] Konnte Dialog nicht speichern: {sq_err}")
 
 async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
     """Zentrale Enzyklopädie-Pipeline für Text- und Sprach-Anfragen"""
@@ -154,9 +216,51 @@ async def verarbeite_anfrage(payload: PayloadData, sprache: str = "de") -> str:
 async def wakeup():
     return PlainTextResponse(content="Ich bin wach!")
 
+@app.get("/dialogues")
+async def get_dialogues(limit: int = 50):
+    """Gibt die letzten gespeicherten anonymen Interaktionen zur Kontrolle aus."""
+    eintraege = []
+    
+    # Aus PostgreSQL lesen falls verfügbar
+    if DATABASE_URL and "postgres" in DATABASE_URL:
+        try:
+            import psycopg2
+            db_uri = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+            conn = psycopg2.connect(db_uri)
+            cur = conn.cursor()
+            cur.execute("SELECT id, zeitstempel, input_type, modus, sprache, frage, antwort FROM interactions ORDER BY id DESC LIMIT %s;", (limit,))
+            rows = cur.fetchall()
+            for r in rows:
+                eintraege.append({
+                    "id": r[0], "zeitstempel": str(r[1]), "type": r[2],
+                    "modus": r[3], "sprache": r[4], "frage": r[5], "antwort": r[6]
+                })
+            cur.close()
+            conn.close()
+            return JSONResponse(content={"source": "PostgreSQL", "count": len(eintraege), "data": eintraege})
+        except Exception as e:
+            pass
+
+    # Aus SQLite lesen
+    try:
+        conn = sqlite3.connect("dialogues.db")
+        cur = conn.cursor()
+        cur.execute("SELECT id, zeitstempel, input_type, modus, sprache, frage, antwort FROM interactions ORDER BY id DESC LIMIT ?;", (limit,))
+        rows = cur.fetchall()
+        for r in rows:
+            eintraege.append({
+                "id": r[0], "zeitstempel": str(r[1]), "type": r[2],
+                "modus": r[3], "sprache": r[4], "frage": r[5], "antwort": r[6]
+            })
+        cur.close()
+        conn.close()
+        return JSONResponse(content={"source": "SQLite", "count": len(eintraege), "data": eintraege})
+    except Exception as e:
+        return JSONResponse(content={"error": str(e), "data": []})
+
 @app.post("/webhook")
 @app.post("/ask")
-async def ask_question(request: Request):
+async def ask_question(request: Request, background_tasks: BackgroundTasks):
     try:
         try:
             body = await request.json()
@@ -181,6 +285,17 @@ async def ask_question(request: Request):
         sprache = body.get("sprache", "de")
 
         antwort = await verarbeite_anfrage(payload, sprache)
+        
+        # Asynchrones Speichern im Hintergrund (kostet den Nutzer 0ms Wartezeit)
+        background_tasks.add_task(
+            speichere_dialog_anonym, 
+            "text", 
+            modus_val, 
+            sprache, 
+            raw_text, 
+            antwort
+        )
+        
         return PlainTextResponse(content=antwort)
 
     except Exception as e:
@@ -189,6 +304,7 @@ async def ask_question(request: Request):
 
 @app.post("/ask-voice")
 async def ask_voice(
+    background_tasks: BackgroundTasks,
     audio: UploadFile = File(...),
     modus: str = Form("standard"),
     sprache: str = Form("de"),
@@ -218,6 +334,16 @@ async def ask_voice(
         payload = PayloadData(text=erkannter_text, modus=modus.lower(), history=parsed_history)
         
         antwort = await verarbeite_anfrage(payload, sprache)
+        
+        # Asynchrones Speichern im Hintergrund
+        background_tasks.add_task(
+            speichere_dialog_anonym, 
+            "voice", 
+            modus.lower(), 
+            sprache, 
+            erkannter_text, 
+            antwort
+        )
         
         return JSONResponse(content={
             "transcription": erkannter_text,
