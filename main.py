@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, JSONResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
+from pydantic import BaseModel
 
 # API-Schlüssel & Umgebungsvariablen
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
@@ -32,6 +33,13 @@ class PayloadData:
         self.text = text
         self.modus = modus
         self.history = history
+
+class PurchaseRequest(BaseModel):
+    item_id: str
+    sprache: str = "en"
+
+class UnlockRequest(BaseModel):
+    code: str
 
 def speichere_dialog_anonym(input_type: str, modus: str, sprache: str, frage: str, antwort: str):
     """
@@ -257,6 +265,42 @@ async def get_dialogues(limit: int = 50):
         return JSONResponse(content={"source": "SQLite", "count": len(eintraege), "data": eintraege})
     except Exception as e:
         return JSONResponse(content={"error": str(e), "data": []})
+
+@app.post("/purchase")
+async def handle_purchase(req: PurchaseRequest):
+    """
+    Routet den Kauf-Button des Frontends zum jeweiligen Payment-Provider oder Affiliate-Link.
+    """
+    # Mapping der in v3.0 definierten item_ids zu den externen Checkout-Nodes
+    item_links = {
+        "book_1_invitation": "https://external-payment-node.com/checkout/invitation",
+        "book_2_physik": "https://external-payment-node.com/checkout/physik"
+    }
+    
+    checkout_url = item_links.get(req.item_id)
+    if checkout_url:
+        return JSONResponse(content={"status": "success", "redirect_url": checkout_url})
+    
+    return JSONResponse(content={"status": "error", "message": "> Error: Item node not found in index."}, status_code=404)
+
+@app.post("/unlock")
+async def unlock_promo(req: UnlockRequest):
+    """
+    Validiert den Promo-Code für Vollversionen aus dem Restricted Access Bereich.
+    """
+    valid_codes = {"ENZYKLO-2026", "OPEN-BOOK-X"}
+    
+    if req.code.strip().upper() in valid_codes:
+        return JSONResponse(content={
+            "status": "success", 
+            "message": "> Access granted. Decrypting payload...",
+            "download_url": "ftp://secure-node.open-book/full_editions.zip"
+        })
+        
+    return JSONResponse(content={
+        "status": "error", 
+        "message": "> Error: Connection to auth server refused. Invalid token."
+    }, status_code=403)
 
 @app.post("/webhook")
 @app.post("/ask")
