@@ -1,5 +1,3 @@
-
-Main · PY
 import os
 import re
 import json
@@ -12,7 +10,7 @@ import traceback
 from io import BytesIO
 from collections import OrderedDict
 from typing import AsyncIterator, Optional
- 
+
 import httpx
 from fastapi import FastAPI, Request, UploadFile, File, Form, Header
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,10 +18,10 @@ from fastapi.responses import PlainTextResponse, JSONResponse, StreamingResponse
 from openai import AsyncOpenAI
 from pinecone import Pinecone
 from pydantic import BaseModel
- 
+
 log = logging.getLogger("enzyklopedia")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
- 
+
 # ==========================================
 # KONFIGURATION (alles per Env überschreibbar, kein Deploy nötig)
 # ==========================================
@@ -34,14 +32,14 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 ADMIN_TOKEN = os.environ.get("ADMIN_TOKEN")              # schützt /dialogues; unset = Route liefert 404
 NODE_NAME = os.environ.get("NODE_NAME", "cloud")          # "cloud" | "cax", erscheint in /health und im done-Event
 INDEX_NAME = os.environ.get("PINECONE_INDEX", "enzyklopaedie")
- 
+
 MODEL_STANDARD = os.environ.get("MODEL_STANDARD", "deepseek/deepseek-chat")
 MODEL_SIMPLE = os.environ.get("MODEL_SIMPLE", "deepseek/deepseek-chat")
 MODEL_HARDCORE = os.environ.get("MODEL_HARDCORE", "deepseek/deepseek-r1")
 MODEL_FALLBACK = os.environ.get("MODEL_FALLBACK", "qwen/qwen-2.5-72b-instruct")
 # Für Reasoning-Modelle: "low" | "medium" | "high" | "" (aus). "low" halbiert die Denkzeit von R1 spürbar.
 HARDCORE_REASONING_EFFORT = os.environ.get("HARDCORE_REASONING_EFFORT", "")
- 
+
 MAX_HISTORY = int(os.environ.get("MAX_HISTORY", "12"))
 MAX_INPUT_CHARS = int(os.environ.get("MAX_INPUT_CHARS", "4000"))
 # Hardcore hoch, weil bei Reasoning-Modellen (R1) die Denk-Tokens mitzählen; sonst kommt die Antwort abgeschnitten oder leer
@@ -54,9 +52,9 @@ CACHE_TTL = int(os.environ.get("CACHE_TTL", str(7 * 24 * 3600)))
 CACHE_SIZE = int(os.environ.get("CACHE_SIZE", "500"))
 RETRIEVAL_TOP_K = int(os.environ.get("RETRIEVAL_TOP_K", "6"))
 RETRIEVAL_MIN_SCORE = float(os.environ.get("RETRIEVAL_MIN_SCORE", "0.3"))
- 
+
 app = FastAPI(title="Enzyklopedia API")
- 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],          # HOOK AP2: auf die Frontend-Domain einschränken, sobald der Session-Cookie kommt
@@ -64,7 +62,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
- 
+
 # ==========================================
 # CLIENTS: einmal bauen, Verbindungen warm halten
 # (vorher pro Request: neuer Pinecone-Client, zwei neue OpenAI-Clients, drei TLS-Handshakes)
@@ -72,15 +70,15 @@ app.add_middleware(
 _pinecone_index = None
 _openai_client: Optional[AsyncOpenAI] = None
 _openrouter_client: Optional[AsyncOpenAI] = None
- 
- 
+
+
 def get_index():
     global _pinecone_index
     if _pinecone_index is None:
         _pinecone_index = Pinecone(api_key=PINECONE_API_KEY).Index(INDEX_NAME)
     return _pinecone_index
- 
- 
+
+
 def get_openai() -> AsyncOpenAI:
     global _openai_client
     if _openai_client is None:
@@ -90,8 +88,8 @@ def get_openai() -> AsyncOpenAI:
             max_retries=1,
         )
     return _openai_client
- 
- 
+
+
 def get_openrouter() -> AsyncOpenAI:
     global _openrouter_client
     if _openrouter_client is None:
@@ -103,19 +101,19 @@ def get_openrouter() -> AsyncOpenAI:
             default_headers={"HTTP-Referer": "https://schweinerei.xyz", "X-Title": "The Open Book"},
         )
     return _openrouter_client
- 
- 
+
+
 # ==========================================
 # ANTWORT-CACHE (nur für Fragen ohne Verlauf)
 # ==========================================
 _cache: "OrderedDict[str, tuple[str, float, str]]" = OrderedDict()
- 
- 
+
+
 def _cache_key(text: str, modus: str, sprache: str) -> str:
     norm = re.sub(r"\s+", " ", text.strip().lower())
     return hashlib.sha256(f"{modus}|{sprache}|{norm}".encode()).hexdigest()
- 
- 
+
+
 def cache_get(key: str):
     item = _cache.get(key)
     if not item:
@@ -126,15 +124,15 @@ def cache_get(key: str):
         return None
     _cache.move_to_end(key)
     return antwort, model
- 
- 
+
+
 def cache_set(key: str, antwort: str, model: str):
     _cache[key] = (antwort, time.time(), model)
     _cache.move_to_end(key)
     while len(_cache) > CACHE_SIZE:
         _cache.popitem(last=False)
- 
- 
+
+
 # ==========================================
 # DATENMODELLE
 # ==========================================
@@ -143,18 +141,18 @@ class PayloadData:
         self.text = text[:MAX_INPUT_CHARS]
         self.modus = modus if modus in ("standard", "hardcore", "simple") else "standard"
         self.history = bereinige_history(history)
- 
- 
+
+
 class PurchaseRequest(BaseModel):
     item_id: str
     format: str = "digital"     # HOOK AP6: wird noch nicht ausgewertet
     sprache: str = "en"
- 
- 
+
+
 class UnlockRequest(BaseModel):
     code: str
- 
- 
+
+
 def bereinige_history(history) -> list:
     """Nur user/assistant-Paare, nur Strings, gekappt. Der Client kann schicken, was er will."""
     if not isinstance(history, list):
@@ -168,8 +166,8 @@ def bereinige_history(history) -> list:
         if role in ("user", "assistant") and isinstance(content, str) and content.strip():
             out.append({"role": role, "content": content[:MAX_INPUT_CHARS]})
     return out[-MAX_HISTORY:]
- 
- 
+
+
 def ermittle_modus(body: dict) -> str:
     """Explizites Feld zuerst. Die alte Substring-Heuristik nur, wenn kein Feld da ist (Webhook-Kompatibilität)."""
     explicit = (body.get("modus") or body.get("mode") or "").strip().lower()
@@ -184,8 +182,8 @@ def ermittle_modus(body: dict) -> str:
         if "simple" in s or "soft" in s:
             return "simple"
     return "standard"
- 
- 
+
+
 # ==========================================
 # PERSISTENZ (unverändert, nur gegen Fehler abgesichert)
 # ==========================================
@@ -217,7 +215,7 @@ def speichere_dialog_anonym(input_type: str, modus: str, sprache: str, frage: st
             return
         except Exception as pg_err:
             log.warning("PostgreSQL Fehler, weiche auf SQLite aus: %s", pg_err)
- 
+
     try:
         conn = sqlite3.connect("dialogues.db")
         cur = conn.cursor()
@@ -237,8 +235,8 @@ def speichere_dialog_anonym(input_type: str, modus: str, sprache: str, frage: st
         conn.close()
     except Exception as sq_err:
         log.error("Konnte Dialog nicht speichern: %s", sq_err)
- 
- 
+
+
 def speichere_im_hintergrund(*args):
     """Fire-and-forget nach Stream-Ende; blockiert den Event-Loop nicht."""
     try:
@@ -246,16 +244,16 @@ def speichere_im_hintergrund(*args):
         loop.run_in_executor(None, speichere_dialog_anonym, *args)
     except RuntimeError:
         speichere_dialog_anonym(*args)
- 
- 
+
+
 # ==========================================
 # PIPELINE: EMBED -> RETRIEVE -> PROMPT
 # ==========================================
 async def embed_frage(text: str) -> list:
     res = await get_openai().embeddings.create(input=text, model="text-embedding-3-small")
     return res.data[0].embedding
- 
- 
+
+
 async def retrieve_kontext(vektor: list, sprache: str) -> str:
     index = get_index()
     # Pinecone-SDK ist synchron -> Threadpool, sonst steht der ganze Server für ~200 ms
@@ -278,8 +276,8 @@ async def retrieve_kontext(vektor: list, sprache: str) -> str:
         baustein.append(f"Inhalt: {text_chunk}")
         context_texte.append("\n".join(baustein))
     return "\n\n---\n\n".join(context_texte) if context_texte else "[KEINE DATEN GEFUNDEN]"
- 
- 
+
+
 KERN_REGELN = (
     "You are the Enzyklopedia, an advanced repository of physical and philosophical knowledge. "
     "Speak directly as the Enzyklopedia. Maintain a slightly enigmatic tone. "
@@ -322,8 +320,8 @@ STIL = {
     ),
     "standard": "Formulate your response in a warm, literary, and evocative style. Use elegant language that reads like a high-quality novel or literary essay, while remaining grounded in the retrieved facts.",
 }
- 
- 
+
+
 def baue_request(payload: PayloadData, kontext: str) -> dict:
     modus = payload.modus
     modell = {"hardcore": MODEL_HARDCORE, "simple": MODEL_SIMPLE}.get(modus, MODEL_STANDARD)
@@ -341,8 +339,8 @@ def baue_request(payload: PayloadData, kontext: str) -> dict:
         max_tokens=MAX_TOKENS[modus],
         extra_body=extra_body,
     )
- 
- 
+
+
 # ==========================================
 # <think>-FILTER FÜR STREAMS
 # R1 liefert Reasoning je nach Provider als delta.reasoning ODER als <think>…</think> im content.
@@ -350,17 +348,17 @@ def baue_request(payload: PayloadData, kontext: str) -> dict:
 # ==========================================
 class ThinkFilter:
     OPEN, CLOSE = "<think>", "</think>"
- 
+
     def __init__(self):
         self.buf = ""
         self.inside = False
- 
+
     def _tail_prefix(self, tag: str) -> int:
         for k in range(len(tag) - 1, 0, -1):
             if self.buf.endswith(tag[:k]):
                 return k
         return 0
- 
+
     def feed(self, chunk: str):
         self.buf += chunk
         visible, hidden = "", 0
@@ -386,13 +384,13 @@ class ThinkFilter:
                 self.buf = self.buf[i + len(self.OPEN):]
                 self.inside = True
         return visible, hidden
- 
+
     def flush(self) -> str:
         out = "" if self.inside else self.buf
         self.buf = ""
         return out
- 
- 
+
+
 # ==========================================
 # KERN: EVENT-GENERATOR (eine Pipeline für /ask, /ask/stream, /ask-voice, /ask-voice/stream)
 # Events: stage {stage}, reasoning {n}, token {t}, done {timing, model, cached, node}, error {code, message}
@@ -401,7 +399,7 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
     t0 = time.perf_counter()
     timing = {}
     ms = lambda: int((time.perf_counter() - t0) * 1000)
- 
+
     key = _cache_key(payload.text, payload.modus, sprache)
     if not payload.history:
         hit = cache_get(key)
@@ -410,20 +408,20 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
             yield ("token", {"t": antwort})
             yield ("done", {"cached": True, "model": modell, "node": NODE_NAME, "timing": {"total": ms()}})
             return
- 
+
     try:
         yield ("stage", {"stage": "embed"})
         vektor = await embed_frage(payload.text)
         timing["embed"] = ms()
- 
+
         yield ("stage", {"stage": "retrieve"})
         kontext = await retrieve_kontext(vektor, sprache)
         timing["retrieve"] = ms() - timing["embed"]
- 
+
         yield ("stage", {"stage": "generate"})
         req = baue_request(payload, kontext)
         stream = await get_openrouter().chat.completions.create(stream=True, **req)
- 
+
         tf = ThinkFilter()
         teile = []
         started = False
@@ -443,17 +441,17 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
             except StopAsyncIteration:
                 break
             next_task = asyncio.ensure_future(it.__anext__())
- 
+
             if getattr(chunk, "model", None):
                 modell_verwendet = chunk.model
             if not chunk.choices:
                 continue
             delta = chunk.choices[0].delta
- 
+
             reasoning = getattr(delta, "reasoning", None) or (getattr(delta, "model_extra", None) or {}).get("reasoning")
             if isinstance(reasoning, str) and reasoning:
                 hidden_total += len(reasoning)
- 
+
             content = getattr(delta, "content", None) or ""
             if content:
                 vis, hid = tf.feed(content)
@@ -467,12 +465,12 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
                         timing["ttft"] = ms()
                     teile.append(vis)
                     yield ("token", {"t": vis})
- 
+
             if not started and (hidden_total - hidden_sent >= 150 or time.perf_counter() - last_reasoning_evt > 1.5) and hidden_total:
                 hidden_sent = hidden_total
                 last_reasoning_evt = time.perf_counter()
                 yield ("reasoning", {"n": hidden_total})
- 
+
         rest = tf.flush()
         if rest:
             if not started:
@@ -483,7 +481,7 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
             if rest:
                 teile.append(rest)
                 yield ("token", {"t": rest})
- 
+
         antwort = "".join(teile).strip()
         timing["total"] = ms()
         if not antwort:
@@ -496,7 +494,7 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
             speichere_im_hintergrund(input_type, payload.modus, sprache, payload.text, antwort)
         log.info("ask modus=%s sprache=%s model=%s timing=%s", payload.modus, sprache, modell_verwendet, timing)
         yield ("done", {"cached": False, "model": modell_verwendet, "node": NODE_NAME, "timing": timing})
- 
+
     except Exception as e:
         log.error("Pipeline-Fehler: %s\n%s", e, traceback.format_exc())
         name = type(e).__name__
@@ -505,17 +503,17 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
         code = "llm_unavailable" if ("openai" in mod or "httpx" in mod) else "pipeline_error"
         detail = f"{name}" + (f" {status}" if status else "")
         yield ("error", {"code": code, "message": f"{detail}: the Enzyklopedia could not complete this request."})
- 
- 
+
+
 def sse(ev: str, data) -> str:
     if ev == "ping":
         return ": ping\n\n"
     return f"event: {ev}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
- 
- 
+
+
 SSE_HEADERS = {"Cache-Control": "no-cache", "X-Accel-Buffering": "no", "Connection": "keep-alive"}
- 
- 
+
+
 async def sammle_antwort(gen: AsyncIterator[tuple]) -> tuple:
     """Für die nicht-streamenden Alt-Endpoints: Generator durchlaufen, Text zusammensetzen."""
     teile, done, error = [], None, None
@@ -527,8 +525,8 @@ async def sammle_antwort(gen: AsyncIterator[tuple]) -> tuple:
         elif ev == "error":
             error = data
     return "".join(teile), done, error
- 
- 
+
+
 # ==========================================
 # ROUTEN
 # ==========================================
@@ -536,13 +534,13 @@ async def sammle_antwort(gen: AsyncIterator[tuple]) -> tuple:
 @app.get("/wakeup")
 async def wakeup():
     return PlainTextResponse(content="Ich bin wach!")
- 
- 
+
+
 @app.get("/health")
 async def health():
     return JSONResponse(content={"ok": True, "node": NODE_NAME, "llm": "ok" if OPENROUTER_API_KEY else "unconfigured", "cache": len(_cache)})
- 
- 
+
+
 @app.get("/dialogues")
 async def get_dialogues(limit: int = 50, x_admin_token: Optional[str] = Header(None)):
     """Nur mit ADMIN_TOKEN. Ohne konfigurierten Token existiert die Route nach außen nicht."""
@@ -577,8 +575,8 @@ async def get_dialogues(limit: int = 50, x_admin_token: Optional[str] = Header(N
         return JSONResponse(content={"source": "SQLite", "count": len(eintraege), "data": eintraege})
     except Exception as e:
         return JSONResponse(content={"error": str(e), "data": []})
- 
- 
+
+
 @app.post("/purchase")
 async def handle_purchase(req: PurchaseRequest):
     # HOOK AP6: Katalog + Format-Routing + Domain-Allowlist. Bis dahin: Mapping wie bisher.
@@ -590,8 +588,8 @@ async def handle_purchase(req: PurchaseRequest):
     if checkout_url:
         return JSONResponse(content={"status": "success", "redirect_url": checkout_url})
     return JSONResponse(content={"status": "error", "message": "> Error: Item node not found in index."}, status_code=404)
- 
- 
+
+
 @app.post("/unlock")
 async def unlock_promo(req: UnlockRequest):
     # HOOK AP6: gehashte Codes in DB, signierte https-Download-URLs. Das Frontend akzeptiert nur https.
@@ -603,8 +601,8 @@ async def unlock_promo(req: UnlockRequest):
             "download_url": "https://secure-node.open-book/full_editions.zip",
         })
     return JSONResponse(content={"status": "error", "message": "> Error: Connection to auth server refused. Invalid token."}, status_code=403)
- 
- 
+
+
 async def lese_ask_body(request: Request):
     try:
         body = await request.json()
@@ -618,23 +616,23 @@ async def lese_ask_body(request: Request):
     payload = PayloadData(text=raw_text.strip(), modus=ermittle_modus(body), history=body.get("history", []))
     sprache = body.get("sprache") if body.get("sprache") in ("en", "de", "ru") else "de"
     return payload, sprache, body
- 
- 
+
+
 @app.post("/ask/stream")
 async def ask_stream(request: Request):
     """SSE. Vertrag: Abschnitt 4 des Projektplans."""
     payload, sprache, _ = await lese_ask_body(request)
     if payload is None:
         return JSONResponse(content={"error": {"code": "empty", "message": "No query found."}}, status_code=400)
- 
+
     async def body():
         yield ": connected\n\n"
         async for ev, data in erzeuge_antwort(payload, sprache, "text"):
             yield sse(ev, data)
- 
+
     return StreamingResponse(body(), media_type="text/event-stream", headers=SSE_HEADERS)
- 
- 
+
+
 @app.post("/webhook")
 @app.post("/ask")
 async def ask_question(request: Request):
@@ -646,8 +644,8 @@ async def ask_question(request: Request):
     if error and not antwort:
         return JSONResponse(content={"error": error}, status_code=502 if error["code"] == "llm_unavailable" else 500)
     return PlainTextResponse(content=antwort)
- 
- 
+
+
 async def transkribiere(audio: UploadFile) -> str:
     audio_bytes = await audio.read()
     audio_file = BytesIO(audio_bytes)
@@ -657,8 +655,8 @@ async def transkribiere(audio: UploadFile) -> str:
         model="whisper-1", file=audio_file, prompt="Hallo. Hello. Здравствуйте."
     )
     return (transcription.text or "").strip()
- 
- 
+
+
 @app.post("/ask-voice/stream")
 async def ask_voice_stream(
     audio: UploadFile = File(...),
@@ -673,7 +671,7 @@ async def ask_voice_stream(
     except Exception:
         parsed_history = []
     sprache = sprache if sprache in ("en", "de", "ru") else "de"
- 
+
     async def body():
         yield ": connected\n\n"
         yield sse("stage", {"stage": "stt"})
@@ -691,10 +689,10 @@ async def ask_voice_stream(
         payload = PayloadData(text=text, modus=modus.lower(), history=parsed_history)
         async for ev, data in erzeuge_antwort(payload, sprache, "voice"):
             yield sse(ev, data)
- 
+
     return StreamingResponse(body(), media_type="text/event-stream", headers=SSE_HEADERS)
- 
- 
+
+
 @app.post("/ask-voice")
 async def ask_voice(
     audio: UploadFile = File(...),
@@ -721,8 +719,3 @@ async def ask_voice(
     if error and not antwort:
         return JSONResponse(content={"transcription": text, "error": error}, status_code=502)
     return JSONResponse(content={"transcription": text, "antwort": antwort})
- 
-
-
-
-
