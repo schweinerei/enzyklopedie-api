@@ -42,7 +42,12 @@ HARDCORE_REASONING_EFFORT = os.environ.get("HARDCORE_REASONING_EFFORT", "")
 
 MAX_HISTORY = int(os.environ.get("MAX_HISTORY", "12"))
 MAX_INPUT_CHARS = int(os.environ.get("MAX_INPUT_CHARS", "4000"))
-MAX_TOKENS = {"standard": 1500, "simple": 700, "hardcore": 3000}
+# Hardcore hoch, weil bei Reasoning-Modellen (R1) die Denk-Tokens mitzählen; sonst kommt die Antwort abgeschnitten oder leer
+MAX_TOKENS = {
+    "standard": int(os.environ.get("MAX_TOKENS_STANDARD", "1500")),
+    "simple": int(os.environ.get("MAX_TOKENS_SIMPLE", "700")),
+    "hardcore": int(os.environ.get("MAX_TOKENS_HARDCORE", "8000")),
+}
 CACHE_TTL = int(os.environ.get("CACHE_TTL", str(7 * 24 * 3600)))
 CACHE_SIZE = int(os.environ.get("CACHE_SIZE", "500"))
 RETRIEVAL_TOP_K = int(os.environ.get("RETRIEVAL_TOP_K", "6"))
@@ -423,15 +428,19 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
         hidden_total, hidden_sent, last_reasoning_evt = 0, 0, time.perf_counter()
         modell_verwendet = req["model"]
         it = stream.__aiter__()
-
+        # Kein asyncio.wait_for: das würde die laufende Lese-Operation beim Timeout abbrechen und den Stream zerstören.
+        # Stattdessen die nächste Iteration als Task laufen lassen und nur darauf warten.
+        next_task = asyncio.ensure_future(it.__anext__())
         while True:
-            try:
-                chunk = await asyncio.wait_for(it.__anext__(), timeout=10.0)
-            except StopAsyncIteration:
-                break
-            except asyncio.TimeoutError:
+            done_set, _ = await asyncio.wait({next_task}, timeout=10.0)
+            if not done_set:
                 yield ("ping", None)     # hält Proxy-Verbindung offen, während das Modell noch denkt
                 continue
+            try:
+                chunk = next_task.result()
+            except StopAsyncIteration:
+                break
+            next_task = asyncio.ensure_future(it.__anext__())
 
             if getattr(chunk, "model", None):
                 modell_verwendet = chunk.model
@@ -475,6 +484,10 @@ async def erzeuge_antwort(payload: PayloadData, sprache: str, input_type: str = 
 
         antwort = "".join(teile).strip()
         timing["total"] = ms()
+        if not antwort:
+            log.warning("Leere Antwort modus=%s model=%s hidden=%s timing=%s", payload.modus, modell_verwendet, hidden_total, timing)
+            yield ("error", {"code": "empty_answer", "message": "The model returned no visible text (token limit or reasoning-only)."})
+            return
         if antwort:
             if not payload.history:
                 cache_set(key, antwort, modell_verwendet)
