@@ -560,6 +560,22 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             </div>
         </div>
 
+        <!-- AP2: SESSION-SCHLUESSEL -->
+        <div style="margin-bottom: 25px; border: 1px solid var(--term-border); border-radius: 4px; padding: 12px;">
+            <div style="font-size: 14px; color: var(--term-accent); text-transform: lowercase; margin-bottom: 8px;" data-i18n="session_key_label">> dein schlüssel</div>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">
+                <code id="session-key-display" style="flex: 1; font-size: 14px; letter-spacing: 1px; word-break: break-all;">----</code>
+                <button id="session-key-copy" class="action-btn" style="padding: 4px 10px; font-size: 12px; height: auto;" data-i18n="session_key_copy">KOPIEREN</button>
+            </div>
+            <div style="font-size: 12px; color: #ccc; margin-bottom: 8px;" data-i18n="session_claim_label">> schlüssel auf diesem gerät eingeben</div>
+            <div style="display: flex; gap: 8px;">
+                <input id="session-claim-input" type="text" maxlength="34" placeholder="0123-4567-89AB-CDEF-GHJK-MNPQ-RS"
+                       style="flex: 1; background: var(--term-bg); color: #fff; border: 1px solid var(--term-border); border-radius: 4px; padding: 6px 10px; font-family: var(--font-mono); font-size: 13px;">
+                <button id="session-claim-btn" class="action-btn" style="padding: 4px 10px; font-size: 12px; height: auto;" data-i18n="session_claim_btn">ÜBERNEHMEN</button>
+            </div>
+            <div id="session-claim-status" style="font-size: 12px; color: #dc3545; margin-top: 6px;"></div>
+        </div>
+
         <!-- OS FULLSCREEN -->
         <div class="fullscreen-wrapper" style="margin-bottom: 25px;">
             <button id="os-fullscreen-btn" class="action-btn" style="width: 100%; font-size: 15px; border-color: var(--term-accent);">[ ENTER FULLSCREEN ]</button>
@@ -843,7 +859,18 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_intensity: "INTENSITY",
             settings_speed: "SPEED",
             settings_battery: "> battery impact",
-            
+            session_key_label: "> your key",
+            session_key_copy: "COPY",
+            session_key_copied: "copied.",
+            session_claim_label: "> enter key on this device",
+            session_claim_btn: "APPLY",
+            session_claim_confirm: "Current session will be replaced. Continue?",
+            session_claim_success: "session applied.",
+            session_claim_bad_format: "invalid key format.",
+            session_claim_not_found: "key not found.",
+            session_claim_rate_limited: "too many attempts, try again in a minute.",
+            session_claim_error: "could not reach server.",
+
             audio_header: ">_ play audio.sh",
             audio_loaded: "> loaded: ",
             audio_play: "PLAY",
@@ -940,7 +967,18 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_intensity: "INTENSITÄT",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
-            
+            session_key_label: "> dein schlüssel",
+            session_key_copy: "KOPIEREN",
+            session_key_copied: "kopiert.",
+            session_claim_label: "> schlüssel auf diesem gerät eingeben",
+            session_claim_btn: "ÜBERNEHMEN",
+            session_claim_confirm: "Aktuelle Sitzung wird ersetzt. Fortfahren?",
+            session_claim_success: "sitzung übernommen.",
+            session_claim_bad_format: "ungültiges schlüsselformat.",
+            session_claim_not_found: "schlüssel nicht gefunden.",
+            session_claim_rate_limited: "zu viele versuche, in einer minute erneut probieren.",
+            session_claim_error: "server nicht erreichbar.",
+
             audio_header: ">_ play audio.sh",
             audio_loaded: "> geladen: ",
             audio_play: "PLAY",
@@ -1037,7 +1075,18 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             settings_speed: "СКОРОСТЬ",
             settings_battery: "> расход батареи",
-            
+            session_key_label: "> твой ключ",
+            session_key_copy: "КОПИРОВАТЬ",
+            session_key_copied: "скопировано.",
+            session_claim_label: "> введи ключ на этом устройстве",
+            session_claim_btn: "ПРИМЕНИТЬ",
+            session_claim_confirm: "Текущая сессия будет заменена. Продолжить?",
+            session_claim_success: "сессия применена.",
+            session_claim_bad_format: "неверный формат ключа.",
+            session_claim_not_found: "ключ не найден.",
+            session_claim_rate_limited: "слишком много попыток, повтори через минуту.",
+            session_claim_error: "сервер недоступен.",
+
             audio_header: ">_ play audio.sh",
             audio_loaded: "> загружено: ",
             audio_play: "PLAY",
@@ -1105,8 +1154,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             log: null,                // F1/AP5: /v1/log existiert noch nicht -> Gästebuch bleibt [OFFLINE]
             votes: null,              // HOOK AP5: "/v1/votes"
             samples: null,            // HOOK AP6: "/v1/store/samples"
-            session: null             // HOOK AP2: "/v1/session"
+            session: "/v1/session"    // AP2
         };
+        // AP2: Session-ID lokal gespiegelt (Cookie ist HttpOnly, JS kann ihn nicht lesen), damit
+        // X-Session als Fallback mitgeschickt werden kann, wenn der Browser den Cookie verliert (Safari).
+        function getStoredSessionId() { return localStorage.getItem('session_id') || ''; }
+        function setStoredSessionId(id) { if (id) { try { localStorage.setItem('session_id', id); } catch (e) {} } }
         // Systemmeldungen (Offline-Badge, Stages, Timing) sind standardmäßig aus.
         // Zum Messen im Browser: localStorage.setItem('show_diagnostics','1') und neu laden.
         const SHOW_DIAGNOSTICS = localStorage.getItem('show_diagnostics') === '1';
@@ -1121,13 +1174,16 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             document.getElementById('window-guestbook').classList.toggle('is-offline', off || !ENDPOINTS.log);
         }
 
-        // Alle Backend-Aufrufe laufen hier durch. HOOK AP2: credentials:'include' ergänzen, sobald das Backend
-        // Access-Control-Allow-Credentials setzt (Session-Cookie). Vorher würde CORS mit '*' brechen.
+        // Alle Backend-Aufrufe laufen hier durch. AP2: credentials:'include' sendet den Session-Cookie,
+        // X-Session ist der Fallback aus localStorage, falls der Browser den Cookie verloren hat.
         async function api(path, opts = {}, timeoutMs = 60000) {
             const ctrl = new AbortController();
             const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+            const headers = { ...(opts.headers || {}) };
+            const sid = getStoredSessionId();
+            if (sid) headers['X-Session'] = sid;
             try {
-                const res = await fetch(API_BASE_URL + path, { ...opts, signal: ctrl.signal });
+                const res = await fetch(API_BASE_URL + path, { ...opts, headers, credentials: 'include', signal: ctrl.signal });
                 apiEverOk = true;
                 if (apiOnline !== true) setOffline(false);
                 return res;
@@ -2996,6 +3052,15 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // State-Blob nach Schnittstellenvertrag (Abschnitt 4). Heute localStorage, später PUT /v1/session/state.
         // ==========================================
         let persistTimer = null;
+        // AP2-Migration: bestehende Vote-Flags (localStorage has_voted_<item>) gehören laut Vertrag in den State-Blob.
+        function collectVotes() {
+            const votes = {};
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('has_voted_')) votes[k.slice('has_voted_'.length)] = localStorage.getItem(k) === 'true';
+            }
+            return votes;
+        }
         function collectState() {
             const win = {};
             document.querySelectorAll('.script-window').forEach(w => { win[w.id.replace('window-', '')] = w.classList.contains('minimized') ? 'min' : 'open'; });
@@ -3008,7 +3073,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                          pos: (!isRadioActive && isFinite(audioPlayer.currentTime)) ? audioPlayer.currentTime : 0, radio: isRadioActive },
                 windows: win,
                 chat_mode: aktuellerModus,
-                throne: throne
+                throne: throne,
+                votes: collectVotes()
             };
         }
         function persistState() {
@@ -3021,6 +3087,71 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }, 2000);
         }
         function loadState() { try { return JSON.parse(localStorage.getItem('obs_state') || 'null'); } catch (e) { return null; } }
+
+        // AP2: Werte werden nur gecastet (Zahl/Enum/Array), nie als innerHTML oder Selector-String verwendet.
+        function applyShaderState(sh) {
+            if (!sh || typeof sh !== 'object') return;
+            const wantAdvanced = sh.mode === 'advanced';
+            if (wantAdvanced !== isAdvancedMode) {
+                isAdvancedMode = wantAdvanced;
+                localStorage.setItem('adv_mode', isAdvancedMode);
+                toggleAdvancedUI();
+            }
+            const active = parseInt(sh.active, 10);
+            if (Number.isInteger(active) && active >= 0 && active <= 3) setShader(active);
+            if (typeof sh.brightness === 'number' && isFinite(sh.brightness)) {
+                currentBrightness = sh.brightness;
+                localStorage.setItem('shader_brightness', currentBrightness);
+                const el = document.getElementById('shader-brightness'); if (el) el.value = currentBrightness;
+            }
+            if (typeof sh.speed === 'number' && isFinite(sh.speed)) {
+                currentSpeed = sh.speed;
+                localStorage.setItem('shader_speed', currentSpeed);
+                const el = document.getElementById('shader-speed'); if (el) el.value = currentSpeed;
+            }
+            if (sh.adv && typeof sh.adv === 'object') {
+                const fields = { intensity: ['int', advIntensity], speed: ['spd', advSpeed], hue: ['hue', advHue] };
+                Object.entries(fields).forEach(([key, [nodeKey, target]]) => {
+                    const arr = sh.adv[key];
+                    if (!Array.isArray(arr)) return;
+                    for (let i = 1; i <= 3; i++) {
+                        const v = parseFloat(arr[i]);
+                        if (!isFinite(v)) continue;
+                        target[i] = v;
+                        localStorage.setItem(`adv_${key}_${i}`, v);
+                        const node = sliderNodes[nodeKey][i]; if (node) node.value = v;
+                    }
+                });
+                if (typeof sh.adv.trace === 'number' && isFinite(sh.adv.trace)) {
+                    advTrace = sh.adv.trace;
+                    localStorage.setItem('adv_trace', advTrace);
+                    if (traceSlider) traceSlider.value = advTrace;
+                }
+                if (typeof sh.adv.auto === 'string' && ['off', 'standard', 'hardcore', 'simple'].includes(sh.adv.auto)) {
+                    currentAutoMode = sh.adv.auto;
+                    localStorage.setItem('adv_auto_mode', currentAutoMode);
+                    updateAutoUI();
+                }
+            }
+        }
+
+        // Aus dem BOOT-Block gezogen (dort bisher nur für den lokalen Cache), damit dieselbe Logik
+        // auch nach einem Remote-State (Cookie/localStorage verloren, Key eingegeben) greift.
+        function restoreAudioFromState(a) {
+            if (!a || typeof a !== 'object' || !a.file || a.radio) return;
+            const aLang = (typeof a.lang === 'string' && i18n[a.lang]) ? a.lang : 'en';
+            document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-alang') === aLang));
+            aktuelleAudioSprache = aLang;
+            const file = String(a.file); const pos = Number(a.pos) || 0;
+            audioPlayer.src = file; audioPlayer.setAttribute('data-last-played', file);
+            audioFilename.innerText = file.split('/').pop();
+            audioPlayer.addEventListener('loadedmetadata', () => {
+                if (pos > 0 && pos < audioPlayer.duration) { audioPlayer.currentTime = pos; }
+                audioProgress.value = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
+                audioTimeText.innerText = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+            }, { once: true });
+        }
+
         function applyState(st) {
             if (!st) return;
             if (st.lang && i18n[st.lang]) changeLanguage(st.lang);
@@ -3029,8 +3160,75 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             if (window.innerWidth > 768 && st.windows) {
                 Object.entries(st.windows).forEach(([k, v]) => { const w = document.getElementById('window-' + k); if (w) w.classList.toggle('minimized', v !== 'open'); });
             }
-            // HOOK AP2/AP7b: st.shader und st.audio vom Server in die lokalen Variablen übernehmen.
-            // Lokal werden Shader-Werte bereits über die bestehenden localStorage-Keys wiederhergestellt.
+            if (st.shader) applyShaderState(st.shader);
+            if (st.audio) restoreAudioFromState(st.audio);
+            if (st.votes && typeof st.votes === 'object') {
+                Object.entries(st.votes).forEach(([id, mine]) => {
+                    if (/^[a-zA-Z0-9_-]{1,40}$/.test(id)) localStorage.setItem('has_voted_' + id, mine === true);
+                });
+            }
+        }
+
+        // ==========================================
+        // AP2: Settings-Fenster - Schlüsselanzeige (Vierergruppen) + Geräte-Claim
+        // ==========================================
+        function formatKeyGroups(id) {
+            return String(id || '').toUpperCase().replace(/(.{4})(?=.)/g, '$1-');
+        }
+        function renderSessionKey(id) {
+            const el = document.getElementById('session-key-display');
+            if (el) el.textContent = id ? formatKeyGroups(id) : '----';
+        }
+        function initSessionKeyUI() {
+            const copyBtn = document.getElementById('session-key-copy');
+            const claimBtn = document.getElementById('session-claim-btn');
+            const input = document.getElementById('session-claim-input');
+            const status = document.getElementById('session-claim-status');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', async () => {
+                    const id = getStoredSessionId();
+                    if (!id) return;
+                    try {
+                        await navigator.clipboard.writeText(id);
+                    } catch (e) {
+                        const ta = document.createElement('textarea');
+                        ta.value = id; document.body.appendChild(ta); ta.select();
+                        try { document.execCommand('copy'); } catch (e2) {}
+                        document.body.removeChild(ta);
+                    }
+                    if (status) {
+                        status.style.color = '#28a745';
+                        status.textContent = t('session_key_copied');
+                        setTimeout(() => { status.textContent = ''; }, 2500);
+                    }
+                });
+            }
+            if (claimBtn && input) {
+                claimBtn.addEventListener('click', async () => {
+                    const raw = (input.value || '').replace(/[^0-9A-Za-z]/g, '').toUpperCase();
+                    if (status) status.style.color = '#dc3545';
+                    if (!/^[0-9A-HJKMNP-TV-Z]{26}$/.test(raw)) { if (status) status.textContent = t('session_claim_bad_format'); return; }
+                    if (!confirm(t('session_claim_confirm'))) return;
+                    if (!ENDPOINTS.session) { if (status) status.textContent = t('session_claim_error'); return; }
+                    try {
+                        const r = await api(ENDPOINTS.session + '/claim', {
+                            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: raw })
+                        }, 10000);
+                        if (r.status === 429) { if (status) status.textContent = t('session_claim_rate_limited'); return; }
+                        if (r.status === 404) { if (status) status.textContent = t('session_claim_not_found'); return; }
+                        if (!r.ok) { if (status) status.textContent = t('session_claim_error'); return; }
+                        const sess = await r.json();
+                        setStoredSessionId(sess.id);
+                        renderSessionKey(sess.id);
+                        localStorage.setItem('session_state_migrated', '1');
+                        if (sess.state) applyState(sess.state);
+                        if (status) { status.style.color = '#28a745'; status.textContent = t('session_claim_success'); }
+                        input.value = '';
+                    } catch (e) {
+                        if (status) status.textContent = t('session_claim_error');
+                    }
+                });
+            }
         }
 
         // ==========================================
@@ -3048,19 +3246,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         restoreChat();
 
         // Audio dort weiter, wo aufgehört wurde (kein Autoplay, Browser-Policy)
-        if (saved && saved.audio && saved.audio.file && !saved.audio.radio) {
-            const aLang = saved.audio.lang || 'en';
-            document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-alang') === aLang));
-            aktuelleAudioSprache = aLang;
-            const file = String(saved.audio.file); const pos = Number(saved.audio.pos) || 0;
-            audioPlayer.src = file; audioPlayer.setAttribute('data-last-played', file);
-            audioFilename.innerText = file.split('/').pop();
-            audioPlayer.addEventListener('loadedmetadata', () => {
-                if (pos > 0 && pos < audioPlayer.duration) { audioPlayer.currentTime = pos; }
-                audioProgress.value = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
-                audioTimeText.innerText = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
-            }, { once: true });
-        }
+        if (saved) restoreAudioFromState(saved.audio);
+
+        // AP2: Schlüsselanzeige/Claim sofort mit dem gecachten Wert füllen, Remote-Update folgt unten.
+        initSessionKeyUI();
+        renderSessionKey(getStoredSessionId());
 
         // Zustand sichern: Regler, Buttons, Audio
         document.addEventListener('input', (e) => { if (e.target && e.target.matches('input[type=range]')) persistState(); });
@@ -3082,8 +3272,23 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             gbLoad();
             loadVotesRemote();
             if (ENDPOINTS.samples) { try { const r = await api(ENDPOINTS.samples, {}, 10000); if (r.ok) applySamples(await r.json()); } catch (e) {} }
-            // HOOK AP2: GET /v1/session -> State vom Server anwenden
-            if (ENDPOINTS.session) { try { const r = await api(ENDPOINTS.session, {}, 10000); if (r.ok) { const sess = await r.json(); if (sess && sess.state) applyState(sess.state); } } catch (e) {} }
+            // AP2: GET /v1/session -> Server-State anwenden, oder beim allerersten Mal (leerer State)
+            // die vorhandenen localStorage-Werte einmalig in den State-Blob migrieren.
+            if (ENDPOINTS.session) {
+                try {
+                    const r = await api(ENDPOINTS.session, {}, 10000);
+                    if (r.ok) {
+                        const sess = await r.json();
+                        if (sess && typeof sess.id === 'string') { setStoredSessionId(sess.id); renderSessionKey(sess.id); }
+                        if (sess && sess.state && Object.keys(sess.state).length > 0) {
+                            applyState(sess.state);
+                        } else if (sess && !localStorage.getItem('session_state_migrated')) {
+                            localStorage.setItem('session_state_migrated', '1');
+                            persistState();
+                        }
+                    }
+                } catch (e) {}
+            }
         })();
         setInterval(() => { if (apiOnline === false) checkApiHealth().then(n => { if (n) zeigeStatus(''); }); }, 300000);
     });
