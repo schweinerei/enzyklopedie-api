@@ -842,6 +842,14 @@ LUECKEN_REGEL = (
     "address the user's question (wrong topic, unrelated passage, or marked [KEINE DATEN GEFUNDEN]), say so "
     "plainly in character as the Enzyklopedia instead of inventing an answer from general knowledge."
 )
+# 2026-09-21 Rico-Befund: seit Etappe 1 enden die Antworten nicht mehr mit einem Gespraechsimpuls. Vorher war das
+# emergentes Modellverhalten (keine Regel im Prompt); die neue GAP RULE macht das Modell knapper. Deshalb jetzt explizit.
+ABSCHLUSS_REGEL = (
+    "CLOSING RULE: End every answer with exactly one short, in-character impulse that invites the user to continue: "
+    "a pointed question, an offer to go deeper into one specific aspect, or a hint at a related thread from the CONTEXT. "
+    "One sentence, in the user's language, no generic phrases like 'let me know if you have questions'. "
+    "This rule does not apply to the spam reply."
+)
 STIL = {
     "hardcore": "Provide maximum scientific, philosophical, and technical depth. Use highly advanced academic terminology, complex theoretical frameworks, and deeply analytical reasoning. Elaborate extensively on the underlying mechanisms, formulas, and theories, assuming an expert-level interlocutor. Structure your response meticulously using clear headings, bullet points, and numbered lists to organize complex information logically. Avoid unbroken walls of text.",
     "simple": (
@@ -867,7 +875,7 @@ def baue_request(payload: PayloadData, kontext: str) -> dict:
             f"Prefer context marked [CURRENT CHAPTER]. Do not reveal events from later chapters unless the user explicitly asks for spoilers."
         )
     system_prompt = (
-        f"{KERN_REGELN}\n{SPRACH_REGEL}\n{SPAM_REGEL}\n{HAERTUNG_REGEL}\n{QUELLEN_REGEL}\n{LUECKEN_REGEL}\n{STIL[modus]}{pos_regel}\n\n"
+        f"{KERN_REGELN}\n{SPRACH_REGEL}\n{SPAM_REGEL}\n{HAERTUNG_REGEL}\n{QUELLEN_REGEL}\n{LUECKEN_REGEL}\n{ABSCHLUSS_REGEL}\n{STIL[modus]}{pos_regel}\n\n"
         f"Use the following retrieved context to inform your answer:\n\n--- CONTEXT ---\n{kontext}\n--- END CONTEXT ---"
     )
     extra_body = {"models": [modell, MODEL_FALLBACK]}
