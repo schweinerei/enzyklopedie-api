@@ -1420,6 +1420,223 @@ async def log_moderate(entry_id: int, request: Request, x_admin_token: Optional[
     return JSONResponse(content={"id": entry_id, "status": status})
 
 
+# ==========================================
+# JOB-20260921-20 (AP2 – Session-Modell). Vertrag: Projektplan Abschnitt 4 + AP2.
+# Session-ID ist eine ULID (26 Zeichen Crockford-Base32, 48 Bit Zeit + 80 Bit Zufall).
+# Entscheidung: selbst erzeugt statt python-ulid als neue Abhängigkeit, weil die Erzeugung
+# ~10 Zeilen sind, keine Fremdversion zu pflegen ist und wir sowieso reines Python/psycopg2/
+# sqlite3 ohne Zusatzpakete für Kernlogik einsetzen (siehe requirements.txt: einzige neue
+# Zeile bleibt psycopg2-binary, das war schon vorher da).
+# ==========================================
+_CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+_ULID_RE = re.compile(r"^[0-9A-HJKMNP-TV-Z]{26}$")
+_SESSION_COOKIE = "sid"
+SESSION_MAX_AGE = 400 * 24 * 3600   # 400 Tage, siehe Projektplan Abschnitt 4
+SESSION_STATE_MAX_BYTES = 32 * 1024
+_session_last_seen_write: dict = {}   # sid -> Unix-Zeit der letzten last_seen-Schreibung (max 1x/Minute)
+
+
+def new_ulid() -> str:
+    ts_ms = int(time.time() * 1000) & ((1 << 48) - 1)
+    rand = secrets.randbits(80)
+    value = (ts_ms << 80) | rand
+    chars = []
+    for _ in range(26):
+        value, rem = divmod(value, 32)
+        chars.append(_CROCKFORD[rem])
+    return "".join(reversed(chars))
+
+
+def is_valid_ulid(s) -> bool:
+    return bool(isinstance(s, str) and _ULID_RE.match(s.upper()))
+
+
+def _ensure_sessions(cur, ph):
+    if ph == "?":
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                id TEXT PRIMARY KEY,
+                created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                state TEXT NOT NULL DEFAULT '{}',
+                rev INTEGER NOT NULL DEFAULT 0
+            );
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT NOT NULL REFERENCES sessions(id),
+                role TEXT NOT NULL,
+                text TEXT NOT NULL,
+                ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+    else:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                id VARCHAR(26) PRIMARY KEY,
+                created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                state JSONB NOT NULL DEFAULT '{}'::jsonb,
+                rev INTEGER NOT NULL DEFAULT 0
+            );
+        """)
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS messages (
+                id SERIAL PRIMARY KEY,
+                session_id VARCHAR(26) NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+                role VARCHAR(20) NOT NULL,
+                text TEXT NOT NULL,
+                ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        """)
+    cur.execute("CREATE INDEX IF NOT EXISTS ix_sessions_last_seen ON sessions (last_seen);")
+    cur.execute("CREATE INDEX IF NOT EXISTS ix_messages_session ON messages (session_id);")
+
+
+def _session_state_from_row(raw) -> dict:
+    if isinstance(raw, dict):
+        return raw
+    try:
+        return json.loads(raw) if raw else {}
+    except Exception:
+        return {}
+
+
+def _row_to_session(row) -> dict:
+    sid, created, last_seen, state_raw, rev = row
+    return {
+        "id": sid,
+        "created": created.isoformat() if hasattr(created, "isoformat") else str(created),
+        "last_seen": last_seen.isoformat() if hasattr(last_seen, "isoformat") else str(last_seen),
+        "state": _session_state_from_row(state_raw),
+        "chat": [],   # Messages-Tabelle existiert (Schema AP2); Befüllung/Auslieferung folgt mit dem session-bewussten Chat-Endpoint.
+        "rev": rev,
+    }
+
+
+def get_or_create_session(sid: str) -> dict:
+    """Lädt eine Session, legt sie bei Bedarf an. last_seen wird höchstens 1x/Minute geschrieben."""
+    conn, ph = _db()
+    try:
+        cur = conn.cursor()
+        _ensure_sessions(cur, ph)
+        cur.execute(f"SELECT id, created, last_seen, state, rev FROM sessions WHERE id = {ph};", (sid,))
+        row = cur.fetchone()
+        now = time.time()
+        if row is None:
+            empty_state = "{}" if ph == "?" else "{}"
+            cast = "::jsonb" if ph != "?" else ""
+            cur.execute(f"INSERT INTO sessions (id, state) VALUES ({ph}, {ph}{cast});", (sid, empty_state))
+            conn.commit()
+            cur.execute(f"SELECT id, created, last_seen, state, rev FROM sessions WHERE id = {ph};", (sid,))
+            row = cur.fetchone()
+            _session_last_seen_write[sid] = now
+        elif now - _session_last_seen_write.get(sid, 0) >= 60:
+            cur.execute(f"UPDATE sessions SET last_seen = CURRENT_TIMESTAMP WHERE id = {ph};", (sid,))
+            conn.commit()
+            _session_last_seen_write[sid] = now
+        return _row_to_session(row)
+    finally:
+        conn.close()
+
+
+def get_session(request: Request):
+    """Cookie sid bevorzugt, sonst Header X-Session, sonst neue ULID.
+    Rückgabe: (Session-Objekt, sid-für-neues-Cookie-oder-None)."""
+    sid = request.cookies.get(_SESSION_COOKIE)
+    need_cookie = False
+    if not sid or not is_valid_ulid(sid):
+        header_sid = request.headers.get("x-session")
+        if header_sid and is_valid_ulid(header_sid):
+            sid = header_sid.upper()
+        else:
+            sid = new_ulid()
+        need_cookie = True
+    session = get_or_create_session(sid)
+    return session, (sid if need_cookie else None)
+
+
+def set_session_cookie(response, sid: str):
+    response.set_cookie(
+        key=_SESSION_COOKIE, value=sid, max_age=SESSION_MAX_AGE,
+        httponly=True, secure=True, samesite="lax", path="/",
+    )
+
+
+def apply_session_cookie(response, new_sid: Optional[str]):
+    if new_sid:
+        set_session_cookie(response, new_sid)
+
+
+@app.get("/v1/session")
+async def session_get(request: Request):
+    session, new_sid = get_session(request)
+    resp = JSONResponse(content=session)
+    apply_session_cookie(resp, new_sid)
+    return resp
+
+
+@app.put("/v1/session/state")
+async def session_put_state(request: Request):
+    try:
+        body = await request.json()
+    except Exception:
+        body = None
+    if not isinstance(body, dict) or not isinstance(body.get("state"), dict):
+        return JSONResponse(content={"error": {"code": "bad_request", "message": "Body must be {\"state\": object}."}},
+                            status_code=400)
+    raw = json.dumps(body["state"], ensure_ascii=False)
+    if len(raw.encode("utf-8")) > SESSION_STATE_MAX_BYTES:
+        return JSONResponse(content={"error": {"code": "too_large", "message": "State exceeds 32 KB."}}, status_code=400)
+    session, new_sid = get_session(request)
+    conn, ph = _db()
+    try:
+        cur = conn.cursor()
+        _ensure_sessions(cur, ph)
+        if ph == "?":
+            cur.execute("UPDATE sessions SET state = ?, rev = rev + 1 WHERE id = ?;", (raw, session["id"]))
+            conn.commit()
+            cur.execute("SELECT rev FROM sessions WHERE id = ?;", (session["id"],))
+        else:
+            cur.execute("UPDATE sessions SET state = %s::jsonb, rev = rev + 1 WHERE id = %s;", (raw, session["id"]))
+            conn.commit()
+            cur.execute("SELECT rev FROM sessions WHERE id = %s;", (session["id"],))
+        rev = cur.fetchone()[0]
+    finally:
+        conn.close()
+    resp = JSONResponse(content={"rev": rev})
+    apply_session_cookie(resp, new_sid)
+    return resp
+
+
+@app.post("/v1/session/claim")
+async def session_claim(request: Request):
+    """Key auf neuem Gerät eingeben: Session muss existieren, Cookie wird neu gesetzt. Rate-Limit 5/min/IP."""
+    if (rl := rate_limited(request, "session_claim", 5)):
+        return rl
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    key = str((body or {}).get("key") or "").strip().upper()
+    if not is_valid_ulid(key):
+        return JSONResponse(content={"error": {"code": "bad_key", "message": "Invalid session key."}}, status_code=400)
+    conn, ph = _db()
+    try:
+        cur = conn.cursor()
+        _ensure_sessions(cur, ph)
+        cur.execute(f"SELECT id, created, last_seen, state, rev FROM sessions WHERE id = {ph};", (key,))
+        row = cur.fetchone()
+    finally:
+        conn.close()
+    if row is None:
+        return JSONResponse(content={"error": {"code": "not_found", "message": "Session key not found."}}, status_code=404)
+    resp = JSONResponse(content=_row_to_session(row))
+    set_session_cookie(resp, key)
+    return resp
+
+
 async def lese_ask_body(request: Request):
     try:
         body = await request.json()
@@ -1429,11 +1646,13 @@ async def lese_ask_body(request: Request):
         body = {}
     raw_text = body.get("text") or body.get("frage") or body.get("query") or body.get("message") or body.get("question")
     if not isinstance(raw_text, str) or not raw_text.strip():
-        return None, None, None
+        return None, None, None, None
+    session, new_sid = get_session(request)
+    conversation_id = body.get("conversation_id") or session["id"]   # AP2: /ask kennt jetzt die Session
     payload = PayloadData(text=raw_text.strip(), modus=ermittle_modus(body), history=body.get("history", []),
-                          position=body.get("position"), conversation_id=body.get("conversation_id"))
+                          position=body.get("position"), conversation_id=conversation_id)
     sprache = body.get("sprache") if body.get("sprache") in ("en", "de", "ru") else "de"
-    return payload, sprache, body
+    return payload, sprache, body, new_sid
 
 
 @app.post("/ask/stream")
@@ -1441,7 +1660,7 @@ async def ask_stream(request: Request):
     """SSE. Vertrag: Abschnitt 4 des Projektplans."""
     if (rl := rate_limited(request, "chat", 10)):
         return rl
-    payload, sprache, _ = await lese_ask_body(request)
+    payload, sprache, _, new_sid = await lese_ask_body(request)
     if payload is None:
         return JSONResponse(content={"error": {"code": "empty", "message": "No query found."}}, status_code=400)
 
@@ -1450,7 +1669,9 @@ async def ask_stream(request: Request):
         async for ev, data in erzeuge_antwort(payload, sprache, "text"):
             yield sse(ev, data)
 
-    return StreamingResponse(body(), media_type="text/event-stream", headers=SSE_HEADERS)
+    resp = StreamingResponse(body(), media_type="text/event-stream", headers=SSE_HEADERS)
+    apply_session_cookie(resp, new_sid)
+    return resp
 
 
 @app.post("/webhook")
@@ -1459,13 +1680,16 @@ async def ask_question(request: Request):
     """Alt-Endpoint, unverändertes Format (Plaintext). Läuft über dieselbe Pipeline."""
     if (rl := rate_limited(request, "chat", 10)):
         return rl
-    payload, sprache, _ = await lese_ask_body(request)
+    payload, sprache, _, new_sid = await lese_ask_body(request)
     if payload is None:
         return PlainTextResponse(content="FEHLER: Keine Suchanfrage gefunden.", status_code=400)
     antwort, done, error = await sammle_antwort(erzeuge_antwort(payload, sprache, "text"))
     if error and not antwort:
-        return JSONResponse(content={"error": error}, status_code=502 if error["code"] == "llm_unavailable" else 500)
-    return PlainTextResponse(content=antwort)
+        resp = JSONResponse(content={"error": error}, status_code=502 if error["code"] == "llm_unavailable" else 500)
+    else:
+        resp = PlainTextResponse(content=antwort)
+    apply_session_cookie(resp, new_sid)
+    return resp
 
 
 async def transkribiere(audio: UploadFile) -> str:
