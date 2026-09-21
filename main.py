@@ -19,7 +19,7 @@ from pathlib import Path
 
 import httpx
 import yaml
-from fastapi import FastAPI, Request, UploadFile, File, Form, Header
+from fastapi import FastAPI, Request, Response, UploadFile, File, Form, Header
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, JSONResponse, StreamingResponse
@@ -35,6 +35,15 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 #   LLM_CONNECT_TIMEOUT  (Default 20)   – Sekunden ohne jeden Chunk von OpenRouter -> event error llm_unavailable
 #   MAX_HISTORY_CHARS    (Default 6000) – zusätzliches Zeichenbudget für den LLM-Kontext (Abschnitt 5 Projektplan)
 # Alle bisherigen Env-Namen unverändert.
+# ==========================================
+
+# ==========================================
+# JOB-20260921-20 (AP2 – Session-Modell): NEUE ENV
+#   CORS_ORIGINS  (Default "https://schweinerei.xyz,https://enzyklopedie-web.onrender.com")
+#                 Kommagetrennte Liste erlaubter Frontend-Origins. Ersetzt das bisherige "*",
+#                 weil Browser allow_credentials=True nicht mit einem Wildcard-Origin akzeptieren
+#                 (Cookie sid wäre sonst nutzlos). Portabel: beim Spiegeln auf den eigenen Server
+#                 einfach per Env auf die dortige(n) Domain(s) setzen, kein Codeänderung nötig.
 # ==========================================
 
 # ==========================================
@@ -120,11 +129,16 @@ LOG_MODERATION = os.environ.get("LOG_MODERATION", "list")       # off | list | a
 LOG_BLOCKLIST = [w.strip().lower() for w in os.environ.get("LOG_BLOCKLIST", "").split(",") if w.strip()]
 LOG_MAX_LEN = 300
 
+# AP2: explizite Origins statt "*", sonst verwirft der Browser den Cookie sid bei allow_credentials=True.
+CORS_ORIGINS = [o.strip() for o in os.environ.get(
+    "CORS_ORIGINS", "https://schweinerei.xyz,https://enzyklopedie-web.onrender.com"
+).split(",") if o.strip()]
+
 app = FastAPI(title="Enzyklopedia API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # HOOK AP2: auf die Frontend-Domain einschränken, sobald der Session-Cookie kommt
+    allow_origins=CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
