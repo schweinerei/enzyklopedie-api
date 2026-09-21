@@ -126,7 +126,15 @@ DEVICE_LIMIT_FALLBACK = int(os.environ.get("DEVICE_LIMIT", "5"))
 
 # --- Gästebuch (AP5) ---
 LOG_MODERATION = os.environ.get("LOG_MODERATION", "list")       # off | list | all  (all = jeder Eintrag wartet auf Freigabe)
-LOG_BLOCKLIST = [w.strip().lower() for w in os.environ.get("LOG_BLOCKLIST", "").split(",") if w.strip()]
+# JOB-20260921-22 (AP5): kurze dreisprachige Grundliste im Code, per LOG_BLOCKLIST (Env, kommagetrennt) erweiterbar.
+LOG_BLOCKLIST_DEFAULT = [
+    "spam", "viagra", "fuck", "nigger",
+    "scheiße", "hurensohn", "wichser",
+    "сука", "хуй", "пизда",
+]
+LOG_BLOCKLIST = sorted(set(LOG_BLOCKLIST_DEFAULT) | {
+    w.strip().lower() for w in os.environ.get("LOG_BLOCKLIST", "").split(",") if w.strip()
+})
 LOG_MAX_LEN = 300
 
 # AP2: explizite Origins statt "*", sonst verwirft der Browser den Cookie sid bei allow_credentials=True.
@@ -1292,17 +1300,25 @@ async def lemon_webhook(request: Request):
 
 
 # ==========================================
-# GÄSTEBUCH (AP5): public_log. Keine Session-Bindung bis AP2; "mine" markiert der Client selbst.
+# GÄSTEBUCH + VOTES (AP5). Vertrag: Projektplan Abschnitt 4 + 9. Session-Bindung über get_session()
+# (AP2, weiter unten in dieser Datei definiert; Python löst das erst beim Aufruf auf, Reihenfolge
+# im Modul ist daher unkritisch). JOB-20260921-22, Ricos Entscheidung 2026-09-21 15:13: kein
+# Forum/Threads, aber parent_id wird JETZT angelegt, damit eine Antwortfunktion später ein reiner
+# Frontend-Schritt ist (Spalte bleibt bis dahin ungenutzt, kein Endpoint schreibt sie).
 # ==========================================
 import unicodedata
 
-_LOG_STRIP = re.compile(r"[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF]")
+_LOG_STRIP = re.compile("[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001F\\u007F\\u200B-\\u200F\\u2028-\\u202E\\u2060-\\u206F\\uFEFF]")
+VOTE_ITEMS = ["bl_1", "bl_2", "bl_3", "bl_4", "bl_5"]
 
 
 def _ensure_log(cur, ph):
+    _ensure_sessions(cur, ph)   # FK-Ziel muss zuerst existieren (Postgres)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS log_entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id TEXT REFERENCES sessions(id),
+            parent_id INTEGER REFERENCES log_entries(id),
             ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             lang VARCHAR(10),
             text TEXT NOT NULL,
@@ -1311,10 +1327,54 @@ def _ensure_log(cur, ph):
     """ if ph == "?" else """
         CREATE TABLE IF NOT EXISTS log_entries (
             id SERIAL PRIMARY KEY,
+            session_id VARCHAR(26) REFERENCES sessions(id) ON DELETE SET NULL,
+            parent_id INTEGER REFERENCES log_entries(id) ON DELETE SET NULL,
             ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             lang VARCHAR(10),
-            text TEXT NOT NULL,
+            text VARCHAR(300) NOT NULL,
             status VARCHAR(10) DEFAULT 'visible'
+        );
+    """)
+    # Bestehende Installationen (log_entries existierte schon vor AP5 ohne diese Spalten):
+    # Postgres kennt ADD COLUMN IF NOT EXISTS, SQLite nicht -> try/except wie beim Rest der Datei.
+    if ph == "?":
+        for col in ("session_id TEXT", "parent_id INTEGER"):
+            try:
+                cur.execute(f"ALTER TABLE log_entries ADD COLUMN {col};")
+            except sqlite3.OperationalError:
+                pass
+    else:
+        cur.execute("ALTER TABLE log_entries ADD COLUMN IF NOT EXISTS session_id VARCHAR(26) REFERENCES sessions(id) ON DELETE SET NULL;")
+        cur.execute("ALTER TABLE log_entries ADD COLUMN IF NOT EXISTS parent_id INTEGER REFERENCES log_entries(id) ON DELETE SET NULL;")
+    cur.execute("CREATE INDEX IF NOT EXISTS ix_log_session ON log_entries (session_id);")
+
+
+def _ensure_log_translations(cur, ph):
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS log_translations (
+            entry_id INTEGER NOT NULL REFERENCES log_entries(id) ON DELETE CASCADE,
+            lang VARCHAR(10) NOT NULL,
+            text TEXT NOT NULL,
+            PRIMARY KEY (entry_id, lang)
+        );
+    """)
+
+
+def _ensure_votes(cur, ph):
+    _ensure_sessions(cur, ph)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS votes (
+            item VARCHAR(16) NOT NULL,
+            session_id TEXT NOT NULL REFERENCES sessions(id),
+            ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (item, session_id)
+        );
+    """ if ph == "?" else """
+        CREATE TABLE IF NOT EXISTS votes (
+            item VARCHAR(16) NOT NULL,
+            session_id VARCHAR(26) NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+            ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (item, session_id)
         );
     """)
 
@@ -1323,45 +1383,96 @@ def log_clean(text: str) -> str:
     text = unicodedata.normalize("NFC", str(text or ""))
     text = _LOG_STRIP.sub("", text)
     text = re.sub(r"\s+", " ", text).strip()
-    return text[:LOG_MAX_LEN]
+    return text
 
 
 def log_row(r) -> dict:
     return {"id": r[0], "ts": (r[1].isoformat() if hasattr(r[1], "isoformat") else str(r[1])), "lang": r[2], "text": r[3], "mine": False}
 
 
+def session_rate_limited(session_id: str, bucket: str, limit: int, window: int = 60) -> Optional[JSONResponse]:
+    """Wie rate_limited(), aber pro Session statt pro IP (für DB-unabhängige Zähler wie 20/min Übersetzung)."""
+    key = (bucket, "s:" + session_id)
+    now = time.time()
+    q = _hits.setdefault(key, deque())
+    while q and q[0] < now - window:
+        q.popleft()
+    if len(q) >= limit:
+        return JSONResponse(content={"error": {"code": "rate_limited", "message": "Too many requests."}},
+                            status_code=429, headers={"Retry-After": str(window)})
+    q.append(now)
+    return None
+
+
+def _log_writes_last_hour(cur, ph, session_id: str) -> int:
+    if ph == "?":
+        cur.execute("SELECT COUNT(*) FROM log_entries WHERE session_id = ? AND ts > datetime('now', '-1 hour');", (session_id,))
+    else:
+        cur.execute("SELECT COUNT(*) FROM log_entries WHERE session_id = %s AND ts > NOW() - INTERVAL '1 hour';", (session_id,))
+    return cur.fetchone()[0]
+
+
 @app.get("/v1/log")
 async def log_list(request: Request, after: int = 0, limit: int = 50):
     if (rl := rate_limited(request, "log_read", 60)):
         return rl
+    session, new_sid = get_session(request)
     limit = max(1, min(limit, 50))
     conn, ph = _db()
     try:
         cur = conn.cursor()
         _ensure_log(cur, ph); conn.commit()
-        cur.execute(f"SELECT id, ts, lang, text FROM log_entries WHERE status = 'visible' AND id > {ph} ORDER BY id ASC LIMIT {ph};", (after, limit))
+        cur.execute(f"SELECT id, ts, lang, text, session_id FROM log_entries WHERE status = 'visible' AND id > {ph} ORDER BY id ASC LIMIT {ph};", (after, limit))
         rows = cur.fetchall()
     except Exception as e:
         log.error("log list: %s", e)
         return JSONResponse(content={"error": {"code": "storage", "message": "Log unavailable."}}, status_code=500)
     finally:
         conn.close()
-    entries = [log_row(r) for r in rows]
-    return JSONResponse(content={"entries": entries, "next": entries[-1]["id"] if entries else after})
+    entries = [{
+        "id": r[0],
+        "ts": (r[1].isoformat() if hasattr(r[1], "isoformat") else str(r[1])),
+        "lang": r[2],
+        "text": r[3],
+        "mine": r[4] == session["id"],
+    } for r in rows]
+    resp = JSONResponse(content={"entries": entries, "next": entries[-1]["id"] if entries else after})
+    apply_session_cookie(resp, new_sid)
+    return resp
 
 
 @app.post("/v1/log")
 async def log_post(request: Request):
-    if (rl := rate_limited(request, "log_write", 10, 3600)):
+    if (rl := rate_limited(request, "log_write", 10, 3600)):   # 10 / IP / Stunde (in-memory, Congress-Schutz)
         return rl
+    session, new_sid = get_session(request)
+    conn, ph = _db()
+    try:
+        cur = conn.cursor()
+        _ensure_log(cur, ph); conn.commit()
+        if _log_writes_last_hour(cur, ph, session["id"]) >= 3:   # 3 / Session / Stunde (DB-gezählt)
+            resp = JSONResponse(content={"error": {"code": "rate_limited", "message": "Too many entries. Please wait."}},
+                                status_code=429, headers={"Retry-After": "3600"})
+            apply_session_cookie(resp, new_sid)
+            return resp
+    finally:
+        conn.close()
     try:
         body = await request.json()
     except Exception:
         body = {}
-    text = log_clean(body.get("text") if isinstance(body, dict) else "")
+    raw_text = body.get("text") if isinstance(body, dict) else ""
+    text = log_clean(raw_text)
     if not text:
         return JSONResponse(content={"error": {"code": "empty", "message": "Empty entry."}}, status_code=400)
-    lang = body.get("lang") if body.get("lang") in ("en", "de", "ru") else "en"
+    if len(text) > LOG_MAX_LEN:
+        return JSONResponse(content={"error": {"code": "too_long", "message": "Entry exceeds 300 characters."}}, status_code=400)
+    if body.get("lang") in ("en", "de", "ru"):
+        lang = body["lang"]
+    elif (session.get("state") or {}).get("lang") in ("en", "de", "ru"):
+        lang = session["state"]["lang"]
+    else:
+        lang = "en"
     status = "visible"
     low = text.lower()
     if LOG_MODERATION == "all" or (LOG_MODERATION == "list" and any(w in low for w in LOG_BLOCKLIST)):
@@ -1371,10 +1482,10 @@ async def log_post(request: Request):
         cur = conn.cursor()
         _ensure_log(cur, ph)
         if ph == "?":
-            cur.execute("INSERT INTO log_entries (lang, text, status) VALUES (?, ?, ?);", (lang, text, status))
+            cur.execute("INSERT INTO log_entries (session_id, lang, text, status) VALUES (?, ?, ?, ?);", (session["id"], lang, text, status))
             new_id = cur.lastrowid
         else:
-            cur.execute("INSERT INTO log_entries (lang, text, status) VALUES (%s, %s, %s) RETURNING id, ts;", (lang, text, status))
+            cur.execute("INSERT INTO log_entries (session_id, lang, text, status) VALUES (%s, %s, %s, %s) RETURNING id, ts;", (session["id"], lang, text, status))
             new_id = cur.fetchone()[0]
         conn.commit()
     except Exception as e:
@@ -1383,8 +1494,70 @@ async def log_post(request: Request):
     finally:
         conn.close()
     if status == "pending":
-        return JSONResponse(content={"status": "pending"}, status_code=202)
-    return JSONResponse(content={"id": new_id, "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "lang": lang, "text": text, "mine": True})
+        resp = JSONResponse(content={"status": "pending"}, status_code=202)
+    else:
+        resp = JSONResponse(content={"id": new_id, "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "lang": lang, "text": text, "mine": True})
+    apply_session_cookie(resp, new_sid)
+    return resp
+
+
+LANG_NAMES = {"en": "English", "de": "German", "ru": "Russian"}
+
+
+async def translate_text(text: str, target_lang: str) -> str:
+    resp = await get_openrouter().chat.completions.create(
+        model=MODEL_FALLBACK,
+        messages=[
+            {"role": "system", "content": f"You are a precise translator. Translate the user's short message into {LANG_NAMES[target_lang]}. Reply with only the translation, no quotes, no explanation."},
+            {"role": "user", "content": text},
+        ],
+        max_tokens=400,
+        temperature=0.2,
+    )
+    return (resp.choices[0].message.content or "").strip()
+
+
+@app.get("/v1/log/{entry_id}/translate")
+async def log_translate(entry_id: int, request: Request, lang: str = "en"):
+    if lang not in ("en", "de", "ru"):
+        return JSONResponse(content={"error": {"code": "bad_lang", "message": "Unsupported language."}}, status_code=400)
+    session, new_sid = get_session(request)
+    if (rl := session_rate_limited(session["id"], "log_translate", 20, 60)):   # 20 / Minute / Session
+        apply_session_cookie(rl, new_sid)
+        return rl
+    conn, ph = _db()
+    try:
+        cur = conn.cursor()
+        _ensure_log(cur, ph); _ensure_log_translations(cur, ph); conn.commit()
+        cur.execute(f"SELECT lang, text FROM log_entries WHERE id = {ph} AND status = 'visible';", (entry_id,))
+        row = cur.fetchone()
+        if row is None:
+            return JSONResponse(content={"error": {"code": "not_found", "message": "Entry not found."}}, status_code=404)
+        src_lang, src_text = row
+        if src_lang == lang:
+            return JSONResponse(content={"text": src_text})
+        cur.execute(f"SELECT text FROM log_translations WHERE entry_id = {ph} AND lang = {ph};", (entry_id, lang))
+        cached = cur.fetchone()
+        if cached:
+            return JSONResponse(content={"text": cached[0]})
+        try:
+            translated = await translate_text(src_text, lang)
+        except Exception as e:
+            log.error("translate: %s", e)
+            return JSONResponse(content={"error": {"code": "llm_unavailable", "message": "Translation unavailable."}}, status_code=502)
+        if not translated:
+            return JSONResponse(content={"error": {"code": "llm_unavailable", "message": "Translation unavailable."}}, status_code=502)
+        try:
+            if ph == "?":
+                cur.execute("INSERT OR IGNORE INTO log_translations (entry_id, lang, text) VALUES (?, ?, ?);", (entry_id, lang, translated))
+            else:
+                cur.execute("INSERT INTO log_translations (entry_id, lang, text) VALUES (%s, %s, %s) ON CONFLICT DO NOTHING;", (entry_id, lang, translated))
+            conn.commit()
+        except Exception as e:
+            log.warning("translate cache write: %s", e)
+        return JSONResponse(content={"text": translated})
+    finally:
+        conn.close()
 
 
 @app.get("/v1/log/pending")
@@ -1418,6 +1591,49 @@ async def log_moderate(entry_id: int, request: Request, x_admin_token: Optional[
     finally:
         conn.close()
     return JSONResponse(content={"id": entry_id, "status": status})
+
+
+@app.get("/v1/votes")
+async def votes_get(request: Request):
+    session, new_sid = get_session(request)
+    conn, ph = _db()
+    try:
+        cur = conn.cursor(); _ensure_votes(cur, ph); conn.commit()
+        result = {}
+        for item in VOTE_ITEMS:
+            cur.execute(f"SELECT COUNT(*) FROM votes WHERE item = {ph};", (item,))
+            count = cur.fetchone()[0]
+            cur.execute(f"SELECT 1 FROM votes WHERE item = {ph} AND session_id = {ph};", (item, session["id"]))
+            result[item] = {"count": count, "mine": cur.fetchone() is not None}
+    finally:
+        conn.close()
+    resp = JSONResponse(content=result)
+    apply_session_cookie(resp, new_sid)
+    return resp
+
+
+@app.post("/v1/votes/{item}")
+async def votes_toggle(item: str, request: Request):
+    if item not in VOTE_ITEMS:
+        return JSONResponse(content={"error": {"code": "not_found", "message": "Unknown item."}}, status_code=404)
+    session, new_sid = get_session(request)
+    conn, ph = _db()
+    try:
+        cur = conn.cursor(); _ensure_votes(cur, ph)
+        cur.execute(f"SELECT 1 FROM votes WHERE item = {ph} AND session_id = {ph};", (item, session["id"]))
+        existed = cur.fetchone() is not None
+        if existed:
+            cur.execute(f"DELETE FROM votes WHERE item = {ph} AND session_id = {ph};", (item, session["id"]))
+        else:
+            cur.execute(f"INSERT INTO votes (item, session_id) VALUES ({ph}, {ph});", (item, session["id"]))
+        conn.commit()
+        cur.execute(f"SELECT COUNT(*) FROM votes WHERE item = {ph};", (item,))
+        count = cur.fetchone()[0]
+    finally:
+        conn.close()
+    resp = JSONResponse(content={"count": count, "mine": not existed})
+    apply_session_cookie(resp, new_sid)
+    return resp
 
 
 # ==========================================
