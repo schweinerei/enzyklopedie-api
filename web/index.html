@@ -519,7 +519,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         </div>
 
         <div style="color: var(--term-accent); font-family: var(--font-mono); margin-bottom: 15px;">
-            <span id="audio-status-text" data-i18n="audio_loaded">> loaded: </span> <span id="audio-filename" style="color: #fff;">...</span>
+            <span id="audio-status-text" data-i18n="audio_loaded">> loaded: </span> <span id="audio-filename" style="color: #fff; font-size: 14px; line-height: 1.35;">...</span>
         </div>
         
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
@@ -1227,10 +1227,42 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // 0. AUDIO PLAYER LOGIC
         // ----------------------------------------------------
         const audioDateien = {
-            en: ['audio/en_chap1.mp3', 'audio/en_chap4.mp3', 'audio/en_chap9.mp3'],
-            de: ['audio/de_chap1.mp3', 'audio/de_chap2.mp3', 'audio/de_chap7.mp3'],
-            ru: ['audio/ru_chap3.mp3', 'audio/ru_chap5.mp3', 'audio/ru_chap8.mp3']
+            en: [
+                { datei: 'audio/en_roman_prolog.mp3',
+                  titel: 'The Invitation · Prologue' },
+                { datei: 'audio/en_roman_k01.mp3',
+                  titel: 'The Invitation · Chapter 1. From Alpha-Stall into the Depths of the Forests' },
+                { datei: 'audio/en_traktat_vorwort.mp3',
+                  titel: 'The Physics of Relations · Foreword. The Quiet Scandal' },
+                { datei: 'audio/en_traktat_k01.mp3',
+                  titel: 'The Physics of Relations · Chapter 1. The Hollow Cavity Resonator Earth' }
+            ],
+            de: [
+                { datei: 'audio/de_roman_prolog.mp3',
+                  titel: 'Die Einladung · Prolog' },
+                { datei: 'audio/de_roman_k01.mp3',
+                  titel: 'Die Einladung · Kapitel 1. Vom Alpha-Stall in die Tiefe der Wälder' },
+                { datei: 'audio/de_traktat_vorwort.mp3',
+                  titel: 'Physik der Beziehungen · Vorwort. Der stille Skandal' },
+                { datei: 'audio/de_traktat_k01.mp3',
+                  titel: 'Physik der Beziehungen · Kapitel 1. Der Hohlraumresonator Erde' }
+            ],
+            ru: [
+                { datei: 'audio/ru_roman_prolog.mp3',
+                  titel: 'Приглашение · Пролог' },
+                { datei: 'audio/ru_roman_k01.mp3',
+                  titel: 'Приглашение · Глава 1. Из Альфа-стойла в глубь лесов' },
+                { datei: 'audio/ru_traktat_vorwort.mp3',
+                  titel: 'Физика отношений · Предисловие. Тихий скандал' },
+                { datei: 'audio/ru_traktat_k01.mp3',
+                  titel: 'Физика отношений · Глава 1. Полостной резонатор Земля' }
+            ]
         };
+
+        // Merkt sich je Sprache, wo man stehengeblieben ist.
+        const audioStelle = { en: 0, de: 0, ru: 0 };
+        let audioFehlversuche = 0;
+        let audioWollteSpielen = false;
 
         const radioStreamUrl = "https://ice1.somafm.com/defcon-128-mp3"; 
         const audioPlayer = new Audio();
@@ -1254,24 +1286,25 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         }
 
-        function loadAudioForLanguage(lang, autoPlay = false) {
+        function loadAudioForLanguage(lang, autoPlay = false, schritt = 0) {
             if (isRadioActive) return;
             audioPlayer.pause();
-            
-            const files = audioDateien[lang];
-            if (!files || files.length === 0) return;
-            
-            let randomFile;
-            do {
-                randomFile = files[Math.floor(Math.random() * files.length)];
-            } while (randomFile === audioPlayer.getAttribute('data-last-played') && files.length > 1);
-            
-            audioPlayer.src = randomFile;
-            audioPlayer.setAttribute('data-last-played', randomFile);
-            audioFilename.innerText = randomFile.split('/').pop();
+
+            const stuecke = audioDateien[lang];
+            if (!stuecke || stuecke.length === 0) return;
+
+            const n = stuecke.length;
+            audioStelle[lang] = (((audioStelle[lang] + schritt) % n) + n) % n;
+            const stueck = stuecke[audioStelle[lang]];
+
+            audioWollteSpielen = autoPlay;
+            audioPlayer.src = stueck.datei;
+            audioPlayer.setAttribute('data-last-played', stueck.datei);
+            audioFilename.innerText = stueck.titel;
+            audioFilename.setAttribute('title', stueck.titel);
             audioPlayer.currentTime = 0;
             audioProgress.value = 0;
-            
+
             if (autoPlay) {
                 audioPlayer.play().then(() => {
                     audioBtn.innerText = i18n[aktuelleSprache]['audio_pause'] || 'PAUSE';
@@ -1307,10 +1340,41 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }
         });
 
+
+        // Laedt ein Stueck nicht, geht der Spieler still zum naechsten weiter.
+        // Erst wenn keines der vier laedt, erscheint eine Meldung.
+        audioPlayer.addEventListener('loadeddata', () => { audioFehlversuche = 0; });
+
         audioPlayer.addEventListener('error', () => {
-            audioFilename.innerText = "Error: Stream unavailable / CORS";
+            if (isRadioActive) {
+                audioFilename.innerText = "Error: Stream unavailable / CORS";
+                audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY';
+                audioBtn.classList.remove('active');
+                return;
+            }
+            const n = (audioDateien[aktuelleAudioSprache] || []).length;
+            if (audioFehlversuche < n - 1) {
+                audioFehlversuche++;
+                loadAudioForLanguage(aktuelleAudioSprache, audioWollteSpielen, 1);
+                return;
+            }
+            audioFehlversuche = 0;
+            audioFilename.innerText = "Error: File unavailable";
             audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY';
             audioBtn.classList.remove('active');
+        });
+
+        // NEXT geht einen Schritt weiter statt zu wuerfeln.
+        audioSkipBtn.addEventListener('click', () => {
+            if (isRadioActive) return;
+            loadAudioForLanguage(aktuelleAudioSprache, true, 1);
+        });
+
+        // Am Ende eines Stuecks von selbst zum naechsten.
+        audioPlayer.addEventListener('ended', () => {
+            if (isRadioActive) return;
+            audioProgress.value = 0;
+            loadAudioForLanguage(aktuelleAudioSprache, true, 1);
         });
 
         document.querySelectorAll('.audio-lang-btn').forEach(btn => {
@@ -1346,10 +1410,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }
         });
 
-        audioSkipBtn.addEventListener('click', () => {
-            if (isRadioActive) return; 
-            loadAudioForLanguage(aktuelleAudioSprache, true); 
-        });
 
         audioPlayer.addEventListener('timeupdate', () => {
             if (!isRadioActive && audioPlayer.duration) {
@@ -1361,13 +1421,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }
         });
 
-        audioPlayer.addEventListener('ended', () => {
-            if (!isRadioActive) {
-                audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY';
-                audioBtn.classList.remove('active');
-                audioProgress.value = 0;
-            }
-        });
 
         audioProgress.addEventListener('input', (e) => {
             if (!isRadioActive && audioPlayer.duration) {
