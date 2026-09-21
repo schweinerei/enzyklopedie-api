@@ -832,6 +832,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             log_sent: "> Entry transmitted.",
             log_pending: "> Entry queued for review.",
             log_limit: "> Too many entries. Please wait.",
+            log_translate: "translate",
+            log_translating: "translating…",
+            log_translate_error: "translation failed",
             votes_local: "local",
             sample_missing: "> Sample not yet uploaded.",
             purchase_routing: "> Routing to vendor...",
@@ -940,6 +943,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             log_sent: "> Eintrag übertragen.",
             log_pending: "> Eintrag wartet auf Freigabe.",
             log_limit: "> Zu viele Einträge. Bitte warten.",
+            log_translate: "übersetzen",
+            log_translating: "übersetze…",
+            log_translate_error: "Übersetzung fehlgeschlagen",
             votes_local: "lokal",
             sample_missing: "> Leseprobe noch nicht hochgeladen.",
             purchase_routing: "> Weiterleitung zum Anbieter...",
@@ -1048,6 +1054,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             log_sent: "> Запись отправлена.",
             log_pending: "> Запись ожидает проверки.",
             log_limit: "> Слишком много записей. Подождите.",
+            log_translate: "перевести",
+            log_translating: "перевожу…",
+            log_translate_error: "перевод не удался",
             votes_local: "локально",
             sample_missing: "> Фрагмент ещё не загружен.",
             purchase_routing: "> Переход к продавцу...",
@@ -1151,8 +1160,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             ask: "/ask", askVoice: "/ask-voice", purchase: "/purchase", unlock: "/unlock",   // vorhanden (Render)
             askStream: "/ask/stream", askVoiceStream: "/ask-voice/stream",                  // SSE; bei 404 (altes Backend) Fallback auf ask/askVoice
             health: "/health",        // HOOK AP8: darf 404 liefern, es zählt nur Erreichbarkeit
-            log: null,                // F1/AP5: /v1/log existiert noch nicht -> Gästebuch bleibt [OFFLINE]
-            votes: null,              // HOOK AP5: "/v1/votes"
+            log: "/v1/log",           // F1/AP5
+            votes: "/v1/votes",       // F7/AP5
             samples: null,            // HOOK AP6: "/v1/store/samples"
             session: "/v1/session"    // AP2
         };
@@ -2843,7 +2852,29 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 + (entry.lang ? ' · ' + String(entry.lang).toUpperCase() : '');
             const body = document.createElement('div'); body.className = 'log-text';
             body.textContent = String(entry.text || '');   // nie innerHTML
-            wrap.appendChild(meta); wrap.appendChild(body); gbList.appendChild(wrap);
+            wrap.appendChild(meta); wrap.appendChild(body);
+            if (entry.lang && entry.lang !== aktuelleSprache && ENDPOINTS.log) {
+                const trBtn = document.createElement('button');
+                trBtn.type = 'button'; trBtn.className = 'log-translate-btn'; trBtn.textContent = t('log_translate');
+                trBtn.style.cssText = 'margin-top:6px;background:none;border:1px solid var(--term-border);color:var(--term-accent);border-radius:4px;padding:2px 8px;font-size:12px;cursor:pointer;font-family:var(--font-mono);';
+                trBtn.addEventListener('click', async () => {
+                    trBtn.disabled = true; trBtn.textContent = t('log_translating');
+                    try {
+                        const res = await api(`${ENDPOINTS.log}/${entry.id}/translate?lang=${encodeURIComponent(aktuelleSprache)}`, {}, 15000);
+                        if (!res.ok) throw new Error('http');
+                        const data = await res.json();
+                        const tr = document.createElement('div'); tr.className = 'log-text log-translation';
+                        tr.style.cssText = 'margin-top:4px;opacity:0.8;font-style:italic;';
+                        tr.textContent = String(data.text || '');   // nie innerHTML
+                        trBtn.replaceWith(tr);
+                    } catch (e) {
+                        trBtn.disabled = false; trBtn.textContent = t('log_translate_error');
+                        setTimeout(() => { trBtn.textContent = t('log_translate'); }, 4000);
+                    }
+                });
+                wrap.appendChild(trBtn);
+            }
+            gbList.appendChild(wrap);
             if ((entry.id | 0) > gbLastId) gbLastId = entry.id | 0;
         }
         function zeigeGbStatus(text) { gbInput.placeholder = text; setTimeout(() => { gbInput.placeholder = t('guestbook_placeholder'); }, 4000); }
