@@ -1,0 +1,71 @@
+# Sperrwoerter fuer das oeffentliche Log (JOB-120). Eine Zeile je Wort, '#' = Kommentar.
+# Vergleich: Kleinschreibung, ganze Woerter. 'wort*' = alle Woerter, die so BEGINNEN.
+# Datei wird bei Aenderung automatisch neu gelesen (kein Neustart noetig); erweitern durch neue Zeilen.
+# --- grobe Beleidigungen DE ---
+arschloch*
+wichser*
+hurensohn*
+hure
+huren
+fotze*
+schlampe*
+scheisse
+scheiße
+scheiss*
+scheiße*
+vollidiot*
+spast
+spasti*
+missgeburt*
+drecksau*
+# --- grobe Beleidigungen EN ---
+fuck*
+motherfucker*
+shit
+bitch*
+asshole*
+cunt*
+dickhead*
+nigger*
+nigga*
+faggot*
+retard*
+whore*
+slut*
+# --- grobe Beleidigungen RU ---
+хуй*
+хуе*
+пизд*
+блядь
+бляд*
+ебан*
+ебат*
+ебал*
+сука
+суки
+сучка
+мудак*
+пидор*
+пидар*
+гандон*
+залуп*
+шлюх*
+# --- Spam / Werbung ---
+casino*
+viagra
+cialis
+porn*
+porno*
+sex
+xxx
+bitcoin*
+crypto*
+forex
+lottery
+jackpot
+whatsapp
+telegram
+telegramm
+# --- Zahlungs-/Kontaktlocker ---
+iban
+paypal
