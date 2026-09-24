@@ -2545,6 +2545,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 
             // JOB-116: Bildspur-Fenster nur sichtbar, solange Audio laeuft; bei Pause/Stopp verschwindet es ganz (display:none).
             // Ausnahme: Vollbild/maximiert bleibt stehen. Kurze Verzoegerung, damit Kapitel-/Sprachwechsel (pause->play) nicht flackert.
+            // Leitstand 24.09.: nur mobil (Ricos Befund war die Handy-Fassung); Desktop behaelt das Fenster wie bisher.
+            const nurMobil = () => window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
             let versteckTimer = null;
             const zeigen = () => {
                 clearTimeout(versteckTimer);
@@ -2553,7 +2555,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             const verstecken = () => {
                 clearTimeout(versteckTimer);
                 versteckTimer = setTimeout(() => {
-                    if (!audioPlayer.paused && !audioPlayer.ended) return;
+                    if (!nurMobil() || (!audioPlayer.paused && !audioPlayer.ended)) return;
                     if (bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
                     bs.classList.add('bs-versteckt');
                 }, 350);
@@ -2562,7 +2564,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audioPlayer.addEventListener('playing', zeigen);
             audioPlayer.addEventListener('pause', verstecken);
             audioPlayer.addEventListener('ended', verstecken);
-            if (audioPlayer.paused) bs.classList.add('bs-versteckt');
+            if (audioPlayer.paused && nurMobil()) bs.classList.add('bs-versteckt');
+            window.addEventListener('resize', () => { if (!nurMobil()) bs.classList.remove('bs-versteckt'); else if (audioPlayer.paused) verstecken(); });
         })();
 
         document.addEventListener('mousemove', moveDrag);
