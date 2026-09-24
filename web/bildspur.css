@@ -397,6 +397,14 @@ html.bs-debug-an .bs-debug { display: flex; }
     #bildspur-fenster { top: auto; right: auto; width: 100%; }
 }
 
+/* JOB-116: Fenster per Touch am Kopf ziehbar; Fensterknoepfe auf Touch-Geraeten/Handy mind. 44 px */
+.bs-header { touch-action: none; }
+@media (max-width: 768px), (pointer: coarse) {
+    .bs-header .bs-toggle,
+    .bs-header .bs-maximize { width: 44px; height: 44px; font-size: 20px; margin: -10px 0; }
+    .bs-header-controls { gap: 0; }
+}
+
 /* ===================================================================
    JOB-87: Transport + Shuttle, echtes Vollbild (Fullscreen API)
    .bs-vollbild wird gesetzt, wenn das Fenster im Browser-Vollbild ist
