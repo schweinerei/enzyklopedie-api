@@ -354,6 +354,9 @@
     overflow: hidden;
 }
 .bs-debug span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Technikzeile nur mit ?debug=1 sichtbar (Rico 24.09. "debug a") */
+.bs-debug { display: none; }
+html.bs-debug-an .bs-debug { display: flex; }
 
 /* Reduced-motion: alle Blenden hart (JS setzt zusaetzlich transitionDuration:0s;
    diese Regel faengt auch CSS-getriebene Uebergaenge wie den Dunkel-Flash ab). */
