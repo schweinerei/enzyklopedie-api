@@ -550,6 +550,8 @@ html.bs-debug-an .bs-debug { display: flex; }
 .bs-shpanel .bs-shb.bs-an:hover { color: #000; }
 .bs-shhinweis { color: #999; font-size: 11px; }
 .bs-shr { display: flex; flex-direction: column; gap: 2px; flex: 1 1 90px; color: #ddd; }
+.bs-shblock .bs-shzeile { flex-wrap: nowrap; }   /* INT/SPD/HUE in EINER Zeile (Rico 24.09.: Platz sparen) */
+.bs-shblock .bs-shr { flex: 1 1 0; min-width: 0; }
 .bs-shr span { font-size: 11px; }
 .bs-shr input[type="range"] { width: 100%; margin: 0; accent-color: #fff; cursor: pointer; }
 .bs-shblock { border-left: 2px solid var(--bs-accent); padding-left: 10px; margin-bottom: 6px; }
@@ -575,8 +577,9 @@ html.bs-debug-an .bs-debug { display: flex; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    padding: 4px 0;
+    gap: 4px;
+    padding: 0;
+    min-height: 0;
 }
 .bs-shtracelabel { color: #fff; font-size: 11px; letter-spacing: 0.05em; }
 .bs-shtraceval { color: #ccc; font-size: 11px; }
@@ -586,7 +589,9 @@ html.bs-debug-an .bs-debug { display: flex; }
     writing-mode: vertical-lr;
     direction: rtl;
     width: 22px;
-    height: 160px;
+    height: auto;          /* Rico 24.09.: nur so hoch wie die drei Shaderzeilen */
+    flex: 1 1 0;
+    min-height: 40px;
     margin: 0;
     background: transparent;
     accent-color: #fff;
@@ -622,4 +627,3 @@ html.bs-debug-an .bs-debug { display: flex; }
     background: #fff;
     cursor: pointer;
 }
-#bildspur-fenster.bs-vollbild .bs-shtrace input[type="range"] { height: 260px; }
