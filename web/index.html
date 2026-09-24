@@ -201,7 +201,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             
             .fullscreen-wrapper { display: none !important; }
 
-            #bildspur-fenster { position: static !important; width: 96vw !important; left: auto !important; bottom: auto !important; margin: 10px 2vw; }
+            /* JOB-116: mobil unten angedockt (fixed, ueber den Fenstern), per Touch am Kopf ziehbar; Standardposition ohne !important, damit der Drag (inline left/bottom) greift */
+            #bildspur-fenster { position: fixed; width: 96vw !important; max-width: 96vw; left: 2vw; bottom: 75px; top: auto; right: auto; margin: 0; z-index: 60; }
         }
 
         .script-window.fullscreen {
@@ -2516,7 +2517,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             const start = (e) => {
                 if (e.target.closest && e.target.closest('.bs-header-controls')) return;
                 if (!e.target.closest || !e.target.closest('.bs-header')) return;
-                if (window.innerWidth <= 768 || bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
+                if (bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
                 const touch = e.type.startsWith('touch');
                 const cx = touch ? e.touches[0].clientX : e.clientX, cy = touch ? e.touches[0].clientY : e.clientY;
                 const r = bs.getBoundingClientRect();
@@ -2541,6 +2542,27 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             };
             bs.addEventListener('mousedown', start);
             bs.addEventListener('touchstart', start, {passive: true});
+
+            // JOB-116: Bildspur-Fenster nur sichtbar, solange Audio laeuft; bei Pause/Stopp verschwindet es ganz (display:none).
+            // Ausnahme: Vollbild/maximiert bleibt stehen. Kurze Verzoegerung, damit Kapitel-/Sprachwechsel (pause->play) nicht flackert.
+            let versteckTimer = null;
+            const zeigen = () => {
+                clearTimeout(versteckTimer);
+                if (bs.classList.contains('bs-versteckt')) { bs.classList.remove('bs-versteckt'); vorn(); if (bildspur && bildspur._shPlan) bildspur._shPlan(); }
+            };
+            const verstecken = () => {
+                clearTimeout(versteckTimer);
+                versteckTimer = setTimeout(() => {
+                    if (!audioPlayer.paused && !audioPlayer.ended) return;
+                    if (bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
+                    bs.classList.add('bs-versteckt');
+                }, 350);
+            };
+            audioPlayer.addEventListener('play', zeigen);
+            audioPlayer.addEventListener('playing', zeigen);
+            audioPlayer.addEventListener('pause', verstecken);
+            audioPlayer.addEventListener('ended', verstecken);
+            if (audioPlayer.paused) bs.classList.add('bs-versteckt');
         })();
 
         document.addEventListener('mousemove', moveDrag);
