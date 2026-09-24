@@ -501,7 +501,7 @@ html.bs-debug-an .bs-debug { display: flex; }
     pointer-events: none;
     z-index: 0;
 }
-#bildspur-fenster.bs-shader-an .bs-shader { display: block; }
+#bildspur-fenster.bs-vollbild.bs-shader-an .bs-shader { display: block; }
 .bs-ruhe { position: relative; }
 /* JOB-103 (v3.16): Zeichnung deckend statt screen: normal zeichnen, Schwarz per SVG-Filter #bs-deckend
    durchsichtig, Linien voll deckend (Alpha aus Helligkeit) mit dunklem Saum. Shader bleibt 100 %. */
@@ -635,3 +635,21 @@ html.bs-debug-an .bs-debug { display: flex; }
     background: #fff;
     cursor: pointer;
 }
+
+/* ===================================================================
+   JOB-118: Fenstermodus (normal + maximiert, alles ausser .bs-vollbild) = KEIN eigener Shader.
+   Fensterflaeche und Buehne transparent -> Desktop (Seiten-Shader bzw. Hintergrundbild) scheint durch.
+   Zeichnungen/Texte nutzen den Shader-Look (Klasse bs-shader-an, JOB-103), nur ohne Canvas.
+   Kopf-, Kopfzeilen-, Transport- und Reglerleiste behalten eine dezente Halbtransparenz (Lesbarkeit der Knoepfe).
+   SHADER-Knopf und Shader-Feld gibt es nur im Vollbild.
+   =================================================================== */
+#bildspur-fenster:not(.bs-vollbild) { background: transparent; backdrop-filter: none; }
+#bildspur-fenster:not(.bs-vollbild) .bs-buehne { background: transparent; }
+#bildspur-fenster:not(.bs-vollbild) .bs-dunkel { background: transparent; }
+#bildspur-fenster:not(.bs-vollbild) .bs-header,
+#bildspur-fenster:not(.bs-vollbild) .bs-kopf,
+#bildspur-fenster:not(.bs-vollbild) .bs-transport,
+#bildspur-fenster:not(.bs-vollbild) .bs-chat-regler,
+#bildspur-fenster:not(.bs-vollbild) .bs-debug { background: rgba(0, 0, 0, 0.5); }
+#bildspur-fenster:not(.bs-vollbild) .bs-t-shader,
+#bildspur-fenster:not(.bs-vollbild) .bs-shpanel { display: none !important; }

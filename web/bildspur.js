@@ -342,6 +342,7 @@
             if (an) this._barZeigen();
             const btn = root.querySelector('.bs-t-vollbild');
             btn.setAttribute('aria-label', an ? 'Vollbild beenden' : 'Vollbild');
+            if (this._shUi) { this._shUi(); this._shPlan(); }
         }
 
         _onFullscreenChange() {
@@ -408,10 +409,15 @@
                 this._shSetze(this._shAn, !frisch);
             };
             this._shUi = () => {
-                this.el.classList.toggle('bs-shader-an', !!(this._shAn && this._shInit));
+                // JOB-118: Fenstermodus = transparent zum Desktop, Bilder/Texte wie im Shader-Look (Klasse bs-shader-an),
+                // aber ohne eigenen Canvas; der Canvas (und Knopf/Feld) gilt nur im Vollbild (CSS .bs-vollbild.bs-shader-an).
+                const voll = this._istVollbild();
+                this.el.classList.toggle('bs-shader-an', !voll || !!(this._shAn && this._shInit));
+                if (!voll && this._shPanel && !this._shPanel.hidden) this._shFeld(false);
                 if (this._shPanel && !this._shPanel.hidden) this._shFeldAktualisieren();
             };
             document.addEventListener('visibilitychange', () => this._shPlan());
+            this._shUi();
             this._shbereit();
             if (!this._shInit) {
                 window.addEventListener('load', () => this._shbereit());
@@ -559,7 +565,7 @@
         _shPlan() {
             if (this._shRafH) { cancelAnimationFrame(this._shRafH); this._shRafH = null; }
             if (this._shTimer) { clearTimeout(this._shTimer); this._shTimer = null; }
-            if (!this._shAn || !this._shInit) return;
+            if (!this._shAn || !this._shInit || !this._istVollbild()) return; // JOB-118: Fenstermodus = keine Schleife
             if (this._shSoll()) this._shRafH = requestAnimationFrame((n) => this._shFrame(n));
             else this._shTimer = setTimeout(() => this._shPlan(), 500);
         }
