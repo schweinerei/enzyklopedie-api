@@ -1697,6 +1697,10 @@ async def i18n_normalize_language(freitext: str) -> Optional[dict]:
         return _i18n_lang_cache[key]
     if (kn := _i18n_known(freitext)):
         return kn
+    dbk = "lang|" + key[:120]
+    if (dbhit := await _i18n_db_get(dbk)) and I18N_CODE_RE.match(str(dbhit.get("code", ""))):
+        _i18n_lang_cache[key] = dbhit
+        return dbhit
     obj = await _i18n_llm(I18N_LANG_PROMPT, json.dumps({"input": freitext}, ensure_ascii=False), 120, 25)
     if not obj or obj.get("ok") is not True:
         return None
@@ -1713,6 +1717,7 @@ async def i18n_normalize_language(freitext: str) -> Optional[dict]:
     _i18n_lang_cache[key] = res
     while len(_i18n_lang_cache) > 500:
         _i18n_lang_cache.popitem(last=False)
+    await _i18n_db_put(dbk, res)
     return res
 
 
@@ -1749,6 +1754,102 @@ def _i18n_cache_write(code: str, ver: str, data: dict) -> None:
         _i18n_cache_file(code, ver).write_text(json.dumps(data, ensure_ascii=False), "utf-8")
     except Exception as e:
         log.warning("i18n cache write: %s", e)   # Datei-Cache ist optional (Render ohne Disk)
+
+
+# --- Dauerhafter Cache in Postgres (JOB-109). Jeder Fehler -> stiller Rueckfall auf Memory/Datei/LLM, nie 500. ---
+_i18n_db_state = {"ready": False, "down_until": 0.0}
+I18N_DB_TIMEOUT = 3          # Sekunden Verbindungsaufbau
+I18N_DB_COOLDOWN = 60        # nach einem DB-Fehler so lange gar nicht erst versuchen
+
+
+def _i18n_db_connect():
+    """Liefert (connection, paramstyle) oder None (keine Postgres-DB konfiguriert / Cooldown)."""
+    if not (DATABASE_URL and "postgres" in DATABASE_URL) or time.time() < _i18n_db_state["down_until"]:
+        return None
+    import psycopg2
+    conn = psycopg2.connect(DATABASE_URL.replace("postgres://", "postgresql://", 1), connect_timeout=I18N_DB_TIMEOUT)
+    return conn, "%s"
+
+
+def _i18n_db_ensure(conn) -> None:
+    if _i18n_db_state["ready"]:
+        return
+    cur = conn.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS i18n_cache (cache_key VARCHAR(200) PRIMARY KEY, value TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);")
+    conn.commit()
+    cur.close()
+    _i18n_db_state["ready"] = True
+
+
+def _i18n_db_get_sync(key: str) -> Optional[dict]:
+    try:
+        c = _i18n_db_connect()
+        if not c:
+            return None
+        conn, ph = c
+        try:
+            _i18n_db_ensure(conn)
+            cur = conn.cursor()
+            cur.execute(f"SELECT value FROM i18n_cache WHERE cache_key = {ph}", (key,))
+            row = cur.fetchone()
+            cur.close()
+        finally:
+            conn.close()
+        if not row:
+            return None
+        obj = json.loads(row[0])
+        return obj["v"] if isinstance(obj, dict) and isinstance(obj.get("v"), dict) else None
+    except Exception as e:
+        _i18n_db_state["down_until"] = time.time() + I18N_DB_COOLDOWN
+        log.warning("i18n db read: %s", e)
+        return None
+
+
+def _i18n_db_put_sync(key: str, data: dict) -> None:
+    try:
+        c = _i18n_db_connect()
+        if not c:
+            return
+        conn, ph = c
+        try:
+            _i18n_db_ensure(conn)
+            cur = conn.cursor()
+            val = json.dumps({"v": data, "ts": int(time.time())}, ensure_ascii=False)
+            cur.execute(f"INSERT INTO i18n_cache (cache_key, value) VALUES ({ph}, {ph}) ON CONFLICT (cache_key) DO UPDATE SET value = EXCLUDED.value", (key, val))
+            conn.commit()
+            cur.close()
+        finally:
+            conn.close()
+    except Exception as e:
+        _i18n_db_state["down_until"] = time.time() + I18N_DB_COOLDOWN
+        log.warning("i18n db write: %s", e)
+
+
+async def _i18n_db_get(key: str) -> Optional[dict]:
+    try:
+        return await asyncio.wait_for(asyncio.to_thread(_i18n_db_get_sync, key), timeout=I18N_DB_TIMEOUT + 3)
+    except Exception:
+        return None
+
+
+async def _i18n_db_put(key: str, data: dict) -> None:
+    try:
+        await asyncio.wait_for(asyncio.to_thread(_i18n_db_put_sync, key, data), timeout=I18N_DB_TIMEOUT + 3)
+    except Exception:
+        pass
+
+
+async def _i18n_cache_get(code: str, ver: str) -> Optional[dict]:
+    """Memory -> Datei -> Postgres."""
+    hit = _i18n_cache_read(code, ver)
+    if hit is not None:
+        return hit
+    hit = await _i18n_db_get(f"tr|{code}|{ver}")
+    if hit is not None:
+        _i18n_tr_cache[f"{code}|{ver}"] = hit
+        while len(_i18n_tr_cache) > 60:
+            _i18n_tr_cache.popitem(last=False)
+    return hit
 
 
 def _i18n_err(code: str, msg: str, status: int):
@@ -1797,13 +1898,13 @@ async def i18n_translate(request: Request):
     if total > I18N_MAX_TOTAL:
         return _i18n_err("too_large", "Strings too large.", 413)
     ver = _i18n_version(strings)
-    hit = _i18n_cache_read(code, ver)
+    hit = await _i18n_cache_get(code, ver)
     if hit is not None:
         return JSONResponse(content={**meta, "builtin": False, "version": ver, "strings": hit, "cached": True, "ms": int((time.perf_counter() - t0) * 1000)})
     lock = _i18n_locks.setdefault(f"{code}|{ver}", asyncio.Lock())   # gleicher Auftrag parallel -> nur ein LLM-Lauf
     try:
         async with lock:
-            hit = _i18n_cache_read(code, ver)
+            hit = await _i18n_cache_get(code, ver)
             if hit is not None:
                 return JSONResponse(content={**meta, "builtin": False, "version": ver, "strings": hit, "cached": True, "ms": int((time.perf_counter() - t0) * 1000)})
             system = I18N_TR_PROMPT.format(name=lang["english_name"], code=code, brands=", ".join(I18N_PROTECTED))
@@ -1829,6 +1930,7 @@ async def i18n_translate(request: Request):
             if len(out) < max(1, int(len(strings) * 0.8)):   # Ausschuss -> nicht cachen, kein halber Sprachwechsel
                 return _i18n_err("incomplete", "Translation incomplete. Please try again.", 502)
             _i18n_cache_write(code, ver, out)
+            await _i18n_db_put(f"tr|{code}|{ver}", out)
     finally:
         if not lock.locked():
             _i18n_locks.pop(f"{code}|{ver}", None)
