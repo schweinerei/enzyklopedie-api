@@ -9,7 +9,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
     "kapitel": "k01",
     "sprache": "de",
     "audio_datei": "bildspur/audio/de_traktat_k01.mp3",
-    "audio_dauer_s": 392.76,
+    "audio_dauer_s": 391.96,
     "erzeugt_aus": "traktat-de-k01.regie.md",
     "alignment_quelle": "elevenlabs_forced_alignment",
     "header": {
@@ -29,7 +29,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2",
-        "t_start": 8.14,
+        "t_start": 7.34,
         "typ": "skizze",
         "inhalt": "Motiv: die junge Erde als gluehende, formlose Kugel, keine feste Oberflaeche, kein Himmel, nur brodelndes Gestein/Metall im Dunkel des jungen Sonnensystems. Stil: monochrom, Terminal-/technische Linienzeichnung (keine Fotorealistik, kein Feuer-Rendering, kein Stockfoto). Wirkt wie ein Oszilloskop-Rauschen, das eine Kugelform andeutet. Format: quadratisch, zentriert im Bildfenster. Beschriftung: keine (bewusst wortlos, vor-geologische Phase).",
         "dauer_hinweis": "bleibt",
@@ -40,7 +40,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2b",
-        "t_start": 14.38,
+        "t_start": 13.58,
         "typ": "skizze",
         "inhalt": "Motiv: Einschlaege/Akkretion — Planetesimale aus Cue 2a schlagen ein und verschmelzen zur Kugel aus Cue 2. Mehrere kurze, harte Einschlaglinien (Vektorstriche, die radial auf die Kugelkontur aus Cue 2 treffen), an den Auftreffpunkten kurze Rauschen-Ausbrueche (Verdichtung der Scanlinien), sonst identische Kugel/Rauschen-Basis wie Cue 2. Stil/Format/Verbot: wie Cue 2/2a, kein Feuer/Explosionsrendering, nur Linien.",
         "dauer_hinweis": "bleibt",
@@ -51,7 +51,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2f",
-        "t_start": 27.98,
+        "t_start": 27.18,
         "typ": "skizze",
         "inhalt": "Motiv: dieselbe Rauschkugel wie Cue 2 (Bild-zu-Bild-Vorlage cue02.png), die von aussen abkuehlt — die Scanlinien werden zur Kontur hin kuerzer und duenner, das Zentrum bleibt dicht. Kein neuer Koerper, keine Kruste, keine Farbe, kein Gold (die Anfangsserie 2a/2b/2/2f/2e bleibt goldfrei). Beschriftung: keine.",
         "dauer_hinweis": "bleibt",
@@ -62,7 +62,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2b2",
-        "t_start": 36.62,
+        "t_start": 35.82,
         "typ": "skizze",
         "inhalt": "Motiv: drei kleine Knotendiagramme nebeneinander, aufsteigend in Komplexitaet — ein einzelner Knoten mit wenigen Verbindungslinien (Molekuel), ein dichteres Netz aus Knoten (Lebewesen/Organismus), ein noch dichteres, vielfach vernetztes Geflecht (Zivilisation). Reine Struktur, kein Piktogramm, kein Icon. Stil: gleiche Linien-Aesthetik wie die uebrige Bildspur, duenne weisse Linien auf Schwarz, keine Fuellung, nur Knotenpunkte (kleine Kreise) und Verbindungslinien. Format: quadratisch, drei Diagramme in einer Reihe, gleich gross. Beschriftung: keine (Ankerwort \"komplexesten Strukturen\" traegt die Sprache).",
         "dauer_hinweis": "bleibt",
@@ -73,7 +73,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2b4",
-        "t_start": 44.64,
+        "t_start": 43.84,
         "typ": "skizze",
         "inhalt": "Motiv: dieselben drei Knotendiagramme wie Cue 2b2 (Bild-zu-Bild-Vorlage cue02b2.png), in jedem jetzt ein geschlossener Weg, der zu seinem Ausgangsknoten zurueckfuehrt — Strukturen, die sich selbst erkennen. Reine Struktur, kein Piktogramm, kein Icon, keine Schrift, kein Gold.",
         "dauer_hinweis": "bleibt",
@@ -84,7 +84,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2b3",
-        "t_start": 55.2,
+        "t_start": 54.4,
         "typ": "skizze",
         "inhalt": "Motiv: dieselbe Rauschkugel wie Cue 2 (identische Textur/Kontur, Bild-zu-Bild-Vorlage cue02.png), aber mit einem einzelnen, minimal helleren Punkt im Zentrum, kaum staerker als das umgebende Rauschen — der \"Keim\", der noch nicht hervortritt. Kein Gold, keine Kontur um den Punkt, keine Strahlen. Stil/Format wie Cue 2.",
         "dauer_hinweis": "bleibt",
@@ -95,7 +95,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2e",
-        "t_start": 72.1,
+        "t_start": 71.3,
         "typ": "skizze",
         "inhalt": "Motiv: Aufschmelzen/Magmaozean — die homogene, noch ungeschichtete junge Erde unmittelbar vor der Differentiation (Text: \"homogene Kugel, eine undifferenzierte Mischung aus Silikaten und Metallen\"). Schnittkreis (Master-Kreis wie Cue 3/4), aber OHNE jede Schichtung: gleichmaessig verteiltes, feines Punkt-/Schraffurrauschen im gesamten Querschnitt, keine Kern-Kontur, keine Pfeile. Stil: wie Cue 3/4 (technische Schnittzeichnung), nur ohne jede innere Struktur — der Ausgangszustand, den Cue 3 dann in Bewegung versetzt.",
         "dauer_hinweis": "bleibt",
@@ -106,7 +106,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-2e2",
-        "t_start": 86.74,
+        "t_start": 85.94,
         "typ": "skizze",
         "inhalt": "Motiv: dieselbe homogene Kugel wie Cue 2e (Bild-zu-Bild-Vorlage cue02e.png), jetzt mit einem gleichmaessigen Feld radialer Pfeile nach innen — die Schwerkraft, bevor sie sortiert. Die Pfeile sind ABSICHTLICH ungleich lang (aussen etwa doppelt so lang wie innen, Zentrum pfeilfrei); das ist physikalisch richtig und darf nicht geglaettet werden. Pfeile offen, keine Schrift, kein Gold.",
         "dauer_hinweis": "bleibt",
@@ -117,7 +117,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-3",
-        "t_start": 94.42,
+        "t_start": 93.62,
         "typ": "skizze",
         "inhalt": "Motiv: Querschnitt der jungen Erde, Pfeile zeigen schweres Eisen absinkend zum Zentrum, leichtere Silikate aufsteigend nach aussen (Prozess der planetaren Differentiation, in Bewegung/Prozessdarstellung, kein Endzustand). Stil: technische Schnittzeichnung, duenne weisse Linien auf Schwarz, Pfeile als Vektorlinien. Format: quadratisch. Beschriftung: \"Eisen\" am absinkenden Pfeil, \"Silikate\" am aufsteigenden Pfeil.",
         "dauer_hinweis": "bleibt",
@@ -127,7 +127,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-3b",
-        "t_start": 107.22,
+        "t_start": 106.42,
         "typ": "skizze",
         "inhalt": "Motiv: derselbe Schnittkreis wie Cue 3 (Bild-zu-Bild-Vorlage cue03.png, gleiche Kreisposition, gleiche Strichstaerke), jetzt einen Schritt weiter: der Kern als Punktwolke deutlich groesser und dichter als in Cue 3, die Mischzone entsprechend kleiner, nur noch zwei bis drei Pfeile (statt vier bis sechs), naeher am Zentrum. Zwischenzustand zwischen Cue 3 (Beginn der Trennung) und Cue 4 (fertige Zwiebel). Stil wie Cue 3/4.",
         "dauer_hinweis": "bleibt",
@@ -138,7 +138,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-4",
-        "t_start": 120.26,
+        "t_start": 119.46,
         "typ": "skizze",
         "inhalt": "Motiv: fertiger Erdquerschnitt, klar geschichtet — dichter metallischer Kern im Zentrum, umgeben vom zaehen, festen Silikatmantel. Stil: technische Schnittzeichnung wie Cue 3, jetzt statisch/final, keine Pfeile mehr. Format: quadratisch, gleiche Kameraposition wie Cue 3 (Kontinuitaet). Beschriftung: \"Kern\" und \"Mantel\" mit duennen Fuehrungslinien.",
         "dauer_hinweis": "bleibt",
@@ -149,7 +149,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-4a",
-        "t_start": 129.6,
+        "t_start": 128.8,
         "typ": "skizze",
         "inhalt": "Motiv: derselbe Querschnitt wie Cue 4 (Bild-zu-Bild-Vorlage cue04.png), der Mantel in drei duenne konzentrische Lagen geteilt, Dichte von aussen nach innen monoton steigend — die Zwiebel als Sortierung. Kein Gold, keine Schrift.",
         "dauer_hinweis": "bleibt",
@@ -160,7 +160,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-4b2",
-        "t_start": 138.14,
+        "t_start": 137.34,
         "typ": "skizze",
         "inhalt": "Motiv: derselbe Erdquerschnitt wie Cue 4 (Bild-zu-Bild-Vorlage cue04.png, Kern/Mantel-Schichtung identisch), jetzt zusaetzlich mit duennen, gebogenen Feldlinien, die aus dem Kern austreten, den Planeten in einem klassischen Dipolmuster umschliessen und auf der Gegenseite wieder eintreten (nur 4-6 Linien, keine Fuellung, keine Pfeile an den Feldlinien, nur die gekruemmte Linie selbst). Feldlinien reichen ueber die Aussenkontur der Erde hinaus ins Schwarz.",
         "dauer_hinweis": "bleibt",
@@ -171,7 +171,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-4b3",
-        "t_start": 148.74,
+        "t_start": 147.94,
         "typ": "skizze",
         "inhalt": "Motiv: derselbe Querschnitt wie Cue 4 (Vorlagen cue04.png / cue04b2.png), alles auf Grau gedimmt bis auf die Kern-Mantel-Grenze in Gold — die eine Flaeche, die aus dem Haufen ein Instrument macht. Gold ist hier der EINE Fokus des Bildes. Keine Schrift, keine Label.",
         "dauer_hinweis": "bleibt",
@@ -182,7 +182,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-5a",
-        "t_start": 158.02,
+        "t_start": 157.22,
         "typ": "skizze",
         "inhalt": "Motiv: voller Erdquerschnitt in der Master-Kreis-Signatur (Mitte 957/518, Aussen-R 418, Kerngrenze R 230), Mantel als breiter, diagonal schraffierter Ring im Stil der Serie (Vorlage cue05b.png), der aeussere Kern als geschlossener, OFFENER Hohlraum-Ring — darin EINE ruhige Sinus-Wellenlinie einmal umlaufend. Die Erde als leerer Resonanzkoerper, VOR der Turbulenz. Kein Rauschen, kein Gold, keine Pfeile, keine Schrift.",
         "dauer_hinweis": "bleibt",
@@ -193,7 +193,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-5b2",
-        "t_start": 167.5,
+        "t_start": 166.7,
         "typ": "skizze",
         "inhalt": "Motiv: zum ersten Mal drei Zonen im Master-Kreis (Vorlage cue05b.png) — fester innerer Kern, fluessige Schale mit dem Rauschen aus Cue 5b, Mantel. Der Hohlraum wird als Schale sichtbar. Verortung, keine Aussage: kein Gold, keine Pfeile, keine Schrift.",
         "dauer_hinweis": "bleibt",
@@ -204,7 +204,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-5b",
-        "t_start": 174.74,
+        "t_start": 173.94,
         "typ": "skizze",
         "inhalt": "Motiv: voller Schnittkreis wie Cue 4 (Bild-zu-Bild-Vorlage cue04.png), aber der fluessige Kernbereich jetzt mit unruhigem, dichtem Linienrauschen gefuellt (Vorstufe zu den geordneten Spiralen aus Cue 6 — hier noch ungerichtet, keine erkennbaren Saeulen). Mantel bleibt unveraendert (Schraffur aus Cue 4). Kein Zoom, volle Erde sichtbar, damit der Kontrast zum folgenden Zoom (Cue 6) als Bewegung \"hinein\" lesbar wird.",
         "dauer_hinweis": "bleibt",
@@ -215,7 +215,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-5c",
-        "t_start": 180.98,
+        "t_start": 180.18,
         "typ": "skizze",
         "inhalt": "Motiv: VOLLER Erdquerschnitt wie Cue 5b (kein Zoom-Ausschnitt; CD-Entscheidung JOB-49c), jetzt mit zwei Pfeilgruppen, die den Antrieb der Konvektion zeigen: drei kurze Pfeile vom Zentrum nach aussen (Hitze des inneren Kerns, Ursprung im Zentrum), drei kurze Pfeile von der Mantelunterseite nach innen (Abkuehlung von aussen). Beide Pfeilgruppen im selben Bild, ueber dem Rauschen aus 5b. Zwei-Objekte-Struktur (Ursache oben/unten), keine dritte Skizze.",
         "dauer_hinweis": "bleibt",
@@ -226,7 +226,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-6",
-        "t_start": 187.14,
+        "t_start": 186.34,
         "typ": "skizze",
         "inhalt": "Motiv: Nahaufnahme des fluessigen aeusseren Kerns — turbulente Konvektionsstroeme in verschlungenen Spiralen, durch die Corioliskraft zu rotierenden Saeulen verdreht. Stil: technisches Stroemungsdiagramm, duenne gekruemmte Linien, changierende Liniendichte statt Farbe zur Andeutung von Intensitaet. Format: quadratisch, Ausschnitt (Zoom in den Kernbereich aus Cue 4). Beschriftung: \"Kern-Konvektion\".",
         "dauer_hinweis": "bleibt",
@@ -236,7 +236,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-6b",
-        "t_start": 197.58,
+        "t_start": 196.78,
         "typ": "skizze",
         "inhalt": "Motiv: derselbe Zoom-Ausschnitt wie Cue 6 (Bild-zu-Bild-Vorlage cue06.png, gleiche Kameraposition), die Spiralstroeme aus Cue 6 jetzt zu zwei bis drei klar erkennbaren, parallelen rotierenden Saeulen verdichtet (laengliche, leicht verdrehte Linienbuendel statt loser Spiralen) — die Corioliskraft als Ordnung im Rauschen. Eine Saeule in Gold (Fortfuehrung des Fokus aus Cue 6), die anderen in Weiss.",
         "dauer_hinweis": "bleibt",
@@ -247,7 +247,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-6b2",
-        "t_start": 205.52,
+        "t_start": 204.72,
         "typ": "skizze",
         "inhalt": "Motiv: Massstabssprung zurueck auf den vollen Kreis (Vorlagen cue05b2.png / cue06b.png) — zwoelf bis fuenfzehn senkrechte Saeulen unterschiedlicher Groesse fuellen die ganze Kernschale: viele Ordnungen ergeben Unordnung. Kein Gold, keine Schrift.",
         "dauer_hinweis": "bleibt",
@@ -258,7 +258,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-7d",
-        "t_start": 216.68,
+        "t_start": 215.88,
         "typ": "skizze",
         "inhalt": "Motiv: ein einfaches Terminal-Spektrum — eine Reihe unregelmaessig hoher, duenner Linien (wie ein Oszilloskop-Frequenzbalken) ueber die gesamte Bildbreite, alle Hoehen zufaellig verteilt (kein Peak, kein Muster), reine Bandbreite. Kein Erdquerschnitt, bewusst abstraktes Diagramm. Stil: gleiche Linienstaerke wie uebrige Bildspur, Grau, kein Gold.",
         "dauer_hinweis": "bleibt",
@@ -269,7 +269,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-7c",
-        "t_start": 230.98,
+        "t_start": 230.18,
         "typ": "skizze",
         "inhalt": "Motiv: der Silikatmantel als akustischer Spiegel — Querschnitt wie Cue 6 (Kern-Konvektion), jetzt zusaetzlich mit der Mantelunterseite als klar hervorgehobener Grenzlinie, an der einzelne Wellenlinien vom Kern aufprallen und reflektiert werden (Vorstufe zu Cue 8, dort dann volle Ueberlagerung). Stil wie Cue 6/8 (technisches Stroemungs-/Wellendiagramm).",
         "dauer_hinweis": "bleibt",
@@ -280,7 +280,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8",
-        "t_start": 244.64,
+        "t_start": 243.84,
         "typ": "skizze",
         "inhalt": "Motiv: voller Master-Kreis wie Cue 4 (Kontur, Kern-Mantel-Grenze, Mantelschraffur gedimmt Grau), im Kern GENAU VIER Wellenzuege, je ein Buendel aus 3 parallelen gekruemmten Wellenfronten: durchgezogene Haelfte vom Kernzentrum schraeg nach aussen bis auf die Kern-Mantel-Grenze (Pfeilspitze nach aussen), gestrichelte Haelfte im Spiegelwinkel zurueck durch den Kern (Pfeilspitze nach innen). Reflexionsstellen bei ca. 45/135/225/315 Grad, die ruecklaufenden Buendel kreuzen einander sichtbar, zwischen den Zuegen bleibt Schwarz. Gold: EINE Reflexionsstelle (45 Grad) als kleiner Kreis auf der Grenzlinie mit kurzer Fuehrungslinie, die INNERHALB des Bildes endet. Label-Anker \"Reflexion an der Mantelunterseite\".",
         "dauer_hinweis": "bleibt",
@@ -292,7 +292,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8b1",
-        "t_start": 265.72,
+        "t_start": 264.92,
         "typ": "skizze",
         "inhalt": "Motiv: zwei kleine Wellendiagramme nebeneinander (Anfang/Ende-Prinzip): links zwei gegenlaeufige Wellenlinien, die sich zu einer flachen Linie ausloeschen (destruktive Interferenz), rechts zwei gleichlaufende Wellenlinien, die sich zu einer hohen Amplitude verstaerken (konstruktive Interferenz). Beide Diagramme gleich gross, gleiche Strichstaerke, mittige duenne Trennlinie wie bei Cue 12.",
         "dauer_hinweis": "bleibt",
@@ -303,7 +303,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8b2",
-        "t_start": 274.28,
+        "t_start": 273.48,
         "typ": "skizze",
         "inhalt": "Motiv: links ein kleines, unregelmaessiges Liniengewirr ohne erkennbare Form (chaotisches, ungeordnetes Medium ohne Struktur), rechts der bekannte Master-Kreis-Querschnitt (wie Cue 4/8, klar konturiert, Kern/Mantel-Grenze sichtbar) — Gegenueberstellung \"ungeordnetes Medium\" vs. \"definierter Resonanzraum\". Zwei-Objekte-Bild, mittige duenne Trennlinie.",
         "dauer_hinweis": "bleibt",
@@ -314,7 +314,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8b3",
-        "t_start": 286.08,
+        "t_start": 285.28,
         "typ": "skizze",
         "inhalt": "Motiv: voller Kreis (Vorlage cue04.png), ein einziger goldener Massbalken quer durch den Kernhohlraum von Grenze zu Grenze — der Raum hat ein Mass. Gold ist der EINE Fokus. Keine Masszahl, kein Formelzeichen, keine Schrift, keine Label.",
         "dauer_hinweis": "bleibt",
@@ -325,7 +325,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8c",
-        "t_start": 291.82,
+        "t_start": 291.02,
         "typ": "skizze",
         "inhalt": "Motiv: kleine Montage zweier bekannter Resonanzkoerper — Umriss einer Violine (Corpus) und einer Kirchenglocke, nebeneinander, als einfache Linienkontur (keine Details, keine Saiten/Kloeppel), Vorschau auf die Glocke-Erde-Analogie aus Cue 12. Stil: technische Umrisszeichnung, duenne weisse Linien auf Schwarz, gleiche Strichstaerke wie uebrige Skizzen. Format: quadratisch, beide Objekte mittig gruppiert.",
         "dauer_hinweis": "bleibt",
@@ -336,7 +336,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8d",
-        "t_start": 299.72,
+        "t_start": 298.92,
         "typ": "skizze",
         "inhalt": "Motiv: dasselbe Spektrum-Diagramm wie Cue 7d (Bild-zu-Bild-Vorlage), jetzt mit den meisten Linien ausgeblendet/verschwunden bis auf zwei bis drei stehende, gleich hohe Linien in Gold (die gefilterten Frequenzen) — Vorher/Nachher-Paar mit Cue 7d.",
         "dauer_hinweis": "bleibt",
@@ -347,7 +347,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8e",
-        "t_start": 304.9,
+        "t_start": 304.1,
         "typ": "skizze",
         "inhalt": "Motiv: cue07e.png pixelgenau uebernommen (zwei Waende, gestrichelte Achse, stehende Welle mit drei Baeuchen und vier Knoten, Knotenpunkte als kleine weisse Punkte). EINZIGE Aenderung: ein goldener Wegzug oberhalb der Welle (ca. 40 px ueber den Bauchspitzen), der den Hin- und Rueckweg zeigt - von der linken Wand waagerecht nach rechts bis zur rechten Wand (offene Pfeilspitze auf halber Strecke nach rechts), dort ein kurzer Bogen nach oben, dann waagerecht zurueck nach links bis zur linken Wand (offene Pfeilspitze auf halber Strecke nach links). Zwei Strecken, eine Kehre: \"2L\" ist abzaehlbar, ohne dass eine Zahl im Bild steht. Der Goldzug liegt vollstaendig zwischen den Waenden und beruehrt die Welle nicht. Label-Anker: linker Endpunkt des Goldzugs = \"Hin- und Rückweg\".",
         "dauer_hinweis": "bleibt",
@@ -358,7 +358,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-9",
-        "t_start": 308.38,
+        "t_start": 307.58,
         "typ": "formel",
         "inhalt": "2L = n\\lambda,\\quad n = 1, 2, 3, \\dots",
         "dauer_hinweis": "bleibt",
@@ -369,7 +369,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8f1",
-        "t_start": 319.28,
+        "t_start": 318.48,
         "typ": "skizze",
         "inhalt": "Folge \"Aufschaukeln\" Bild 1/4: Geometrie wie cue08e (Waende, Achse, 4 Knoten, 3 Baeuche), Huellkurve Amplitude 40 px, 1 goldene Umlauf-Schleife(n). Kein Text im Bild.",
         "dauer_hinweis": "bleibt",
@@ -380,7 +380,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8f2",
-        "t_start": 321.92,
+        "t_start": 321.12,
         "typ": "skizze",
         "inhalt": "Folge \"Aufschaukeln\" Bild 2/4: Geometrie wie cue08e (Waende, Achse, 4 Knoten, 3 Baeuche), Huellkurve Amplitude 80 px, 2 goldene Umlauf-Schleife(n). Kein Text im Bild.",
         "dauer_hinweis": "bleibt",
@@ -391,7 +391,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8f3",
-        "t_start": 324.84,
+        "t_start": 324.04,
         "typ": "skizze",
         "inhalt": "Folge \"Aufschaukeln\" Bild 3/4: Geometrie wie cue08e (Waende, Achse, 4 Knoten, 3 Baeuche), Huellkurve Amplitude 125 px, 3 goldene Umlauf-Schleife(n). Kein Text im Bild.",
         "dauer_hinweis": "bleibt",
@@ -402,7 +402,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-8f4",
-        "t_start": 329.22,
+        "t_start": 328.42,
         "typ": "skizze",
         "inhalt": "Folge \"Aufschaukeln\" Bild 4/4: Geometrie wie cue08e (Waende, Achse, 4 Knoten, 3 Baeuche), Huellkurve Amplitude 156 px, 4 goldene Umlauf-Schleife(n). Kein Text im Bild.",
         "dauer_hinweis": "bleibt",
@@ -413,7 +413,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-10",
-        "t_start": 332.28,
+        "t_start": 331.48,
         "typ": "skizze",
         "inhalt": "Motiv: stehende Welle im Erdquerschnitt — klare, stabile Schwingungsform statt der chaotischen Ueberlagerung aus Cue 8, durchzieht den ganzen Hohlraum. Stil: technisches Diagramm, gleiche Kameraposition wie Cue 8 (Kontinuitaet), jetzt geordnete statt chaotische Linie. Format: quadratisch. Beschriftung: \"stehende Welle\".",
         "dauer_hinweis": "bleibt",
@@ -424,7 +424,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-10c",
-        "t_start": 340.38,
+        "t_start": 339.58,
         "typ": "skizze",
         "inhalt": "Motiv: der ganze Planet schwingt (Vorlage cue10.png) — die stehende Welle innen in Grau, die Aussenkontur selbst als leicht gewellte Goldlinie. Gold ist der EINE Fokus. Keine Schrift, kein Label (Rico: keine Schrift ausser Ueberschrift, Formel und Schlusstafel).",
         "dauer_hinweis": "bleibt",
@@ -435,7 +435,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-11b",
-        "t_start": 348.44,
+        "t_start": 347.64,
         "typ": "skizze",
         "inhalt": "Motiv: voller Erdquerschnitt wie Cue 10 (Kern/Mantel/stehende Welle), zusaetzlich ein kurzer, gebogener Pfeil, der entlang der Kern-Mantel-Grenze eine Streichbewegung andeutet (wie ein Bogen ueber eine Saite), Startpunkt und Endpunkt der Bewegung als zwei kleine Punkte auf der Grenzlinie. In Gold.",
         "dauer_hinweis": "bleibt",
@@ -446,7 +446,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-12",
-        "t_start": 362.02,
+        "t_start": 361.22,
         "typ": "skizze",
         "inhalt": "Motiv: zwei-geteiltes Bild — links eine Kirchenglocke mit markiertem Durchmesser/Wandstaerke, rechts der Erdquerschnitt aus Cue 10 mit analog markierter Mantelgeometrie. Stil: technische Vergleichszeichnung, symmetrischer Aufbau, gleiche Linienstaerke beidseitig. Format: quer (Bildfenster breiter als hoch), beide Haelften gleich gross. Beschriftung: \"Glocke\" links, \"Erde\" rechts, je ein Mass-Pfeil.",
         "dauer_hinweis": "bleibt",
@@ -456,7 +456,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-12a",
-        "t_start": 371.36,
+        "t_start": 370.56,
         "typ": "skizze",
         "inhalt": "Motiv: Rueckkehr zum vollen Erdquerschnitt (Master-Kreis wie Cue 10/11b, nicht mehr geteilt wie Cue 12), Kernbereich hervorgehoben (Punktraster etwas dichter/kontrastreicher als der Mantel), stehende Welle aus Cue 10 weiterhin sichtbar. Keine neue Geometrie, bewusst ruhiger Abschluss der Erde-Serie vor der Schlusstafel.",
         "dauer_hinweis": "bleibt",
@@ -467,7 +467,7 @@ window.BILDSPUR_INLINE["traktat-de-k01"] = {
       },
       {
         "id": "cue-13",
-        "t_start": 382.46,
+        "t_start": 381.66,
         "typ": "tafel",
         "inhalt": "Physik der Beziehungen",
         "dauer_hinweis": "bleibt",
