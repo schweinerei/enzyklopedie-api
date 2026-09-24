@@ -531,7 +531,7 @@ html.bs-debug-an .bs-debug { display: flex; }
 .bs-shpanel {
     order: 6;
     flex: 1 1 100%;
-    max-height: 240px;
+    max-height: 340px;
     overflow-y: auto;
     padding: 8px 10px;
     border: 1px solid var(--bs-border);
@@ -557,8 +557,69 @@ html.bs-debug-an .bs-debug { display: flex; }
 .bs-shauto > span { color: #fff; flex: 1 1 100%; }
 .bs-shpanel:not(.bs-sh-advmodus) .bs-shadv { display: none; }
 .bs-shpanel.bs-sh-advmodus .bs-shstd { display: none; }
-#bildspur-fenster.bs-vollbild .bs-shpanel { max-height: 45vh; background: rgba(0, 0, 0, 0.8); }
+#bildspur-fenster.bs-vollbild .bs-shpanel { max-height: 62vh; background: rgba(0, 0, 0, 0.8); }
 #bildspur-fenster.bs-vollbild .bs-shpanel .bs-shb { height: 36px; font-size: 14px; }
 #bildspur-fenster.bs-vollbild .bs-transport { max-height: 100dvh; }
 #bildspur-fenster .bs-shpanel .bs-shb.bs-an { background: #fff; color: #000; border-color: #fff; }
 #bildspur-fenster .bs-shpanel .bs-sh-imbild { flex: 0 0 auto; }
+
+/* JOB-112: TRACE als senkrechter Fader rechts neben SH1-3, statt in der Breite verzogener
+   Zeile. Eigene Track-/Thumb-Regeln, weil die globale input[type=range]-Regel der Seite
+   (index.html) den Klickbereich auf die 2px-Track-Hoehe zusammenzieht - genau das machte
+   TRACE bisher "wirkungslos" (Treffer-Flaeche fast null). */
+.bs-shrow { display: flex; align-items: stretch; gap: 10px; }
+.bs-shblocks { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+.bs-shblocks .bs-shblock:last-child { margin-bottom: 0; }
+.bs-shtrace {
+    flex: 0 0 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+}
+.bs-shtracelabel { color: #fff; font-size: 11px; letter-spacing: 0.05em; }
+.bs-shtraceval { color: #ccc; font-size: 11px; }
+.bs-shtrace input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 22px;
+    height: 160px;
+    margin: 0;
+    background: transparent;
+    accent-color: #fff;
+    cursor: pointer;
+    touch-action: none;
+}
+.bs-shtrace input[type="range"]::-webkit-slider-runnable-track {
+    width: 4px;
+    height: 100%;
+    background: var(--bs-border);
+    cursor: pointer;
+}
+.bs-shtrace input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 14px;
+    margin-left: -8px;
+    border-radius: 2px;
+    background: #fff;
+    cursor: pointer;
+}
+.bs-shtrace input[type="range"]::-moz-range-track {
+    width: 4px;
+    height: 100%;
+    background: var(--bs-border);
+    cursor: pointer;
+}
+.bs-shtrace input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 14px;
+    border: none;
+    border-radius: 2px;
+    background: #fff;
+    cursor: pointer;
+}
+#bildspur-fenster.bs-vollbild .bs-shtrace input[type="range"] { height: 260px; }

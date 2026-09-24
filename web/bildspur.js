@@ -450,8 +450,14 @@
                     ${reg('bs-shi', '#shader-speed', 0, 5, 0.05, 'SPEED')}
                 </div>
                 <div class="bs-shadv">
-                    ${adv}
-                    <div class="bs-shzeile">${reg('bs-shi', '#adv-trace', 0, 0.99, 0.01, 'TRACE')}</div>
+                    <div class="bs-shrow">
+                        <div class="bs-shblocks">${adv}</div>
+                        <div class="bs-shtrace">
+                            <span class="bs-shtracelabel">TRACE</span>
+                            <input type="range" class="bs-shi bs-shtraceinput" data-sel="#adv-trace" min="0" max="0.99" step="0.01" aria-label="TRACE" aria-orientation="vertical">
+                            <output class="bs-shtraceval">0.00</output>
+                        </div>
+                    </div>
                     <div class="bs-shzeile bs-shauto">
                         <span>AUTO MODULATION</span>
                         <button type="button" class="bs-shb bs-sh-auto">OFF</button>
@@ -461,7 +467,11 @@
                     </div>
                 </div>`;
             P.querySelectorAll('.bs-shi').forEach((el) => {
-                el.addEventListener('input', () => { api.regler(el.dataset.sel, el.value); this._shPlan(); });
+                el.addEventListener('input', () => {
+                    api.regler(el.dataset.sel, el.value);
+                    if (el.dataset.sel === '#adv-trace') P.querySelector('.bs-shtraceval').textContent = (+el.value).toFixed(2);
+                    this._shPlan();
+                });
             });
             P.querySelectorAll('.bs-shmodus button').forEach((b) => b.addEventListener('click', () => {
                 const z = api.zustand(), m = b.dataset.m;
@@ -520,6 +530,10 @@
                     v = sel.indexOf('intensity') > 0 ? z.intens[n] : sel.indexOf('adv-speed') > 0 ? z.spd[n] : z.hue[n];
                 }
                 setze(el, v);
+                if (sel === '#adv-trace') {
+                    const out = P.querySelector('.bs-shtraceval');
+                    if (out) out.textContent = (+v).toFixed(2);
+                }
             });
             const aus = z.auto === 'off';
             const ab = P.querySelector('.bs-sh-auto');
