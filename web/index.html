@@ -31,7 +31,7 @@ bzw. laut Auftrag zu korrigierenden Punkte:
 - F6:  data-i18n-Dopplung ([DIR] vs. [ITEM]) war bereits behoben (separate Keys store_item_*
        und store_dir_*) - verifiziert.
 - F8:  Sprachpersistenz + <html lang> waren bereits vorhanden - verifiziert.
-- Gaestebuch/Votes: ENDPOINTS.log zeigte auf /v1/log, obwohl dieser Endpoint laut Projektplan
+- Gaestebuch/Votes (Stand Etappe 1, seit JOB-120 ueberholt: ENDPOINTS.log = /v1/log): ENDPOINTS.log zeigte auf /v1/log, obwohl dieser Endpoint laut Projektplan
   (Abschnitt 2/4) noch nicht existiert. Laut Auftrag KEINE Backend-Anbindung fuer Gaestebuch/
   Votes in dieser Etappe -> ENDPOINTS.log auf null gesetzt, Gaestebuch zeigt sauberen
   [OFFLINE]-Zustand statt eines echten (aber unbelegten) Live-Requests. Votes waren schon auf
@@ -482,9 +482,13 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         </div>
         
         <!-- EINGABEBEREICH -->
-        <div style="display: flex; padding: 10px 20px 20px 20px; gap: 10px; border-top: 1px solid var(--term-border); background: var(--term-bg);">
-            <input type="text" id="guestbook-eingabe" data-i18n-placeholder="guestbook_placeholder" maxlength="300" placeholder="Enter public message..." autocomplete="off" style="flex-grow: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--term-accent); color: #ffffff; border-radius: 4px; outline: none; font-family: var(--font-mono); font-size: 16px;">
+        <div style="padding: 10px 20px 20px 20px; border-top: 1px solid var(--term-border); background: var(--term-bg);">
+        <div id="guestbook-hint" data-i18n="log_hint" style="color: #bbbbbb; font-size: 13px; margin-bottom: 8px; font-family: var(--font-mono);">> Entries are public. Please do not share personal data.</div>
+        <div id="guestbook-status" role="status" aria-live="polite" style="min-height: 18px; font-size: 13px; margin-bottom: 8px; font-family: var(--font-mono);"></div>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" id="guestbook-eingabe" data-i18n-placeholder="guestbook_placeholder" maxlength="280" placeholder="Enter public message..." autocomplete="off" style="flex-grow: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--term-accent); color: #ffffff; border-radius: 4px; outline: none; font-family: var(--font-mono); font-size: 16px;">
             <button id="guestbook-senden-btn" class="action-btn" data-i18n="guestbook_send" aria-label="Send public message" data-i18n-aria="aria_send_public">SEND</button>
+        </div>
         </div>
     </div>
 </div>
@@ -850,11 +854,17 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             status_warming: "> Contacting backend...",
             status_error: "> Transmission failed. Please try again.",
             status_http: "> Backend answered with an error.",
-            log_offline: "> Public log offline (backend endpoint pending).",
+            log_offline: "> Public log unreachable. Retrying automatically...",
             log_empty: "> No entries yet. Be the first node.",
-            log_sent: "> Entry transmitted.",
-            log_pending: "> Entry queued for review.",
-            log_limit: "> Too many entries. Please wait.",
+            log_sent: "> Entry saved.",
+            log_limit: "> Too fast. Please wait a few minutes before the next entry.",
+            log_hint: "> Entries are public. Please do not share personal data.",
+            log_err_empty: "> Rejected: the entry is empty.",
+            log_err_too_long: "> Rejected: too long (max. 280 characters).",
+            log_err_link: "> Rejected: links and addresses are not allowed.",
+            log_err_blocked: "> Rejected: the entry contains blocked words.",
+            log_err_duplicate: "> Rejected: this entry was just posted already.",
+            log_err_server: "> Could not save the entry. Please try again later.",
             votes_local: "local",
             sample_missing: "> Sample not yet uploaded.",
             purchase_routing: "> Routing to vendor...",
@@ -947,11 +957,17 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             status_warming: "> Verbinde mit Backend...",
             status_error: "> Übertragung fehlgeschlagen. Bitte erneut versuchen.",
             status_http: "> Backend hat mit einem Fehler geantwortet.",
-            log_offline: "> Öffentliches Log offline (Backend-Endpoint folgt).",
+            log_offline: "> Öffentliches Log nicht erreichbar. Neuer Versuch läuft automatisch...",
             log_empty: "> Noch keine Einträge. Sei der erste Knoten.",
-            log_sent: "> Eintrag übertragen.",
-            log_pending: "> Eintrag wartet auf Freigabe.",
-            log_limit: "> Zu viele Einträge. Bitte warten.",
+            log_sent: "> Eintrag gespeichert.",
+            log_limit: "> Zu schnell. Bitte ein paar Minuten bis zum nächsten Eintrag warten.",
+            log_hint: "> Einträge sind öffentlich. Bitte keine persönlichen Daten angeben.",
+            log_err_empty: "> Abgelehnt: der Eintrag ist leer.",
+            log_err_too_long: "> Abgelehnt: zu lang (max. 280 Zeichen).",
+            log_err_link: "> Abgelehnt: Links und Adressen sind nicht erlaubt.",
+            log_err_blocked: "> Abgelehnt: der Eintrag enthält gesperrte Wörter.",
+            log_err_duplicate: "> Abgelehnt: dieser Eintrag wurde gerade schon gesendet.",
+            log_err_server: "> Eintrag konnte nicht gespeichert werden. Bitte später erneut versuchen.",
             votes_local: "lokal",
             sample_missing: "> Leseprobe noch nicht hochgeladen.",
             purchase_routing: "> Weiterleitung zum Anbieter...",
@@ -1044,11 +1060,17 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             status_warming: "> Соединение с сервером...",
             status_error: "> Ошибка передачи. Попробуйте ещё раз.",
             status_http: "> Сервер ответил ошибкой.",
-            log_offline: "> Публичный журнал недоступен (эндпоинт в разработке).",
+            log_offline: "> Публичный журнал недоступен. Повторная попытка выполняется автоматически...",
             log_empty: "> Записей пока нет. Станьте первым узлом.",
-            log_sent: "> Запись отправлена.",
-            log_pending: "> Запись ожидает проверки.",
-            log_limit: "> Слишком много записей. Подождите.",
+            log_sent: "> Запись сохранена.",
+            log_limit: "> Слишком быстро. Подождите несколько минут до следующей записи.",
+            log_hint: "> Записи публичны. Пожалуйста, не указывайте личные данные.",
+            log_err_empty: "> Отклонено: запись пуста.",
+            log_err_too_long: "> Отклонено: слишком длинная (макс. 280 символов).",
+            log_err_link: "> Отклонено: ссылки и адреса запрещены.",
+            log_err_blocked: "> Отклонено: запись содержит запрещённые слова.",
+            log_err_duplicate: "> Отклонено: такая запись только что уже отправлена.",
+            log_err_server: "> Не удалось сохранить запись. Попробуйте позже.",
             votes_local: "локально",
             sample_missing: "> Фрагмент ещё не загружен.",
             purchase_routing: "> Переход к продавцу...",
@@ -1141,7 +1163,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             ask: "/ask", askVoice: "/ask-voice", purchase: "/purchase", unlock: "/unlock",   // vorhanden (Render)
             askStream: "/ask/stream", askVoiceStream: "/ask-voice/stream",                  // SSE; bei 404 (altes Backend) Fallback auf ask/askVoice
             health: "/health",        // HOOK AP8: darf 404 liefern, es zählt nur Erreichbarkeit
-            log: null,                // F1/AP5: /v1/log existiert noch nicht -> Gästebuch bleibt [OFFLINE]
+            log: "/v1/log",          // JOB-120: öffentliches Log; [OFFLINE] nur bei echtem Fehler/Timeout
             votes: null,              // HOOK AP5: "/v1/votes"
             samples: null,            // HOOK AP6: "/v1/store/samples"
             session: null             // HOOK AP2: "/v1/session"
@@ -1157,7 +1179,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         function setOffline(off) {
             apiOnline = !off;
             document.getElementById('window-chat').classList.toggle('is-offline', off);
-            document.getElementById('window-guestbook').classList.toggle('is-offline', off || !ENDPOINTS.log);
         }
 
         // Alle Backend-Aufrufe laufen hier durch. HOOK AP2: credentials:'include' ergänzen, sobald das Backend
@@ -3025,7 +3046,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 
         // ==========================================
         // NOTFIX: GÄSTEBUCH (F1)
-        // HOOK AP5: ENDPOINTS.log setzen -> GET /log?after=<id>&limit=50 {entries:[{id,ts,lang,text,mine}]}, POST /log {text}
+        // JOB-120: GET /v1/log?after=<id>&limit=50 {entries:[{id,ts,lang,text,mine}]}, POST /v1/log {text,lang}; Fehlercodes empty|too_long|link|blocked|duplicate|rate_limited|storage
         // ==========================================
         const gbList = document.getElementById('guestbook-list');
         const gbInput = document.getElementById('guestbook-eingabe');
@@ -3040,7 +3061,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             d.textContent = text; gbList.appendChild(d);
         }
         function gbRender(entry) {
-            const wrap = document.createElement('div'); wrap.className = 'log-entry' + (entry.mine ? ' mine' : '');
+            const wrap = document.createElement('div'); wrap.className = 'log-entry' + (entry.mine ? ' mine' : ''); wrap.dataset.id = String(entry.id);
             const meta = document.createElement('div'); meta.className = 'log-meta';
             const ts = entry.ts ? new Date(entry.ts) : null;
             meta.textContent = '> #' + entry.id
@@ -3051,41 +3072,63 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             wrap.appendChild(meta); wrap.appendChild(body); gbList.appendChild(wrap);
             if ((entry.id | 0) > gbLastId) gbLastId = entry.id | 0;
         }
-        function zeigeGbStatus(text) { gbInput.placeholder = text; setTimeout(() => { gbInput.placeholder = t('guestbook_placeholder'); }, 4000); }
+        const gbStatus = document.getElementById('guestbook-status');
+        let gbStatusTimer = null; let gbLoading = false; let gbEverOk = false;
+        function zeigeGbStatus(text, isError) {
+            gbStatus.textContent = text; gbStatus.style.color = isError ? '#ff8a8a' : 'var(--term-accent)';
+            clearTimeout(gbStatusTimer); gbStatusTimer = setTimeout(() => { gbStatus.textContent = ''; }, 7000);
+        }
+        function gbSetOffline(off) { gbWin.classList.toggle('is-offline', off); }
+        function gbVisible() { return !gbWin.classList.contains('minimized') && !document.hidden; }
         async function gbLoad() {
-            if (!ENDPOINTS.log) { gbNotice(t('log_offline')); gbWin.classList.add('is-offline'); return; }
+            if (!ENDPOINTS.log || gbLoading) return;
+            gbLoading = true;
             try {
-                const res = await api(`${ENDPOINTS.log}?after=${gbLastId}&limit=50`, {}, 10000);
-                if (!res.ok) { if (!gbHasEntries) gbNotice(t('log_offline')); return; }
+                // erster Abruf darf einen Render-Kaltstart (30-60 s) abwarten, danach 10 s
+                const res = await api(`${ENDPOINTS.log}?after=${gbLastId}&limit=50`, {}, gbEverOk ? 10000 : 60000);
+                if (!res.ok) throw new Error('http ' + res.status);
                 const data = await res.json();
                 const entries = Array.isArray(data.entries) ? data.entries : [];
+                gbEverOk = true; gbSetOffline(false);
                 if (!gbHasEntries && entries.length === 0) { gbNotice(t('log_empty')); return; }
                 if (!gbHasEntries) gbList.textContent = '';
-                entries.forEach(gbRender);
-                if (entries.length) { gbHasEntries = true; gbList.scrollTop = gbList.scrollHeight; }
-            } catch (e) { if (!gbHasEntries) gbNotice(t('log_offline')); }
+                const known = new Set([...gbList.querySelectorAll('[data-id]')].map(n => n.dataset.id));
+                const fresh = entries.filter(e => !known.has(String(e.id)));
+                fresh.forEach(gbRender);
+                if (entries.length) { gbHasEntries = true; if (fresh.length) gbList.scrollTop = gbList.scrollHeight; }
+            } catch (e) {
+                gbSetOffline(true);
+                if (!gbHasEntries) gbNotice(t('log_offline'));
+            } finally { gbLoading = false; }
         }
+        const GB_ERRORS = { empty: 'log_err_empty', too_long: 'log_err_too_long', link: 'log_err_link', blocked: 'log_err_blocked', duplicate: 'log_err_duplicate' };
         async function gbSendEntry() {
-            const text = gbInput.value.trim(); if (!text) return;
-            if (!ENDPOINTS.log) { gbNotice(t('log_offline')); return; }
+            const text = gbInput.value.trim(); if (!text || gbSend.disabled) return;
             gbSend.disabled = true;
             try {
-                const res = await api(ENDPOINTS.log, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang: aktuelleSprache }) }, 15000);
-                if (res.status === 429) zeigeGbStatus(t('log_limit'));
-                else if (res.status === 202) { gbInput.value = ''; zeigeGbStatus(t('log_pending')); }
+                const res = await api(ENDPOINTS.log, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, lang: aktuelleSprache }) }, 60000);
+                if (res.status === 429) zeigeGbStatus(t('log_limit'), true);
                 else if (res.ok) {
-                    gbInput.value = '';
+                    gbInput.value = ''; gbSetOffline(false);
                     const entry = await res.json();
                     if (!gbHasEntries) gbList.textContent = '';
                     gbHasEntries = true; gbRender({ ...entry, mine: true }); gbList.scrollTop = gbList.scrollHeight;
-                    zeigeGbStatus(t('log_sent'));
-                } else zeigeGbStatus(t('status_http') + ' (' + res.status + ')');
-            } catch (e) { zeigeGbStatus(t('status_error')); }
+                    zeigeGbStatus(t('log_sent'), false);
+                } else {
+                    let code = ''; try { code = (await res.json()).error.code; } catch (e) {}
+                    if (GB_ERRORS[code]) zeigeGbStatus(t(GB_ERRORS[code]), true);
+                    else { zeigeGbStatus(t('log_err_server'), true); if (res.status >= 500) gbSetOffline(true); }
+                }
+            } catch (e) { zeigeGbStatus(t('log_err_server'), true); gbSetOffline(true); }
             gbSend.disabled = false;
         }
         gbSend.addEventListener('click', gbSendEntry);
         gbInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); gbSendEntry(); } });
-        gbTimer = setInterval(() => { if (ENDPOINTS.log && !gbWin.classList.contains('minimized')) gbLoad(); }, 20000);
+        // Laden beim Öffnen des Fensters, danach alle 30 s - nur solange das Fenster offen und der Tab sichtbar ist.
+        let gbWasMin = gbWin.classList.contains('minimized');
+        new MutationObserver(() => { const m = gbWin.classList.contains('minimized'); if (gbWasMin && !m && gbVisible()) gbLoad(); gbWasMin = m; }).observe(gbWin, { attributes: true, attributeFilter: ['class'] });
+        document.addEventListener('visibilitychange', () => { if (gbVisible()) gbLoad(); });
+        gbTimer = setInterval(() => { if (gbVisible()) gbLoad(); }, 30000);
 
         // ==========================================
         // NOTFIX: LESEPROBEN (F2)
@@ -3347,7 +3390,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         (async () => {
             const node = await checkApiHealth();
             if (!node && !apiEverOk) { zeigeStatus(t('status_offline')); }   // nur mit SHOW_DIAGNOSTICS sichtbar
-            gbLoad();
             loadVotesRemote();
             if (ENDPOINTS.samples) { try { const r = await api(ENDPOINTS.samples, {}, 10000); if (r.ok) applySamples(await r.json()); } catch (e) {} }
             // HOOK AP2: GET /v1/session -> State vom Server anwenden

@@ -115,11 +115,6 @@ LEMON_WEBHOOK_SECRET = os.environ.get("LEMON_WEBHOOK_SECRET", "")
 LEMON_ACTIVATION_NAME = os.environ.get("LEMON_ACTIVATION_NAME", "open-book")
 DEVICE_LIMIT_FALLBACK = int(os.environ.get("DEVICE_LIMIT", "5"))
 
-# --- Gästebuch (AP5) ---
-LOG_MODERATION = os.environ.get("LOG_MODERATION", "list")       # off | list | all  (all = jeder Eintrag wartet auf Freigabe)
-LOG_BLOCKLIST = [w.strip().lower() for w in os.environ.get("LOG_BLOCKLIST", "").split(",") if w.strip()]
-LOG_MAX_LEN = 300
-
 app = FastAPI(title="Enzyklopedia API")
 
 app.add_middleware(
@@ -1278,132 +1273,208 @@ async def lemon_webhook(request: Request):
 
 
 # ==========================================
-# GÄSTEBUCH (AP5): public_log. Keine Session-Bindung bis AP2; "mine" markiert der Client selbst.
+# OEFFENTLICHES LOG (JOB-120): public_log. Anonym: keine IP, kein User-Agent, kein Name in der DB.
+# Postgres wie beim i18n-Cache (to_thread + Timeout). DB-Fehler -> 503 {"error":{"code":"storage"}}, nie 500.
+# Loeschen nur per scripts/log_loeschen.py (kein oeffentlicher Delete-Endpunkt, kein Admin-Token im Frontend).
 # ==========================================
-import unicodedata
-
-_LOG_STRIP = re.compile(r"[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF]")
-
-
-def _ensure_log(cur, ph):
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS log_entries (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            lang VARCHAR(10),
-            text TEXT NOT NULL,
-            status VARCHAR(10) DEFAULT 'visible'
-        );
-    """ if ph == "?" else """
-        CREATE TABLE IF NOT EXISTS log_entries (
-            id SERIAL PRIMARY KEY,
-            ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            lang VARCHAR(10),
-            text TEXT NOT NULL,
-            status VARCHAR(10) DEFAULT 'visible'
-        );
-    """)
+LOG_MAX_LEN = 280
+LOG_PAGE = 50
+LOG_DB_TIMEOUT = 3            # Sekunden Verbindungsaufbau
+LOG_DB_COOLDOWN = 30          # nach DB-Fehler so lange sofort 503, statt jeden Request neu zu versuchen
+LOG_DUP_WINDOW = 600          # gleicher Text innerhalb 10 min = Duplikat
+LOG_WORDLIST_FILE = Path(os.environ.get("LOG_WORDLIST_FILE", str(Path(__file__).with_name("log_sperrwoerter.txt"))))
+_log_state = {"ready": False, "down_until": 0.0}
+_log_dupes: dict = {}         # sha1(normalisierter Text) -> Zeitpunkt; nur Hash im Speicher, nie in der DB
+_LOG_STRIP = re.compile(r"[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F​-‏ -‮⁠-⁯﻿]")
+_LOG_TAG = re.compile(r"</?[A-Za-z!?][^>]*>")
+_LOG_URL = re.compile(r"(?:https?|ftp|file)\s*:|www\s*\.|//|@|\bt\.me\b|\bbit\.ly\b", re.I)
+_LOG_TLD = re.compile(
+    r"(?<![\w-])[\w-]+(?:\.[\w-]+)*\.(?:com|net|org|info|biz|xyz|top|de|ru|su|ua|by|io|me|co|eu|app|dev|ly|gg|tv|to|cc|ws|"
+    r"site|online|shop|club|link|click|store|blog|cloud|pro|fr|uk|us|ch|at|nl|it|es|pl|cn|tk|ml|ga|cf|gq)(?![\w-])", re.I)
+_log_words_cache = {"mtime": None, "exact": frozenset(), "prefix": ()}
 
 
-def log_clean(text: str) -> str:
+def _log_norm(text: str) -> str:
+    """Vergleichsform: NFKC (Vollbreite -> ASCII), casefold, ohne Zero-Width/Steuerzeichen."""
+    return _LOG_STRIP.sub("", unicodedata.normalize("NFKC", text)).casefold()
+
+
+def log_clean(text) -> str:
+    """Nur Text: HTML-Tags/Klammern, Backticks und Steuer-/Zero-Width-Zeichen raus, Leerraum glatt. Ausgabe im Frontend per textContent."""
     text = unicodedata.normalize("NFC", str(text or ""))
     text = _LOG_STRIP.sub("", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text[:LOG_MAX_LEN]
+    text = _LOG_TAG.sub(" ", text).replace("<", "\u2039").replace(">", "\u203a").replace("`", "'")   # echte Tags raus, einzelne < > als harmlose Zeichen
+    return re.sub(r"\s+", " ", text).strip()
 
 
-def log_row(r) -> dict:
-    return {"id": r[0], "ts": (r[1].isoformat() if hasattr(r[1], "isoformat") else str(r[1])), "lang": r[2], "text": r[3], "mine": False}
+def log_has_link(text: str) -> bool:
+    n = _log_norm(text)
+    if _LOG_URL.search(n):
+        return True
+    # auch "beispiel . com" / "beispiel(.)com" / "beispiel [dot] com" erwischen
+    n2 = re.sub(r"\s*(?:\(\s*\.\s*\)|\[\s*\.\s*\]|[\(\[]\s*dot\s*[\)\]]|\s\.\s)\s*", ".", n)
+    return bool(_LOG_TLD.search(n) or _LOG_TLD.search(n2))
+
+
+def _log_words() -> tuple:
+    """Sperrwoerter aus Datei (eine je Zeile, '#' Kommentar, 'wort*' = Praefix). Neu geladen bei Dateiaenderung."""
+    try:
+        mt = LOG_WORDLIST_FILE.stat().st_mtime
+    except OSError:
+        return frozenset(), ()
+    if _log_words_cache["mtime"] != mt:
+        exact, prefix = set(), []
+        for line in LOG_WORDLIST_FILE.read_text(encoding="utf-8").splitlines():
+            w = _log_norm(line.split("#", 1)[0]).strip()
+            if not w:
+                continue
+            (prefix.append(w[:-1]) if w.endswith("*") and len(w) > 1 else exact.add(w))
+        _log_words_cache.update(mtime=mt, exact=frozenset(exact), prefix=tuple(prefix))
+    return _log_words_cache["exact"], _log_words_cache["prefix"]
+
+
+def log_blocked(text: str) -> bool:
+    exact, prefix = _log_words()
+    for tok in re.findall(r"\w+", _log_norm(text)):
+        if tok in exact or any(tok.startswith(p) for p in prefix):
+            return True
+    return False
+
+
+def log_is_dupe(text: str, remember: bool = False) -> bool:
+    now = time.time()
+    for k in [k for k, ts in _log_dupes.items() if ts < now - LOG_DUP_WINDOW]:
+        _log_dupes.pop(k, None)
+    key = hashlib.sha1(re.sub(r"\W+", "", _log_norm(text)).encode("utf-8")).hexdigest()
+    hit = key in _log_dupes
+    if remember:
+        _log_dupes[key] = now
+    return hit
+
+
+def _log_err(code: str, message: str, status: int) -> JSONResponse:
+    return JSONResponse(content={"error": {"code": code, "message": message}}, status_code=status)
+
+
+def _log_connect():
+    if not (DATABASE_URL and "postgres" in DATABASE_URL):
+        raise RuntimeError("no postgres configured")
+    if time.time() < _log_state["down_until"]:
+        raise RuntimeError("log db cooling down")
+    import psycopg2
+    return psycopg2.connect(DATABASE_URL.replace("postgres://", "postgresql://", 1), connect_timeout=LOG_DB_TIMEOUT)
+
+
+def _log_ensure(conn) -> None:
+    if _log_state["ready"]:
+        return
+    cur = conn.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS public_log (
+        id SERIAL PRIMARY KEY,
+        zeit TIMESTAMP NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+        text VARCHAR(280) NOT NULL,
+        sprache VARCHAR(5)
+    );""")
+    conn.commit()
+    cur.close()
+    _log_state["ready"] = True
+
+
+def _log_row(r) -> dict:
+    return {"id": r[0], "ts": r[1].strftime("%Y-%m-%dT%H:%M:%SZ") if hasattr(r[1], "strftime") else str(r[1]),
+            "text": r[2], "lang": r[3], "mine": False}
+
+
+def _log_list_sync(after: int, limit: int) -> list:
+    conn = None
+    try:
+        conn = _log_connect()
+        _log_ensure(conn)
+        cur = conn.cursor()
+        if after > 0:
+            cur.execute("SELECT id, zeit, text, sprache FROM public_log WHERE id > %s ORDER BY id ASC LIMIT %s;", (after, limit))
+            rows = cur.fetchall()
+        else:   # neueste `limit` Eintraege, in Anzeigereihenfolge (neueste unten)
+            cur.execute("SELECT id, zeit, text, sprache FROM (SELECT id, zeit, text, sprache FROM public_log ORDER BY id DESC LIMIT %s) t ORDER BY id ASC;", (limit,))
+            rows = cur.fetchall()
+        return [_log_row(r) for r in rows]
+    except Exception:
+        _log_state["down_until"] = time.time() + LOG_DB_COOLDOWN
+        raise
+    finally:
+        if conn is not None:
+            conn.close()
+
+
+def _log_insert_sync(text: str, sprache: str) -> dict:
+    conn = None
+    try:
+        conn = _log_connect()
+        _log_ensure(conn)
+        cur = conn.cursor()
+        cur.execute("INSERT INTO public_log (text, sprache) VALUES (%s, %s) RETURNING id, zeit, text, sprache;", (text, sprache))
+        row = cur.fetchone()
+        conn.commit()
+        return _log_row(row)
+    except Exception:
+        _log_state["down_until"] = time.time() + LOG_DB_COOLDOWN
+        raise
+    finally:
+        if conn is not None:
+            conn.close()
 
 
 @app.get("/v1/log")
-async def log_list(request: Request, after: int = 0, limit: int = 50):
+async def log_list(request: Request, after: int = 0, limit: int = LOG_PAGE):
+    """Letzte 50 Eintraege (after=0) bzw. neuere als `after`; aelteste zuerst, neueste unten."""
     if (rl := rate_limited(request, "log_read", 60)):
         return rl
-    limit = max(1, min(limit, 50))
-    conn, ph = _db()
+    limit = max(1, min(limit, LOG_PAGE))
     try:
-        cur = conn.cursor()
-        _ensure_log(cur, ph); conn.commit()
-        cur.execute(f"SELECT id, ts, lang, text FROM log_entries WHERE status = 'visible' AND id > {ph} ORDER BY id ASC LIMIT {ph};", (after, limit))
-        rows = cur.fetchall()
+        entries = await asyncio.wait_for(asyncio.to_thread(_log_list_sync, max(0, after), limit), timeout=LOG_DB_TIMEOUT + 5)
     except Exception as e:
-        log.error("log list: %s", e)
-        return JSONResponse(content={"error": {"code": "storage", "message": "Log unavailable."}}, status_code=500)
-    finally:
-        conn.close()
-    entries = [log_row(r) for r in rows]
-    return JSONResponse(content={"entries": entries, "next": entries[-1]["id"] if entries else after})
+        log.error("log list: %s", type(e).__name__)
+        return _log_err("storage", "Log unavailable.", 503)
+    return JSONResponse(content={"entries": entries, "next": entries[-1]["id"] if entries else max(0, after)},
+                        headers={"Cache-Control": "no-store"})
 
 
 @app.post("/v1/log")
 async def log_post(request: Request):
-    if (rl := rate_limited(request, "log_write", 10, 3600)):
+    """Eintrag anlegen. Pruefreihenfolge: Grobbremse -> Form/Inhalt -> strenges Rate-Limit -> DB. Nur validierte Eintraege zaehlen zum strengen Limit."""
+    if (rl := rate_limited(request, "log_post_all", 30, 600)):   # Grobbremse auch gegen Probing mit ungueltigen Texten
         return rl
     try:
         body = await request.json()
     except Exception:
         body = {}
-    text = log_clean(body.get("text") if isinstance(body, dict) else "")
+    if not isinstance(body, dict):
+        body = {}
+    raw = body.get("text")
+    if isinstance(raw, str) and len(raw) > LOG_MAX_LEN * 4:
+        return _log_err("too_long", "Entry too long.", 400)
+    text = log_clean(raw)
     if not text:
-        return JSONResponse(content={"error": {"code": "empty", "message": "Empty entry."}}, status_code=400)
-    lang = body.get("lang") if body.get("lang") in ("en", "de", "ru") else "en"
-    status = "visible"
-    low = text.lower()
-    if LOG_MODERATION == "all" or (LOG_MODERATION == "list" and any(w in low for w in LOG_BLOCKLIST)):
-        status = "pending"
-    conn, ph = _db()
+        return _log_err("empty", "Empty entry.", 400)
+    if len(text) > LOG_MAX_LEN:
+        return _log_err("too_long", "Entry too long (max %d)." % LOG_MAX_LEN, 400)
+    if log_has_link(text):
+        return _log_err("link", "Links are not allowed.", 400)
+    if log_blocked(text):
+        return _log_err("blocked", "Entry rejected.", 400)
+    if log_is_dupe(text):
+        return _log_err("duplicate", "Duplicate entry.", 409)
+    if (rl := rate_limited(request, "log_write", 3, 600)) or (rl := rate_limited(request, "log_write_h", 10, 3600)):
+        return rl
+    sprache = body.get("lang") if isinstance(body.get("lang"), str) and re.fullmatch(r"[a-z]{2,3}", body.get("lang")) else None
     try:
-        cur = conn.cursor()
-        _ensure_log(cur, ph)
-        if ph == "?":
-            cur.execute("INSERT INTO log_entries (lang, text, status) VALUES (?, ?, ?);", (lang, text, status))
-            new_id = cur.lastrowid
-        else:
-            cur.execute("INSERT INTO log_entries (lang, text, status) VALUES (%s, %s, %s) RETURNING id, ts;", (lang, text, status))
-            new_id = cur.fetchone()[0]
-        conn.commit()
+        entry = await asyncio.wait_for(asyncio.to_thread(_log_insert_sync, text, sprache), timeout=LOG_DB_TIMEOUT + 5)
     except Exception as e:
-        log.error("log post: %s", e)
-        return JSONResponse(content={"error": {"code": "storage", "message": "Log unavailable."}}, status_code=500)
-    finally:
-        conn.close()
-    if status == "pending":
-        return JSONResponse(content={"status": "pending"}, status_code=202)
-    return JSONResponse(content={"id": new_id, "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "lang": lang, "text": text, "mine": True})
-
-
-@app.get("/v1/log/pending")
-async def log_pending(x_admin_token: Optional[str] = Header(None)):
-    if not ADMIN_TOKEN or x_admin_token != ADMIN_TOKEN:
-        return JSONResponse(content={"detail": "Not Found"}, status_code=404)
-    conn, ph = _db()
-    try:
-        cur = conn.cursor(); _ensure_log(cur, ph)
-        cur.execute("SELECT id, ts, lang, text FROM log_entries WHERE status = 'pending' ORDER BY id ASC LIMIT 200;")
-        rows = cur.fetchall()
-    finally:
-        conn.close()
-    return JSONResponse(content={"entries": [log_row(r) for r in rows]})
-
-
-@app.patch("/v1/log/{entry_id}")
-async def log_moderate(entry_id: int, request: Request, x_admin_token: Optional[str] = Header(None)):
-    """Moderation: {"status": "visible" | "hidden"}. Nichts wird gelöscht."""
-    if not ADMIN_TOKEN or x_admin_token != ADMIN_TOKEN:
-        return JSONResponse(content={"detail": "Not Found"}, status_code=404)
-    body = await request.json()
-    status = body.get("status") if isinstance(body, dict) else None
-    if status not in ("visible", "hidden", "pending"):
-        return JSONResponse(content={"error": {"code": "bad_status"}}, status_code=400)
-    conn, ph = _db()
-    try:
-        cur = conn.cursor(); _ensure_log(cur, ph)
-        cur.execute(f"UPDATE log_entries SET status = {ph} WHERE id = {ph};", (status, entry_id))
-        conn.commit()
-    finally:
-        conn.close()
-    return JSONResponse(content={"id": entry_id, "status": status})
+        log.error("log post: %s", type(e).__name__)
+        return _log_err("storage", "Log unavailable.", 503)
+    log_is_dupe(text, remember=True)
+    entry["mine"] = True
+    return JSONResponse(content=entry, status_code=201)
 
 
 async def lese_ask_body(request: Request):
