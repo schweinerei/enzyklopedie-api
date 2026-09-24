@@ -66,6 +66,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
          crossorigin="anonymous" ist fuer SRI mit CDN-Ressourcen Pflicht (sonst blockt der Browser). -->
     <script src="https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js" integrity="sha384-H+hy9ULve6xfxRkWIh/YOtvDdpXgV2fmAGQkIDTxIgZwNoaoBal14Di2YTMR6MzR" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js" integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu" crossorigin="anonymous"></script>
+    <!-- JOB-57: KaTeX lokal statt CDN - der Bildspur-USP (Formeln mit Marker) muss ohne
+         Internet funktionieren, sonst erscheint ausgerechnet die Formel nicht. -->
+    <link rel="stylesheet" href="vendor/katex/katex.min.css">
+    <link rel="stylesheet" href="bildspur.css">
     <script>
         window.MathJax = {
             tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true },
@@ -143,7 +147,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         #window-chat     { top: 20px; left: 20px; width: 600px; }
         #window-store    { top: 80px; left: 20px; width: 600px; } 
         #window-guestbook{ top: 140px; left: 20px; width: 600px; }
-        #window-throne   { bottom: 20px; right: 20px; width: 450px; }
+        #window-throne   { bottom: 20px; right: 20px; width: 450px; }   /* JOB-106: Fenster abgeschaltet (HTML auskommentiert), CSS bleibt fuer Reaktivierung */
+        #window-lang     { bottom: 20px; right: 20px; width: 450px; }
+        html[dir="rtl"] #bildspur-fenster { direction: ltr; }   /* JOB-106: Player-Bedienung bleibt bei RTL-Sprachen an gewohnter Stelle */
         #window-backlog  { display: none !important; }   /* geparkt bis zum Startmenü (About + Legal + Backlog) */
         #throne-canvas { display: block; width: 100%; height: 230px; cursor: crosshair; touch-action: manipulation; }
         #throne-stats { font-family: var(--font-mono); font-size: 13px; color: #bbbbbb; padding: 8px 12px 10px; border-top: 1px solid var(--term-border); line-height: 1.7; }
@@ -154,6 +160,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         #window-backlog  { bottom: 20px; right: 20px; width: 450px; }
         #window-audio    { bottom: 75px; left: 20px; width: 450px; }
         #window-about    { bottom: 20px; left: 20px; width: 450px; }
+        #bildspur-fenster { position: fixed; top: auto; right: auto; bottom: 75px; left: 490px; width: 420px; z-index: 10; }  /* JOB-105: normale Fensterreihenfolge (highestZ), verschiebbar */
 
         @media (max-width: 768px) {
             .script-window { min-width: 260px; }
@@ -164,7 +171,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             /* DOCK LOGIK FÜR UNTERE 4 FENSTER AUF MOBILE */
             #window-settings:not(.minimized), 
             #window-audio:not(.minimized), 
-            #window-throne:not(.minimized), 
+            #window-lang:not(.minimized), 
             #window-about:not(.minimized) {
                 bottom: 75px !important; left: 2vw !important; width: 96vw !important; top: auto !important; right: auto !important;
                 max-height: calc(100vh - 160px);
@@ -175,7 +182,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }
             #window-settings.minimized  { left: 2vw !important; width: 22.5vw !important; }
             #window-audio.minimized     { left: 26.5vw !important; width: 22.5vw !important; }
-            #window-throne.minimized    { left: 51vw !important; width: 22.5vw !important; }
+            #window-lang.minimized    { left: 51vw !important; width: 22.5vw !important; }
             #window-about.minimized     { left: 75.5vw !important; width: 22.5vw !important; }
 
             .script-window[data-anchor="bottom"].minimized .window-header {
@@ -186,12 +193,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             
             #window-settings.minimized .window-header::before { content: "SYS"; font-size: 14px; letter-spacing: 1px; color: #ccc; }
             #window-audio.minimized .window-header::before { content: "SND"; font-size: 14px; letter-spacing: 1px; color: #ccc; }
-            #window-throne.minimized .window-header::before { content: "THR"; font-size: 14px; letter-spacing: 1px; color: #ccc; }
+            #window-lang.minimized .window-header::before { content: "LNG"; font-size: 14px; letter-spacing: 1px; color: #ccc; }
             #window-about.minimized .window-header::before { content: "INF"; font-size: 14px; letter-spacing: 1px; color: #ccc; }
 
             .window-header { padding: 6px 15px !important; font-size: 13px !important; }
             
             .fullscreen-wrapper { display: none !important; }
+
+            #bildspur-fenster { position: static !important; width: 96vw !important; left: auto !important; bottom: auto !important; margin: 10px 2vw; }
         }
 
         .script-window.fullscreen {
@@ -251,9 +260,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         #status-text:empty { display: none; }
         #mode-switches { display: flex; background: var(--term-panel); border-top: 1px solid var(--term-border); padding: 12px 20px 8px 20px; gap: 10px; justify-content: center; }
         
-        .mode-btn, .lang-btn, .audio-lang-btn, .bg-btn, .shader-btn, .radio-btn, .auto-btn { background: var(--term-bg); color: #cccccc; border: 1px solid var(--term-border); border-radius: 4px; padding: 8px 15px; font-size: 15px; font-family: var(--font-mono); cursor: pointer; }
+        .mode-btn, .lang-btn, .audio-lang-btn, .audio-kap-btn, .bg-btn, .shader-btn, .radio-btn, .auto-btn { background: var(--term-bg); color: #cccccc; border: 1px solid var(--term-border); border-radius: 4px; padding: 8px 15px; font-size: 15px; font-family: var(--font-mono); cursor: pointer; }
         .auto-btn { font-size: 13px; }
-        .mode-btn.active, .lang-btn.active, .audio-lang-btn.active, .bg-btn.active, .shader-btn.active, .radio-btn.active, .auto-btn.active { background: #ffffff; color: #000000; font-weight: bold; border-color: #ffffff; }
+        .mode-btn.active, .lang-btn.active, .audio-lang-btn.active, .audio-kap-btn.active, .bg-btn.active, .shader-btn.active, .radio-btn.active, .auto-btn.active { background: #ffffff; color: #000000; font-weight: bold; border-color: #ffffff; }
 
         #eingabe-bereich { display: flex; padding: 8px 20px 18px 20px; background: var(--term-panel); gap: 10px; }
         #chat-eingabe, .promo-input { flex-grow: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--term-accent); color: #ffffff; border-radius: 4px; outline: none; font-family: var(--font-mono); font-size: 18px; }
@@ -342,10 +351,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <div class="script-window minimized" id="window-chat" data-anchor="top">
     <div class="window-header">
-        <span><span data-i18n="chat_header">>_ run Enzyklopedia.sh</span><span class="offline-badge">[OFFLINE]</span></span>
+        <span><span data-i18n="chat_header">>_ run Enzyklopedia.sh</span><span class="offline-badge" data-i18n="badge_offline">[OFFLINE]</span></span>
         <div class="window-controls">
-            <button class="maximize-btn" aria-label="Maximize window">□</button>
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="maximize-btn" aria-label="Maximize window" data-i18n-aria="aria_maximize">□</button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content">
@@ -366,15 +375,15 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         <div id="status-text"></div>
         
         <div id="mode-switches">
-            <button class="mode-btn active" data-mode="standard">Standard</button>
-            <button class="mode-btn" data-mode="hardcore">Hardcore</button>
-            <button class="mode-btn" data-mode="simple">Simple</button>
+            <button class="mode-btn active" data-mode="standard" data-i18n="mode_standard">Standard</button>
+            <button class="mode-btn" data-mode="hardcore" data-i18n="mode_hardcore">Hardcore</button>
+            <button class="mode-btn" data-mode="simple" data-i18n="mode_simple">Simple</button>
         </div>
         
         <div id="eingabe-bereich">
             <input type="text" id="chat-eingabe" data-i18n-placeholder="chat_placeholder" placeholder="Enter inquiry..." autocomplete="off">
-            <button id="text-senden-btn" class="action-btn" aria-label="Send">➤</button>
-            <button id="mic-btn" class="action-btn" aria-label="Record voice input">🎤</button>
+            <button id="text-senden-btn" class="action-btn" aria-label="Send" data-i18n-aria="aria_send">➤</button>
+            <button id="mic-btn" class="action-btn" aria-label="Record voice input" data-i18n-aria="aria_mic">🎤</button>
         </div>
     </div>
 </div>
@@ -386,8 +395,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     <div class="window-header">
         <span data-i18n="store_header">>_ access store.dir</span>
         <div class="window-controls">
-            <button class="maximize-btn" aria-label="Maximize window">□</button>
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="maximize-btn" aria-label="Maximize window" data-i18n-aria="aria_maximize">□</button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content text-content">
@@ -398,18 +407,18 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         <div style="margin-bottom: 20px; font-family: var(--font-mono);" data-item="book_1_invitation">
             <strong style="color: var(--term-accent);" data-i18n="store_item_1">[ITEM] Schweinerei 1: The Invitation</strong><br>
             <span style="color: #ffffff; font-size: 16px;" data-i18n="store_format">> Format: Print / Digital / Audio</span><br>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="print">[PRINT]</a>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="digital">[DIGITAL]</a>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="audio">[AUDIO]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="print" data-i18n="fmt_print">[PRINT]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="digital" data-i18n="fmt_digital">[DIGITAL]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_1_invitation" data-format="audio" data-i18n="fmt_audio">[AUDIO]</a>
             <div class="item-status" id="status-book_1_invitation"></div>
         </div>
 
         <div style="margin-bottom: 25px; font-family: var(--font-mono);" data-item="book_2_physik">
             <strong style="color: var(--term-accent);" data-i18n="store_item_2">[ITEM] Physik der Beziehungen</strong><br>
             <span style="color: #ffffff; font-size: 16px;" data-i18n="store_format">> Format: Print / Digital / Audio</span><br>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="print">[PRINT]</a>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="digital">[DIGITAL]</a>
-            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="audio">[AUDIO]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="print" data-i18n="fmt_print">[PRINT]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="digital" data-i18n="fmt_digital">[DIGITAL]</a>
+            <a href="#" class="file-link format-btn purchase-action" data-item-id="book_2_physik" data-format="audio" data-i18n="fmt_audio">[AUDIO]</a>
             <div class="item-status" id="status-book_2_physik"></div>
         </div>
 
@@ -421,18 +430,18 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         <div style="margin-bottom: 20px; font-family: var(--font-mono);">
             <strong style="color: var(--term-accent);" data-i18n="store_dir_1">[DIR] Schweinerei 1: The Invitation</strong>
             <div style="padding-left: 20px; margin-top: 8px; line-height: 1.8;">
-                <span style="color: #ffffff;">├─ EN:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="en" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="en" data-kind="audio">[AUDIO]</a><br>
-                <span style="color: #ffffff;">├─ DE:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="de" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="de" data-kind="audio">[AUDIO]</a><br>
-                <span style="color: #ffffff;">└─ РУ:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="ru" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="ru" data-kind="audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">├─ EN:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="en" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="en" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">├─ DE:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="de" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="de" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">└─ РУ:</span> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="ru" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_1" data-lang="ru" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
             </div>
         </div>
 
         <div style="margin-bottom: 10px; font-family: var(--font-mono);">
             <strong style="color: var(--term-accent);" data-i18n="store_dir_2">[DIR] Physik der Beziehungen</strong>
             <div style="padding-left: 20px; margin-top: 8px; line-height: 1.8;">
-                <span style="color: #ffffff;">├─ EN:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="en" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="en" data-kind="audio">[AUDIO]</a><br>
-                <span style="color: #ffffff;">├─ DE:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="de" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="de" data-kind="audio">[AUDIO]</a><br>
-                <span style="color: #ffffff;">└─ РУ:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="ru" data-kind="pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="ru" data-kind="audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">├─ EN:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="en" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="en" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">├─ DE:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="de" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="de" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
+                <span style="color: #ffffff;">└─ РУ:</span> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="ru" data-kind="pdf" data-i18n="fmt_pdf">[PDF]</a> <a href="#" class="file-link sample-link" data-book="book_2" data-lang="ru" data-kind="audio" data-i18n="fmt_audio">[AUDIO]</a><br>
             </div>
         </div>
 
@@ -457,10 +466,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <div class="script-window minimized" id="window-guestbook" data-anchor="top">
     <div class="window-header">
-        <span><span data-i18n="guestbook_header">>_ tail -f public_log.txt</span><span class="offline-badge">[OFFLINE]</span></span>
+        <span><span data-i18n="guestbook_header">>_ tail -f public_log.txt</span><span class="offline-badge" data-i18n="badge_offline">[OFFLINE]</span></span>
         <div class="window-controls">
-            <button class="maximize-btn" aria-label="Maximize window">□</button>
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="maximize-btn" aria-label="Maximize window" data-i18n-aria="aria_maximize">□</button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content" style="background: var(--term-panel); display: flex; flex-direction: column; height: 100%;">
@@ -472,7 +481,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         <!-- EINGABEBEREICH -->
         <div style="display: flex; padding: 10px 20px 20px 20px; gap: 10px; border-top: 1px solid var(--term-border); background: var(--term-bg);">
             <input type="text" id="guestbook-eingabe" data-i18n-placeholder="guestbook_placeholder" maxlength="300" placeholder="Enter public message..." autocomplete="off" style="flex-grow: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--term-accent); color: #ffffff; border-radius: 4px; outline: none; font-family: var(--font-mono); font-size: 16px;">
-            <button id="guestbook-senden-btn" class="action-btn" data-i18n="guestbook_send" aria-label="Send public message">SEND</button>
+            <button id="guestbook-senden-btn" class="action-btn" data-i18n="guestbook_send" aria-label="Send public message" data-i18n-aria="aria_send_public">SEND</button>
         </div>
     </div>
 </div>
@@ -480,11 +489,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <!-- SCRIPT 3b: THRONE.EXE                      -->
 <!-- =========================================== -->
+<!-- JOB-106: auf Ricos Wunsch 24.09. aus dem Dock genommen, reaktivierbar (Kommentar entfernen; JS-Teil "THRONE.EXE" ist per Element-Pruefung geschuetzt)
 <div class="script-window minimized" id="window-throne" data-anchor="bottom">
     <div class="window-header">
         <span><span data-i18n="throne_header">>_ throne.exe</span> <span id="throne-state" style="color:#bbbbbb; font-size: 12px; letter-spacing: 1px;"></span></span>
         <div class="window-controls">
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content" style="padding: 0;">
@@ -498,6 +508,31 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         </div>
     </div>
 </div>
+-->
+
+<!-- ========================================== -->
+<!-- SCRIPT 3c: LANG.SH (JOB-106 Stufe 2)       -->
+<!-- ========================================== -->
+<div class="script-window minimized" id="window-lang" data-anchor="bottom">
+    <div class="window-header">
+        <span><span data-i18n="lang_header">>_ lang.sh</span></span>
+        <div class="window-controls">
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
+        </div>
+    </div>
+    <div class="window-content text-content">
+        <!-- JOB-106: feste Stammsprach-Tasten, werden NIE uebersetzt (Rueckweg fuer freie Sprache) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span style="font-size: 14px; color: var(--term-accent); text-transform: lowercase;" data-i18n="settings_lang">> systemsprache</span>
+            <div style="display: flex; gap: 10px;" translate="no" dir="ltr">
+                <button class="lang-btn active" data-lang="en" translate="no">EN</button>
+                <button class="lang-btn" data-lang="de" translate="no">DE</button>
+                <button class="lang-btn" data-lang="ru" translate="no">РУ</button>
+            </div>
+        </div>
+        <div id="sf-host"></div>
+    </div>
+</div>
 
 <!-- =========================================== -->
 <!-- SCRIPT 4: AUDIO PLAYER                     -->
@@ -506,7 +541,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     <div class="window-header">
         <span data-i18n="audio_header">>_ play audio.sh</span>
         <div class="window-controls">
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content text-content" style="height: auto; padding: 25px;">
@@ -517,6 +552,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             <button class="audio-lang-btn" data-alang="de">DE</button>
             <button class="audio-lang-btn" data-alang="ru">РУ</button>
         </div>
+        <!-- KAPITELWAHL Bildspur: nur DE (nur dort gibt es Kapitel mit Bildspur) -->
+        <div id="audio-kapitel" style="display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+            <button class="audio-kap-btn" data-akap="k01">PHYSIK K1</button>
+            <button class="audio-kap-btn" data-akap="k02">PHYSIK K2</button>
+        </div>
 
         <div style="color: var(--term-accent); font-family: var(--font-mono); margin-bottom: 15px;">
             <span id="audio-status-text" data-i18n="audio_loaded">> loaded: </span> <span id="audio-filename" style="color: #fff; font-size: 14px; line-height: 1.35;">...</span>
@@ -524,7 +564,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
             <button id="audio-play-btn" class="action-btn" style="padding: 8px 25px; font-size: 16px;">PLAY</button>
-            <button id="audio-skip-btn" class="action-btn" style="padding: 8px 15px; font-size: 16px;">NEXT</button>
+            <button id="audio-skip-btn" class="action-btn" style="padding: 8px 15px; font-size: 16px;" data-i18n="audio_next">NEXT</button>
             <span id="audio-time" style="font-family: var(--font-mono); font-size: 14px; color: #ffffff; margin-left: 10px;">0:00 / 0:00</span>
         </div>
 
@@ -537,28 +577,23 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     </div>
 </div>
 
+<!-- BILDSPUR: fuellt sich selbst per bildspur.js, bleibt leer wenn ein Buch keine Regie hat -->
+<div id="bildspur-fenster"></div>
+
 
 <!-- ========================================== -->
 <!-- SCRIPT 5: SETTINGS                         -->
 <!-- ========================================== -->
 <div class="script-window minimized" id="window-settings" data-anchor="bottom">
     <div class="window-header">
-        <span data-i18n="settings_header">>_ conf lang vis</span>
+        <span data-i18n="settings_header">>_ conf vis</span>
         <div class="window-controls">
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content text-content">
         
-        <!-- SPRACHE -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <span style="font-size: 14px; color: var(--term-accent); text-transform: lowercase;" data-i18n="settings_lang">> systemsprache</span>
-            <div style="display: flex; gap: 10px;">
-                <button class="lang-btn active" data-lang="en">EN</button>
-                <button class="lang-btn" data-lang="de">DE</button>
-                <button class="lang-btn" data-lang="ru">РУ</button>
-            </div>
-        </div>
+        <!-- JOB-106: Sprachteil in eigenes Fenster window-lang verschoben -->
 
         <!-- OS FULLSCREEN -->
         <div class="fullscreen-wrapper" style="margin-bottom: 25px;">
@@ -661,7 +696,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     <div class="window-header">
         <span data-i18n="about_header">>_ cat about.txt</span>
         <div class="window-controls">
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content text-content">
@@ -708,7 +743,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     <div class="window-header">
         <span data-i18n="backlog_header">>_ cat backlog.txt</span>
         <div class="window-controls">
-            <button class="toggle-btn" aria-label="Minimize or restore window"></button>
+            <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
         </div>
     </div>
     <div class="window-content text-content">
@@ -716,57 +751,57 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         
         <div class="backlog-item">
             <div class="backlog-content">
-                <span style="color: var(--term-accent);">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t1">Voice-Chat Integration</strong><br>
+                <span style="color: var(--term-accent);" data-i18n="backlog_pending">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t1">Voice-Chat Integration</strong><br>
                 <span style="color: #ffffff;" data-i18n="backlog_d1">> Enabling audio protocol for inter-user node interaction.</span>
             </div>
             <div class="backlog-upvote">
-                <button class="upvote-btn" data-id="bl_1" aria-label="Upvote">▲</button>
+                <button class="upvote-btn" data-id="bl_1" aria-label="Upvote" data-i18n-aria="aria_upvote">▲</button>
                 <span class="upvote-count" id="count_bl_1">0</span>
             </div>
         </div>
 
         <div class="backlog-item">
             <div class="backlog-content">
-                <span style="color: var(--term-accent);">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t2">Document Publication Pipeline</strong><br>
+                <span style="color: var(--term-accent);" data-i18n="backlog_pending">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t2">Document Publication Pipeline</strong><br>
                 <span style="color: #ffffff;">> Tractatus: Biology of Relationships</span><br>
                 <span style="color: #ffffff;">> Tractatus: War of Relationships</span><br>
                 <span style="color: #ffffff;">> Novel: Kinderschweinerei</span>
             </div>
             <div class="backlog-upvote">
-                <button class="upvote-btn" data-id="bl_2" aria-label="Upvote">▲</button>
+                <button class="upvote-btn" data-id="bl_2" aria-label="Upvote" data-i18n-aria="aria_upvote">▲</button>
                 <span class="upvote-count" id="count_bl_2">0</span>
             </div>
         </div>
 
         <div class="backlog-item">
             <div class="backlog-content">
-                <span style="color: var(--term-accent);">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t3">Volume Two Deployment</strong><br>
+                <span style="color: var(--term-accent);" data-i18n="backlog_pending">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t3">Volume Two Deployment</strong><br>
                 <span style="color: #ffffff;" data-i18n="backlog_d3">> Scheduling release of Volume Two.</span>
             </div>
             <div class="backlog-upvote">
-                <button class="upvote-btn" data-id="bl_3" aria-label="Upvote">▲</button>
+                <button class="upvote-btn" data-id="bl_3" aria-label="Upvote" data-i18n-aria="aria_upvote">▲</button>
                 <span class="upvote-count" id="count_bl_3">0</span>
             </div>
         </div>
 
         <div class="backlog-item">
             <div class="backlog-content">
-                <span style="color: var(--term-accent);">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t4">Global Localization</strong><br>
+                <span style="color: var(--term-accent);" data-i18n="backlog_pending">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t4">Global Localization</strong><br>
                 <span style="color: #ffffff;" data-i18n="backlog_d4">> Execution of further translations for all compiled works.</span>
             </div>
             <div class="backlog-upvote">
-                <button class="upvote-btn" data-id="bl_4" aria-label="Upvote">▲</button>
+                <button class="upvote-btn" data-id="bl_4" aria-label="Upvote" data-i18n-aria="aria_upvote">▲</button>
                 <span class="upvote-count" id="count_bl_4">0</span>
             </div>
         </div>
 
         <div class="backlog-item">
             <div class="backlog-content">
-                <span style="color: var(--term-accent);">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t5">Voice of the Enzyklopedia</strong> <span style="color:#d4af37; font-size:14px;">[PAID TIER]</span><br>
+                <span style="color: var(--term-accent);" data-i18n="backlog_pending">[PENDING]</span> <strong style="color: #ffffff;" data-i18n="backlog_t5">Voice of the Enzyklopedia</strong> <span style="color:#d4af37; font-size:14px;" data-i18n="backlog_paid">[PAID TIER]</span><br>
                 <span style="color: #ffffff;" data-i18n="backlog_d5">> Voice output for chat interface.</span>
             </div>
             <div class="backlog-upvote">
-                <button class="upvote-btn" data-id="bl_5" aria-label="Upvote">▲</button>
+                <button class="upvote-btn" data-id="bl_5" aria-label="Upvote" data-i18n-aria="aria_upvote">▲</button>
                 <span class="upvote-count" id="count_bl_5">0</span>
             </div>
         </div>
@@ -780,6 +815,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <!-- JAVASCRIPT: LOGIK, I18N, WEBGL & WINDOWS   -->
 <!-- ========================================== -->
+<script src="i18n/sprache-frei.js"></script>
 <script>
     // F5: Seite muss auch ohne CDN-Libs bedienbar bleiben
     const LIBS_OK = !!(window.marked && window.DOMPurify);
@@ -838,7 +874,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "the author", arch_prophet: "the prophet", arch_clerk: "the bureaucrat", arch_star: "the influencer",
             timing_cached: "cached",
             
-            settings_header: ">_ conf lang vis",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
             settings_speed: "SPEED",
@@ -935,7 +971,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "der Autor", arch_prophet: "der Prophet", arch_clerk: "der Bürokrat", arch_star: "der Influencer",
             timing_cached: "aus Cache",
             
-            settings_header: ">_ conf lang vis",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
             settings_speed: "TEMPO",
@@ -1032,7 +1068,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "автор", arch_prophet: "пророк", arch_clerk: "чиновник", arch_star: "инфлюенсер",
             timing_cached: "из кэша",
             
-            settings_header: ">_ conf lang vis",
+            settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             settings_speed: "СКОРОСТЬ",
@@ -1247,7 +1283,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 { datei: 'audio/de_traktat_vorwort.mp3',
                   titel: 'Physik der Beziehungen · Vorwort. Der stille Skandal' },
                 { datei: 'audio/de_traktat_k01.mp3',
-                  titel: 'Physik der Beziehungen · Kapitel 1. Der Hohlraumresonator Erde' }
+                  titel: 'Physik der Beziehungen · Kapitel 1. Der Hohlraumresonator Erde',
+                  slug: 'traktat', kapitel: 'k01' },
+                { datei: 'audio/de_traktat_k02.mp3',
+                  titel: 'Physik der Beziehungen · Kapitel 2. Die Kondensation des inneren Kerns',
+                  slug: 'traktat', kapitel: 'k02' }
             ],
             ru: [
                 { datei: 'audio/ru_roman_vorwort.mp3',
@@ -1268,9 +1308,23 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         let audioFehlversuche = 0;
         let audioWollteSpielen = false;
 
-        const radioStreamUrl = "https://ice1.somafm.com/defcon-128-mp3"; 
+        const radioStreamUrl = "https://ice1.somafm.com/defcon-128-mp3";
         const audioPlayer = new Audio();
-        audioPlayer.crossOrigin = null; 
+        audioPlayer.crossOrigin = null;
+        const bildspur = Bildspur.erstelle(audioPlayer, { container: '#bildspur-fenster' });
+        // Regie zu einer Audio-Datei laden (auch fuer Wiederaufnahme aus localStorage / Hoerproben)
+        function bildspurFuerDatei(datei) {
+            const name = String(datei || '').split('/').pop();
+            for (const lang of Object.keys(audioDateien)) {
+                const st = (audioDateien[lang] || []).find(x => x.datei.split('/').pop() === name);
+                if (st && st.slug && st.kapitel) {
+                    bildspur.ladeRegie(`bildspur/${st.slug}-${lang}-${st.kapitel}.regie.json`, st.titel).catch(() => {});
+                    return st;
+                }
+            }
+            bildspur.ladeRegie({ cues: [] });
+            return null;
+        }
         
         let aktuelleAudioSprache = "en"; 
         let isRadioActive = false;
@@ -1282,6 +1336,30 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         const audioProgress = document.getElementById('audio-progress');
         const audioTimeText = document.getElementById('audio-time');
         const radioToggleBtn = document.getElementById('radio-toggle-btn');
+
+        // Kapitelwahl (Bildspur): Tasten nur bei DE sichtbar, aktiv = laufendes Stueck.
+        const audioKapitel = document.getElementById('audio-kapitel');
+        function aktualisiereKapitelWahl(datei) {
+            audioKapitel.style.display = aktuelleAudioSprache === 'de' ? 'flex' : 'none';
+            const name = String(datei || '').split('/').pop();
+            const st = (audioDateien.de || []).find(x => x.datei.split('/').pop() === name);
+            audioKapitel.querySelectorAll('.audio-kap-btn').forEach(b =>
+                b.classList.toggle('active', !!(st && st.kapitel === b.getAttribute('data-akap'))));
+        }
+        audioKapitel.querySelectorAll('.audio-kap-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (isRadioActive) {
+                    isRadioActive = false;
+                    radioToggleBtn.classList.remove('active');
+                }
+                const idx = audioDateien.de.findIndex(x => x.kapitel === btn.getAttribute('data-akap'));
+                if (idx < 0) return;
+                document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-alang') === 'de'));
+                aktuelleAudioSprache = 'de';
+                audioStelle.de = idx;
+                loadAudioForLanguage('de', !audioPlayer.paused && audioPlayer.currentTime > 0);
+            });
+        });
 
         function formatTime(seconds) {
             if(isNaN(seconds) || !isFinite(seconds)) return "LIVE";
@@ -1304,8 +1382,15 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audioWollteSpielen = autoPlay;
             audioPlayer.src = stueck.datei;
             audioPlayer.setAttribute('data-last-played', stueck.datei);
+            if (stueck.slug && stueck.kapitel) {
+                bildspur.ladeRegie(`bildspur/${stueck.slug}-${lang}-${stueck.kapitel}.regie.json`, stueck.titel)
+                    .catch(() => { /* Buch ohne Bildspur (noch) — Fenster bleibt leer, kein Fehler sichtbar */ });
+            } else {
+                bildspur.ladeRegie({ cues: [] }); // kein Regie-Buch: Fenster auf Ruhezustand, kein Fetch noetig
+            }
             audioFilename.innerText = stueck.titel;
             audioFilename.setAttribute('title', stueck.titel);
+            aktualisiereKapitelWahl(stueck.datei);
             audioPlayer.currentTime = 0;
             audioProgress.value = 0;
 
@@ -1336,7 +1421,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     audioBtn.innerText = i18n[aktuelleSprache]['audio_pause'] || 'PAUSE';
                     audioBtn.classList.add('active');
                 }).catch(e => {
-                    audioFilename.innerText = "Error: Stream blocked / offline";
+                    audioFilename.innerText = t("audio_err_blocked");
                 });
             } else {
                 radioToggleBtn.classList.remove('active');
@@ -1351,7 +1436,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 
         audioPlayer.addEventListener('error', () => {
             if (isRadioActive) {
-                audioFilename.innerText = "Error: Stream unavailable / CORS";
+                audioFilename.innerText = t("audio_err_cors");
                 audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY';
                 audioBtn.classList.remove('active');
                 return;
@@ -1363,7 +1448,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 return;
             }
             audioFehlversuche = 0;
-            audioFilename.innerText = "Error: File unavailable";
+            audioFilename.innerText = t("audio_err_file");
             audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY';
             audioBtn.classList.remove('active');
         });
@@ -1378,7 +1463,20 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         audioPlayer.addEventListener('ended', () => {
             if (isRadioActive) return;
             audioProgress.value = 0;
-            loadAudioForLanguage(aktuelleAudioSprache, true, 1);
+            // Endet ein Kapitel mit einer Schlusstafel, bleibt sie mindestens 8 s ruhig stehen,
+            // bevor das naechste Stueck startet (Rico 24.09. "schluss2 b": Kap. 2 endet 2,8 s nach der Tafel).
+            let halteSek = 0;
+            const m = (audioPlayer.getAttribute('data-last-played') || '').match(/(\w+?)_(\w+?)_(k\d+)\.mp3$/);
+            const inl = m && window.BILDSPUR_INLINE ? window.BILDSPUR_INLINE[`${m[2]}-${m[1]}-${m[3]}`] : null;
+            const cues = inl && inl.regie && inl.regie.cues;
+            const letzter = cues && cues.length ? cues[cues.length - 1] : null;
+            if (letzter && letzter.typ === 'tafel' && isFinite(audioPlayer.duration)) {
+                halteSek = Math.max(0, 8 - (audioPlayer.duration - letzter.t_start));
+            }
+            setTimeout(() => {
+                if (!audioPlayer.ended) return; // Nutzer hat inzwischen selbst weitergeschaltet
+                loadAudioForLanguage(aktuelleAudioSprache, true, 1);
+            }, halteSek * 1000);
         });
 
         document.querySelectorAll('.audio-lang-btn').forEach(btn => {
@@ -1405,7 +1503,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     audioBtn.classList.add('active');
                 }).catch(e => {
                     console.log("Playback failed:", e);
-                    audioFilename.innerText = "Error: Stream/File unavailable";
+                    audioFilename.innerText = t("audio_err_any");
                 });
             } else {
                 audioPlayer.pause();
@@ -1414,6 +1512,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             }
         });
 
+
+        // JOB-87: Play/Pause auch von der Bildspur-Leiste aus -> Beschriftung der Audio-Taste nachziehen (nur bei Zustandswechsel)
+        audioPlayer.addEventListener('play', () => {
+            if (!audioBtn.classList.contains('active')) { audioBtn.innerText = i18n[aktuelleSprache]['audio_pause'] || 'PAUSE'; audioBtn.classList.add('active'); }
+        });
+        audioPlayer.addEventListener('pause', () => {
+            if (audioBtn.classList.contains('active')) { audioBtn.innerText = i18n[aktuelleSprache]['audio_play'] || 'PLAY'; audioBtn.classList.remove('active'); }
+        });
 
         audioPlayer.addEventListener('timeupdate', () => {
             if (!isRadioActive && audioPlayer.duration) {
@@ -1436,6 +1542,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // ----------------------------------------------------
         // 1. SPRACHE INIT (GLOBAL UI)
         // ----------------------------------------------------
+        // JOB-106: Texte, die per JS gesetzt werden (Vollbild-Taste), nach Sprachwechsel nachziehen
+        function refreshDynamicTexts() {
+            const fs = document.getElementById('os-fullscreen-btn');
+            if (fs) fs.innerText = document.fullscreenElement ? t('settings_fs_exit') : t('settings_fs_enter');
+        }
         function changeLanguage(lang) {
             aktuelleSprache = lang;
             localStorage.setItem('lang', lang);            // F8
@@ -1448,9 +1559,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 const key = el.getAttribute('data-i18n-placeholder');
                 if (i18n[lang] && i18n[lang][key]) el.placeholder = i18n[lang][key];
             });
+            document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+                const key = el.getAttribute('data-i18n-aria');
+                if (i18n[lang] && i18n[lang][key]) el.setAttribute('aria-label', i18n[lang][key]);
+            });
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
             });
+            refreshDynamicTexts();
             
             if(!audioPlayer.paused && audioPlayer.currentTime > 0) {
                 audioBtn.innerText = i18n[lang]['audio_pause'] || 'PAUSE';
@@ -1463,6 +1579,20 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             btn.addEventListener('click', () => changeLanguage(btn.getAttribute('data-lang')));
         });
         changeLanguage(aktuelleSprache);
+
+        // JOB-106 Stufe 2: freie Sprachwahl (Tippfeld im Fenster lang.sh, DE/EN/RU-Tasten daneben bleiben fest)
+        if (window.SpracheFrei) {
+            SpracheFrei.init({
+                apiBase: () => API_BASE_URL,
+                i18n: i18n,
+                builtin: ['en', 'de', 'ru'],
+                getBuiltinLang: () => localStorage.getItem('lang') || 'en',
+                setActiveLang: (c) => { aktuelleSprache = c; },
+                changeLanguage: changeLanguage,
+                onApplied: () => { refreshDynamicTexts(); try { audioBtn.innerText = (!audioPlayer.paused && audioPlayer.currentTime > 0) ? t('audio_pause') : t('audio_play'); } catch (e) {} }
+            });
+            SpracheFrei.mount(document.getElementById('sf-host'));
+        }
 
         // ----------------------------------------------------
         // 2. BACKGROUND IMAGE INIT
@@ -2117,6 +2247,40 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 lastRenderTime = performance.now();
                 animationFrameId = requestAnimationFrame(render);
             }
+
+            // Schnittstelle fuer die Bildspur: gleiche Shader-Quelle, kein zweiter Shader-Code.
+            // Die Bildspur spiegelt dieses Canvas in ihre Buehne (auch im Vollbild sichtbar).
+            window.bsShaderApi = {
+                canvas: () => canvas,
+                laeuft: () => !!animationFrameId,
+                wahl: () => isAdvancedMode ? 'mix' : String(activeShader),
+                sicherstellen() {
+                    if(!isAdvancedMode && activeShader === 0) setShader(parseInt(localStorage.getItem('bs_letzter_shader')) || 1);
+                    else if(!animationFrameId) { lastRenderTime = performance.now(); animationFrameId = requestAnimationFrame(render); }
+                },
+                // JOB-105: komplette Steuerung fuer das Shader-Feld der Bildspur. Lesen aus denselben
+                // Variablen, Schreiben ueber die Original-Regler der Seite (gleiche Handler, gleicher Speicher).
+                zustand: () => ({
+                    adv: isAdvancedMode, aktiv: activeShader, hell: currentBrightness, tempo: currentSpeed,
+                    intens: advIntensity.slice(), spd: advSpeed.slice(), hue: advHue.slice(), trace: advTrace, auto: currentAutoMode
+                }),
+                regler(sel, wert) {
+                    const el = document.querySelector(sel); if(!el) return;
+                    el.value = wert; el.dispatchEvent(new Event('input', { bubbles: true }));
+                },
+                klick(sel) { const el = document.querySelector(sel); if(el) el.click(); },
+                waehle(w) {
+                    if(w === 'mix') {
+                        if(!isAdvancedMode) { isAdvancedMode = true; localStorage.setItem('adv_mode', isAdvancedMode); toggleAdvancedUI(); }
+                        if(!animationFrameId) { lastRenderTime = performance.now(); animationFrameId = requestAnimationFrame(render); }
+                    } else {
+                        const n = parseInt(w) || 1;
+                        localStorage.setItem('bs_letzter_shader', n);
+                        if(isAdvancedMode) { isAdvancedMode = false; localStorage.setItem('adv_mode', isAdvancedMode); toggleAdvancedUI(); }
+                        setShader(n);
+                    }
+                }
+            };
         }
 
         // ----------------------------------------------------
@@ -2128,7 +2292,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             const s = "St. Petersburg Street 1";
             const c = "0102 Tbilisi, Georgia";
             const p1 = "le"; const p2 = "gal"; const p3 = "schweinerei.xyz";
-            slot.innerHTML = `${n}<br>${s}<br>${c}<br><br>Contact: <a href="mailto:${p1}${p2}@${p3}">${p1}${p2}@${p3}</a>`;
+            slot.innerHTML = `${n}<br>${s}<br>${c}<br><br>${t('legal_contact')} <a href="mailto:${p1}${p2}@${p3}">${p1}${p2}@${p3}</a>`;
         }
 
         // ----------------------------------------------------
@@ -2187,7 +2351,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         let draggedWin = null;
         let isDragging = false, startX, startY, initialX, initialY;
 
-        const bottomWindows = ['window-settings', 'window-audio', 'window-throne', 'window-about'];   // Backlog geparkt
+        const bottomWindows = ['window-settings', 'window-audio', 'window-lang', 'window-about'];   // Backlog geparkt
 
         // Initial setup for docks on mobile
         if (window.innerWidth <= 768) {
@@ -2336,6 +2500,46 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             isDragging = false; draggedWin = null; document.body.style.userSelect = "";
         };
 
+        // JOB-105: Bildspur-Fenster wie die Terminal-Fenster: verschiebbar am Kopf, nach vorn nur bei Klick.
+        (function() {
+            const bs = document.getElementById('bildspur-fenster');
+            if (!bs) return;
+            const vorn = () => {
+                if (bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
+                highestZ += 1; bs.style.zIndex = highestZ;
+            };
+            bs.addEventListener('mousedown', vorn);
+            bs.addEventListener('touchstart', vorn, {passive: true});
+            const start = (e) => {
+                if (e.target.closest && e.target.closest('.bs-header-controls')) return;
+                if (!e.target.closest || !e.target.closest('.bs-header')) return;
+                if (window.innerWidth <= 768 || bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
+                const touch = e.type.startsWith('touch');
+                const cx = touch ? e.touches[0].clientX : e.clientX, cy = touch ? e.touches[0].clientY : e.clientY;
+                const r = bs.getBoundingClientRect();
+                const x0 = r.left, y0 = window.innerHeight - r.bottom;
+                bs.style.left = x0 + 'px'; bs.style.bottom = y0 + 'px'; bs.style.top = 'auto'; bs.style.right = 'auto';
+                bs.dataset.dragged = '1';
+                document.body.style.userSelect = 'none';
+                const move = (ev) => {
+                    if (ev.cancelable) ev.preventDefault();
+                    const mx = touch ? ev.touches[0].clientX : ev.clientX, my = touch ? ev.touches[0].clientY : ev.clientY;
+                    const nl = Math.min(window.innerWidth - 40, Math.max(-bs.offsetWidth + 40, x0 + mx - cx));
+                    const nb = Math.min(Math.max(0, window.innerHeight - bs.offsetHeight), Math.max(0, y0 - (my - cy)));   // Kopf bleibt sichtbar
+                    bs.style.left = nl + 'px'; bs.style.bottom = nb + 'px';
+                };
+                const ende = () => {
+                    document.removeEventListener(touch ? 'touchmove' : 'mousemove', move);
+                    document.removeEventListener(touch ? 'touchend' : 'mouseup', ende);
+                    document.body.style.userSelect = '';
+                };
+                document.addEventListener(touch ? 'touchmove' : 'mousemove', move, {passive: false});
+                document.addEventListener(touch ? 'touchend' : 'mouseup', ende);
+            };
+            bs.addEventListener('mousedown', start);
+            bs.addEventListener('touchstart', start, {passive: true});
+        })();
+
         document.addEventListener('mousemove', moveDrag);
         document.addEventListener('touchmove', moveDrag, {passive: false});
         document.addEventListener('mouseup', stopDrag);
@@ -2383,7 +2587,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         const promoInput = document.getElementById('promo-code');
         async function checkPromoCode() {
             const code = promoInput.value.trim(); if (!code) return;
-            promoStatus.textContent = '> Authenticating token...'; promoStatus.style.color = '#fff';
+            promoStatus.textContent = t('friends_auth'); promoStatus.style.color = '#fff';
             try {
                 const res = await api(ENDPOINTS.unlock, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) }, 20000);
                 const data = res.ok ? await res.json() : null;
@@ -2392,12 +2596,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     promoStatus.style.color = '#28a745';
                     // HOOK AP6: künftig data.downloads = [{label, url, expires}]; heute data.download_url
                     const list = Array.isArray(data.downloads) ? data.downloads
-                               : (data.download_url ? [{ label: '[DOWNLOAD SECURE PAYLOAD]', url: data.download_url }] : []);
+                               : (data.download_url ? [{ label: t('friends_download_secure'), url: data.download_url }] : []);
                     list.forEach(d => {
                         const u = safeHttpsUrl(d.url); if (!u) return;
                         promoStatus.appendChild(document.createElement('br'));
                         const a = document.createElement('a'); a.href = u; a.target = '_blank'; a.rel = 'noopener noreferrer';
-                        a.textContent = d.label || '[DOWNLOAD]';
+                        a.textContent = d.label || t('friends_download');
                         a.style.cssText = 'color:#fff;border:1px solid #28a745;padding:5px 10px;text-decoration:none;display:inline-block;margin-top:8px;';
                         promoStatus.appendChild(a);
                     });
@@ -2430,10 +2634,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 
             document.addEventListener('fullscreenchange', () => {
                 if (!document.fullscreenElement) {
-                    fsBtn.innerText = "[ ENTER FULLSCREEN ]";
+                    fsBtn.innerText = t("settings_fs_enter");
                     fsBtn.classList.remove('active');
                 } else {
-                    fsBtn.innerText = "[ EXIT FULLSCREEN ]";
+                    fsBtn.innerText = t("settings_fs_exit");
                     fsBtn.classList.add('active');
                 }
             });
@@ -2853,7 +3057,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 e.preventDefault();
                 if (isRadioActive) { isRadioActive = false; radioToggleBtn.classList.remove('active'); }
                 audioPlayer.src = a.href; audioPlayer.setAttribute('data-last-played', a.href);
-                audioFilename.innerText = a.href.split('/').pop();
+                const probeStueck = bildspurFuerDatei(a.href);
+                audioFilename.innerText = probeStueck ? probeStueck.titel : a.href.split('/').pop();
                 audioPlayer.play().then(() => { audioBtn.innerText = t('audio_pause'); audioBtn.classList.add('active'); }).catch(() => {});
                 const aw = document.getElementById('window-audio');
                 if (aw && aw.classList.contains('minimized')) aw.querySelector('.toggle-btn').click();
@@ -2873,10 +3078,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             { id: 'king', glyph: '♛' }, { id: 'priest', glyph: '✚' }, { id: 'merchant', glyph: '$' }, { id: 'algorithm', glyph: '01' },
             { id: 'author', glyph: '✎' }, { id: 'prophet', glyph: '☽' }, { id: 'clerk', glyph: '§' }, { id: 'star', glyph: '★' }
         ];
+        const throneAktiv = !!(throneCanvas && throneWin);   // JOB-106: Fenster kann aus dem Dock genommen sein
         const throne = (() => {
             let st = { emptySince: Date.now(), dismissed: 0, occupied: 0, record: 0, occupant: null, occupiedSince: 0 };
             try { const saved = JSON.parse(localStorage.getItem('throne_state') || 'null'); if (saved && typeof saved === 'object') st = Object.assign(st, saved); } catch (e) {}
-            if (!st.occupant) window.throneDim = 1; else window.throneDim = 0.7;
+            window.throneDim = (throneAktiv && st.occupant) ? 0.7 : 1;
             return st;
         })();
         let intruders = [];         // {a, x, y, tx, ty, speed, repelled, alpha}
@@ -2986,10 +3192,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             if (best) { best.repelled = true; throne.dismissed += 1; throneSave(); return; }
             if (throne.occupant && Math.hypot(CX() - x, CY() - 12 - y) < 40) vacate();
         }
-        throneCanvas.addEventListener('click', throneHit);
-        throneCanvas.addEventListener('touchstart', (e) => { throneHit(e); e.preventDefault(); }, { passive: false });
-        throneStats();
-        requestAnimationFrame(throneFrame);
+        if (throneAktiv) {
+            throneCanvas.addEventListener('click', throneHit);
+            throneCanvas.addEventListener('touchstart', (e) => { throneHit(e); e.preventDefault(); }, { passive: false });
+            throneStats();
+            requestAnimationFrame(throneFrame);
+        }
 
         // ==========================================
         // NOTFIX: ZUSTAND (HOOK AP2)
@@ -3054,7 +3262,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             aktuelleAudioSprache = aLang;
             const file = String(saved.audio.file); const pos = Number(saved.audio.pos) || 0;
             audioPlayer.src = file; audioPlayer.setAttribute('data-last-played', file);
-            audioFilename.innerText = file.split('/').pop();
+            const wiederStueck = bildspurFuerDatei(file);
+            aktualisiereKapitelWahl(file);
+            audioFilename.innerText = wiederStueck ? wiederStueck.titel : file.split('/').pop();
             audioPlayer.addEventListener('loadedmetadata', () => {
                 if (pos > 0 && pos < audioPlayer.duration) { audioPlayer.currentTime = pos; }
                 audioProgress.value = audioPlayer.duration ? (audioPlayer.currentTime / audioPlayer.duration) * 100 : 0;
@@ -3065,7 +3275,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // Zustand sichern: Regler, Buttons, Audio
         document.addEventListener('input', (e) => { if (e.target && e.target.matches('input[type=range]')) persistState(); });
         document.addEventListener('click', (e) => {
-            if (e.target && e.target.closest && e.target.closest('.mode-btn, .bg-btn, .shader-btn, .auto-btn, .lang-btn, .audio-lang-btn, #adv-auto-toggle, #advanced-shader-btn, #audio-skip-btn, #radio-toggle-btn')) persistState();
+            if (e.target && e.target.closest && e.target.closest('.mode-btn, .bg-btn, .shader-btn, .auto-btn, .lang-btn, .audio-lang-btn, .audio-kap-btn, #adv-auto-toggle, #advanced-shader-btn, #audio-skip-btn, #radio-toggle-btn')) persistState();
         });
         audioPlayer.addEventListener('pause', persistState);
         setInterval(() => { if (!audioPlayer.paused) persistState(); }, 10000);
@@ -3088,6 +3298,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         setInterval(() => { if (apiOnline === false) checkApiHealth().then(n => { if (n) zeigeStatus(''); }); }, 300000);
     });
 </script>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="bildspur/regie-inline.js"></script>
+<script src="bildspur.js"></script>
 
 </body>
 </html>

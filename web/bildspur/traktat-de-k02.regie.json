@@ -1,0 +1,179 @@
+{
+  "buch": "traktat",
+  "kapitel": "k02",
+  "sprache": "de",
+  "audio_datei": "audio/de_traktat_k02.mp3",
+  "audio_dauer_s": 361.46,
+  "erzeugt_aus": "traktat-de-k02.regie.md",
+  "alignment_quelle": "elevenlabs_forced_alignment",
+  "header": {
+    "text": "Physik der Beziehungen · Kapitel 2. Die Kondensation des inneren Kerns"
+  },
+  "labels_datei": null,
+  "cues": [
+    {
+      "id": "cue-1",
+      "t_start": 0.52,
+      "typ": "ueberschrift",
+      "inhalt": "Die Kondensation des inneren Kerns",
+      "dauer_hinweis": "8s",
+      "notiz": "Wie Kapitel 1 Cue 1 (weich 1.0, 8 s, danach kurz leer). Einzige Schrift des Kapitels neben dem header.",
+      "blende": "weich 1.0",
+      "abblende": "weich 1.0"
+    },
+    {
+      "id": "cue-2-01",
+      "t_start": 9.38,
+      "typ": "skizze",
+      "inhalt": "Motiv: der Grundton im noch vollen fluessigen Kern. Master-Kreis wie cue10 (Kontur, Mantelschraffur, Kern-Mantel-Grenze R 257,5 pixelgleich), KEIN Innenkern. Stehende Welle in Gold als vier Linsen von der Mitte zur Grenze (0/90/180/270 Grad): Knoten im Zentrum und auf der Grenze, Bauch bei halbem Radius. Keine Schrift. Briefing B1.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Screening 2-01 sah cue10 unveraendert vor. Geaendert, weil cue10 im Zentrum einen Bauch zeigt (Physik-Befund 1); Bild-zu-Bild aus cue10 haelt die Wiedererkennung von Kapitel 1.",
+      "blende": "weich 4.0",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-01.png"
+    },
+    {
+      "id": "cue-2-02",
+      "t_start": 42.72,
+      "typ": "skizze",
+      "inhalt": "Motiv: dieselbe Zeichnung wie 2-01, die Welle auf Grau gedimmt, im Zentrum ein kleiner offener Goldkreis auf dem Knoten, in dem alle vier Linsen zusammenlaufen. Gold ist der EINE Fokus. Briefing B2.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Anker auf dem Wort \"Schwingungsknoten\" (42,7 s) statt auf dem Satzanfang (39,5 s), damit der Goldpunkt mit dem Wort kommt. 2-01 ist nach 10 s abgeblendet, darum weich statt ueberblenden.",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-02.png"
+    },
+    {
+      "id": "cue-2-03",
+      "t_start": 59.42,
+      "typ": "skizze",
+      "inhalt": "Motiv: cue02e2 unveraendert (homogene Kugel, Schwerkraftpfeile aussen lang, nach innen kuerzer, Zentrum pfeilfrei), EINZIGE Aenderung: kleiner offener Goldkreis im Mittelpunkt, dort, wo die Nettokraft null ist. Briefing B3.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Ungleiche Pfeillaengen sind Physik, nicht glaetten (Kapitel 1 Abschnitt 24). Goldkreis gleiche Groesse und Lage wie in 2-02: der Knoten und der schwerelose Punkt sind derselbe Ort.",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-03.png"
+    },
+    {
+      "id": "cue-2-04",
+      "t_start": 89.28,
+      "typ": "skizze",
+      "inhalt": "Motiv: kapitel2-material/k01-cue05b2-schwarzer-innenkern-20260923.png UNVERAENDERT: Kernrauschen, das zur Mitte hin weich auslaeuft, die Zone der Ruhe. Kein Kristall, kein Gold.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Wiederverwendung ohne Bearbeitung (Kopie der Materialdatei nach code/etappe1/bildspur/assets/ unter dem asset-Namen). Das Dunkel ist hier die Ruhezone vor dem Kristall, nicht der feste Kern (Physik-Befund 4).",
+      "blende": "weich 4.0",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-04.png"
+    },
+    {
+      "id": "cue-2-05",
+      "t_start": 97.72,
+      "typ": "skizze",
+      "inhalt": "Motiv: dasselbe Bild wie 2-04, in der ruhigen Mitte ein winziger Kristallkeim in Gold: Dreiecksgitter aus 19 Punkten (Mittelpunkt plus zwei Sechserringe) mit Verbindungslinien, Radius ca. 24 px. Gold ist der EINE Fokus. Briefing B4.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Abstand zu 2-04 nur 8,4 s, dieselbe Zeichnung laeuft weiter. Danach 67 s Schwarz bis 2-09 (Reserve 2-06/2-07 siehe Kopf).",
+      "blende": "weich 1.0 ueberblenden",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-05.png"
+    },
+    {
+      "id": "cue-2-09",
+      "t_start": 165.08,
+      "typ": "skizze",
+      "inhalt": "Motiv: zweigeteilt im Layout von cue12. Links die Erde mit voller fluessiger Kernkugel (Kernraster bis zur Mitte), rechts dieselbe Erde mit Innenkern R 0,35 der Kerngrenze als feines Dreiecksgitter: Vollkugel gegen Schale mit innerem Rand. Kein Gold, keine Schrift. Briefing B7.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Erster fester Innenkern des Buches. Querformat wie cue12, darum keine Ueberblendung zum Master-Kreis (Geometrie springt).",
+      "blende": "weich 4.0",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-09.png"
+    },
+    {
+      "id": "cue-2-10",
+      "t_start": 190.42,
+      "typ": "skizze",
+      "inhalt": "Motiv: Master-Kreis wie cue04b3, alles auf Grau gedimmt, die Kern-Mantel-Grenze jetzt ebenfalls Grau; NUR die neue Innenkerngrenze (R 90) in Gold, der Innenkern als graues Dreiecksgitter. Gold ist der EINE Fokus. Briefing B6.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Echo von cue04b3 aus Kapitel 1 (dort Gold auf der Kern-Mantel-Grenze): Gold wandert eine Grenze nach innen, der Betrachter sieht, welche Randbedingung neu ist.",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-10.png"
+    },
+    {
+      "id": "cue-2-11",
+      "t_start": 221.88,
+      "typ": "skizze",
+      "inhalt": "Motiv: Zoom 4x auf den rechten oberen Rand des Innenkerns: Innenkernbogen (Gitter innen), fluessige Schale, oben rechts die Kern-Mantel-Grenze mit Mantelschraffur. Zwei Wellenbuendel in der Signatur von cue07c treffen von aussen auf den Innenkernbogen, einfallend durchgezogen, reflektiert gestrichelt, gleich stark; ein Reflexionspunkt als kleiner Goldkreis. Briefing B8.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Gegenstueck zu cue07c (Kapitel 1: Spiegel an der Mantelunterseite). Hier derselbe Mechanismus an der neuen, inneren Grenze.",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-11.png"
+    },
+    {
+      "id": "cue-2-12",
+      "t_start": 230.2,
+      "typ": "skizze",
+      "inhalt": "Motiv: Tafel-Rahmen aus cue08e (Waende, gestrichelte Achse pixelgleich), in der Mitte der Innenkern als Block (0,35 von L, Punktraster, seine zwei Waende in Gold). In jedem der zwei kuerzeren Hohlraeume eine stehende Welle mit zwei Baeuchen, gleiche Amplitude wie cue08e, Knoten auf allen vier Waenden. Kein Goldzug, keine Schrift. Briefing B10.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Abweichung vom Skizzen-Default begruendet: der Text sagt \"sprunghaft\", der Schnitt sitzt auf dem Wort (Dramaturgie-Regel regie-format.md). Physik-Befund 5: \"hoeher\" ist nahegelegt, aber nicht vom Text gedeckt (Offen fuer Leitstand).",
+      "blende": "hart",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-12.png"
+    },
+    {
+      "id": "cue-2-14",
+      "t_start": 267.58,
+      "typ": "skizze",
+      "inhalt": "Motiv: dichteste Kugelpackung in Aufsicht: sich beruehrende Kreise im Dreiecksgitter als ebenes Feld, mittig. Um die Mittelkugel ist ein Sechseck (Verbindung der sechs Nachbarmittelpunkte) in Gold gezogen. Keine Schrift, kein Rahmen. Briefing B11.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Beginn der Gitter-Folge 2-14 -> 2-15 -> 2-16 (eine Zeichnung, drei Zustaende).",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-14.png"
+    },
+    {
+      "id": "cue-2-15",
+      "t_start": 280.22,
+      "typ": "skizze",
+      "inhalt": "Motiv: dasselbe Gitter wie 2-14 im Kreis des Innenkerns (vergroessert, R 300): innen regelmaessig, zum Rand hin gestaucht und den Kreis entlang gebogen, an sechs Randstellen ein Gitterpunkt mit nur fuenf Nachbarn als Defekt in Gold. Keine Spannungspfeile. Briefing B12.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "2-14 ist nach 10 s abgeblendet (Abstand 12,6 s), darum weich statt ueberblenden. Physik-Befund 7.",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-15.png"
+    },
+    {
+      "id": "cue-2-16",
+      "t_start": 314.38,
+      "typ": "skizze",
+      "inhalt": "Motiv: derselbe Innenkern-Kreis wie 2-15, das Gitter nur noch als Punkte (Kugelmittelpunkte), jede senkrechte Punktreihe quer ausgelenkt nach einer Sinuswelle; eine Goldlinie laeuft exakt durch die ausgelenkten Punkte der mittleren Reihe. Keine Defekte mehr, keine Schrift. Briefing B13.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Phonon = kollektive Auslenkung des Gitters. Amplitude ueberhoeht, damit lesbar (Physik-Befund 8).",
+      "blende": "weich 2.5",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-16.png"
+    },
+    {
+      "id": "cue-2-17",
+      "t_start": 347.52,
+      "typ": "skizze",
+      "inhalt": "Motiv: Master-Kreis mit Innenkern R 90 (Gitter). Muster stehender Wellen ueber alle drei Schalen in der Linsen-Signatur aus 2-01: vier Goldlinsen im Innenkern (Zentrum = Knoten), acht weisse Linsen in der fluessigen Schale, sechzehn graue Linsen im Mantel bis zur Aussenkontur; Knoten auf jeder Grenze. Gold nur im Innenkern (der Sender). Briefing B9.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "Schlussbild; schliesst den Bogen zu 2-01 (dieselbe Linsen-Signatur, jetzt mit Innenkern und durch den ganzen Erdkoerper). Layout-Idee aus kapitel2-material/cue12a2, aber neu aufgebaut (Physik-Befund 2). v3.14: geht in die Schlusstafel 2-18 ueber.",
+      "blende": "weich 4.0",
+      "abblende": "weich 1.0",
+      "asset": "bildspur/assets/traktat-de-k02-cue2-17.png"
+    },
+    {
+      "id": "cue-2-18",
+      "t_start": 360.02,
+      "typ": "tafel",
+      "inhalt": "Er hatte eine Stimme bekommen.",
+      "dauer_hinweis": "bleibt",
+      "notiz": "v3.14 (Rico 24.09. 09:05 \"schluss2 b\", Msg 1552576811139862620): Schlusstafel wie Kapitel 1 (Cue 13, gleicher Tafel-Typ), einzige Schrift am Ende. Steht ruhig, wird nicht getippt.",
+      "blende": "weich 1.0",
+      "abblende": "weich 1.0"
+    }
+  ],
+  "uebergang": "schwarz"
+}

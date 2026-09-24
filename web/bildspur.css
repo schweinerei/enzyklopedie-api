@@ -1,0 +1,561 @@
+/* ===================================================================
+   BILDSPUR — Bildfenster fuer PAB (Picturized Audio Book)
+   Eigenstaendiges Fenster im Stil der Seite (.script-window-Optik ohne
+   die window-Klasse zu benoetigen). Nutzt die --term-* Variablen aus
+   index.html, faellt bei Fehlen auf eigene Defaults zurueck.
+   =================================================================== */
+
+#bildspur-fenster {
+    --bs-bg: var(--term-panel, rgba(20, 20, 20, 0.6));
+    --bs-border: var(--term-border, #333333);
+    --bs-text: var(--term-text, #ffffff);
+    --bs-accent: var(--term-accent, #666666);
+    --bs-font: var(--font-mono, 'Consolas', 'Courier New', Courier, monospace);
+
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 420px;
+    max-width: 92vw;
+    background: var(--bs-bg);
+    border: 1px solid var(--bs-border);
+    border-radius: 6px;
+    color: var(--bs-text);
+    font-family: var(--bs-font);
+    z-index: 10;
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#bildspur-fenster.bs-versteckt { display: none; }
+
+.bs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--bs-border);
+    cursor: default;
+}
+
+.bs-header-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.bs-header .bs-toggle,
+.bs-header .bs-maximize {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: var(--bs-font);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+.bs-header .bs-toggle:hover,
+.bs-header .bs-maximize:hover { color: #fff; }
+
+/* JOB-48: maximierter Zustand — Bildfenster deckt den Viewport, Bildflaeche bleibt 16:9
+   und skaliert auf die groesstmoegliche Breite/Hoehe, Fusszeile/Regler bleiben unten (kein
+   natives Fullscreen, reine Layout-Klasse wie .script-window.fullscreen). */
+#bildspur-fenster.bs-maximiert {
+    position: fixed;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: 100vw !important;
+    max-height: 100dvh !important;
+    border-radius: 0;
+    border: none;
+    z-index: 200 !important;
+    justify-content: center;
+}
+#bildspur-fenster.bs-maximiert .bs-buehne {
+    width: min(100%, calc((100dvh - 140px) * 16 / 9));
+    max-height: calc(100dvh - 140px);
+    margin: 0 auto;
+}
+#bildspur-fenster.bs-maximiert .bs-label { font-size: 14px; }
+#bildspur-fenster.bs-maximiert .bs-typ-zitat { font-size: 32px; }
+#bildspur-fenster.bs-maximiert .bs-typ-tafel { font-size: 22px; }
+#bildspur-fenster.bs-maximiert .bs-typ-ueberschrift { font-size: 34px; }
+
+.bs-buehne {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    flex: 0 0 auto; /* JOB-47: Fixe Flaeche haelt Fusszeile/Regler an Ort (Ruhezustand,
+                        Typo-/Zitat-/Formel-Cues, waehrend Blenden — kein Reflow durch
+                        Flex-Stretch/Shrink im Spaltencontainer #bildspur-fenster). */
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Persistente Kopfzeile (Ricos Befund 22.09.: ueberdeckte vorher als absolute Lage im
+   Bildfeld die Tafeln und war grau/zu klein): eigene Flex-Zeile ZWISCHEN Fensterleiste und
+   Buehne, nie vom Bild/Text ueberlagert. Buehne darunter behaelt ihr eigenes 16:9. */
+.bs-kopf {
+    flex: 0 0 auto;
+    padding: 6px 15px;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    color: #fff;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid var(--bs-border);
+}
+.bs-kopf:empty,
+.bs-kopf.bs-kopf-leer { display: none; }
+
+#bildspur-fenster.bs-maximiert .bs-kopf { font-size: 18px; padding: 10px 20px; }
+
+#bildspur-fenster.bs-minimiert .bs-buehne,
+#bildspur-fenster.bs-minimiert .bs-debug,
+#bildspur-fenster.bs-minimiert .bs-kopf {
+    display: none;
+}
+
+/* Ruhezustand: keine aktive Cue */
+.bs-ruhe {
+    color: #333;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Bildbruch-Dunkelmoment bei Ueberschrift-Cues */
+.bs-dunkel {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    z-index: 5;
+}
+.bs-dunkel.bs-aktiv { opacity: 1; }
+
+/* Element-Container je Typ, ueberlagert per Fade */
+.bs-element {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    opacity: 0;
+    /* JOB-88: eine gleichmaessige Sinus-Kurve fuer alle Blenden (Dauer setzt JS inline) */
+    transition: opacity 0.5s cubic-bezier(0.37, 0, 0.63, 1);
+    box-sizing: border-box;
+}
+.bs-element.bs-sichtbar { opacity: 1; }
+
+.bs-typ-ueberschrift {
+    font-size: 22px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    line-height: 1.4;
+}
+
+.bs-typ-verortung {
+    font-size: 15px;
+    color: var(--bs-accent);
+    letter-spacing: 0.5px;
+    border-top: 1px dashed var(--bs-border);
+    border-bottom: 1px dashed var(--bs-border);
+    padding: 14px 10px;
+}
+.bs-typ-verortung::before { content: "> "; }
+
+.bs-typ-skizze {
+    padding: 0;
+}
+
+.bs-typ-skizze img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: screen;
+    display: block;
+}
+
+.bs-typ-skizze svg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Label-Overlay je Skizzen-Cue. Positionierung (links/rechts/oben/unten vom
+   Anker, Clamping ans Bildfenster) macht bildspur.js in Pixeln nach dem
+   Einhaengen ins DOM — hier keine zentrierende transform mehr (JOB-45:
+   ein zentriertes Label lag sonst auf dem Pfeil statt daneben). */
+.bs-labels-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.bs-label {
+    position: absolute;
+    font-family: 'Consolas', 'Courier New', Courier, monospace;
+    font-size: 11px;
+    color: #ffffff;
+    white-space: nowrap;
+    line-height: 1;
+    letter-spacing: 0.5px;
+}
+.bs-skizze-platzhalter {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bs-skizze-platzhalter text {
+    font-family: var(--bs-font);
+}
+
+.bs-typ-zitat {
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.75);
+    padding: 16px 20px;
+    border: 1px solid var(--bs-border);
+}
+
+/* Tafel: ruhige Ueberbrueckungszeile zwischen zwei Skizzen (regie-format.md) — kleiner
+   und leiser als zitat (keine Pointe), monospace ohne Anfuehrungszeichen, ohne Rahmen/Box. */
+.bs-typ-tafel {
+    font-family: 'Consolas', 'Courier New', Courier, monospace;
+    font-size: 15px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    color: var(--bs-accent);
+    line-height: 1.5;
+}
+
+/* Schlusstafel: der Abbinder am Kapitelende, kein Ueberbrueckungstext. Rico 23.09.:
+   "physik der beziehungen ist grau und zu klein und zu kurz" — gemessen war sie 15px in
+   #666666. Wird ueber das Regie-Feld `klasse` nur an diesem einen Cue gesetzt. */
+.bs-typ-tafel.bs-schlusstafel {
+    font-size: 30px;
+    color: var(--bs-text);
+    letter-spacing: 2px;
+    line-height: 1.35;
+}
+#bildspur-fenster.bs-maximiert .bs-typ-tafel.bs-schlusstafel { font-size: 46px; }
+
+/* Formel: Rico 23.09. 02:19 "die formel ist zu klein" (20px) -> 32px; Rico 10:25 "zu gross fuer
+   das playerfenster, nur in vollbild komplett sichtbar" (index.html-Fenster 420px, Formel 429px
+   breit). Jetzt relativ zur Buehnenbreite (Container-Einheit cqw): fuellt im kleinen Fenster
+   ca. 80 % der Breite und waechst im Vollbild mit, statt fester Pixel fuer beide Groessen. */
+.bs-buehne { container-type: inline-size; }
+.bs-typ-formel,
+.bs-typ-rechnung {
+    font-size: clamp(14px, 6cqw, 60px);
+}
+.bs-typ-formel .katex,
+.bs-typ-rechnung .katex { color: var(--bs-text); }
+.bs-hl { color: #ffcc33 !important; }
+
+/* JOB-57 Formel-Marker: Bestandteile der Formel, die per \htmlClass in der LaTeX-Quelle
+   markiert sind (bs-formel-teil + bs-g1..bs-g6 je Bestandteil). Default gedaempftes Grau,
+   Gold nur fuer den Bestandteil, dessen Gruppe gerade aktiv ist (data-aktiver-teil auf dem
+   .bs-element). Reiner Farbwechsel per CSS-transition — kein Neu-Render, keine Layoutaenderung,
+   die Formel steht an derselben Stelle und bricht zwischen Schritten nicht um. */
+.bs-formel-teil {
+    color: #7a7a7a;
+    transition: color 0.5s ease;
+}
+.bs-formel-op { color: #555555; }
+.bs-element[data-aktiver-teil~="1"] .bs-g1,
+.bs-element[data-aktiver-teil~="2"] .bs-g2,
+.bs-element[data-aktiver-teil~="3"] .bs-g3,
+.bs-element[data-aktiver-teil~="4"] .bs-g4,
+.bs-element[data-aktiver-teil~="5"] .bs-g5,
+.bs-element[data-aktiver-teil~="6"] .bs-g6,
+.bs-element[data-aktiver-teil~="7"] .bs-g7,
+.bs-element[data-aktiver-teil~="8"] .bs-g8 {
+    color: #ffcc33;
+}
+/* Verschachtelung (JOB-B11-Integration): Liegt ein Bestandteil INNERHALB eines aktiven
+   Bestandteils, leuchtet er mit. Ohne diese Regel bliebe z.B. das g_ij im Rueckstellterm
+   grau, waehrend die Klammer um es herum gold ist - der Term saehe zerrissen aus.
+   Grund: `.bs-formel-teil` setzt eine eigene Farbe, Kinder erben also nicht automatisch.
+   Damit kann der Generator (formelmarker.py) die Kerne schlicht nach Position markieren
+   (g_ij nur `bs-g1`) statt jede Huellennummer mitfuehren zu muessen (`bs-g1 bs-g5`). */
+.bs-element[data-aktiver-teil~="1"] .bs-g1 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="2"] .bs-g2 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="3"] .bs-g3 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="4"] .bs-g4 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="5"] .bs-g5 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="6"] .bs-g6 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="7"] .bs-g7 .bs-formel-teil,
+.bs-element[data-aktiver-teil~="8"] .bs-g8 .bs-formel-teil {
+    color: #ffcc33;
+}
+/* Ein INNEN liegender Bestandteil muss den umschliessenden ueberstimmen koennen: steht nur
+   Tau (bs-g7) auf aktiv, bleibt der umschliessende Bruch (bs-g2) gedaempft, das Tau darin
+   wird gold. Der Attribut+Klassen-Selektor oben hat dafuer bereits die hoehere Spezifitaet
+   als `.bs-formel-teil` - deshalb kein !important noetig. */
+.bs-formel-notiz {
+    font-size: 11px;
+    color: #999;
+    margin-top: 14px;
+    transition: opacity 0.3s ease;
+}
+
+/* Tipp-Cursor fuer blende: tippen (Terminalzeile mit blinkendem Cursor) */
+.bs-tipp-cursor {
+    display: inline-block;
+    width: 0.5em;
+    margin-left: 2px;
+    background: currentColor;
+    animation: bs-blink 0.9s steps(2, start) infinite;
+    vertical-align: -0.1em;
+    height: 1em;
+}
+@keyframes bs-blink { to { visibility: hidden; } }
+
+.bs-debug {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 10px;
+    padding: 8px 15px;
+    font-size: 11px;
+    color: var(--bs-accent);
+    border-top: 1px solid var(--bs-border);
+    overflow: hidden;
+}
+.bs-debug span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Reduced-motion: alle Blenden hart (JS setzt zusaetzlich transitionDuration:0s;
+   diese Regel faengt auch CSS-getriebene Uebergaenge wie den Dunkel-Flash ab). */
+@media (prefers-reduced-motion: reduce) {
+    .bs-element,
+    .bs-dunkel {
+        transition: none !important;
+    }
+    .bs-tipp-cursor { animation: none; }
+}
+
+/* Chat-Regler-Stub */
+.bs-chat-regler {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 15px;
+    font-size: 11px;
+    color: var(--bs-accent);
+    border-top: 1px solid var(--bs-border);
+}
+.bs-chat-regler button {
+    background: var(--bs-bg);
+    color: #ccc;
+    border: 1px solid var(--bs-border);
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-family: var(--bs-font);
+    font-size: 11px;
+    cursor: pointer;
+}
+.bs-chat-regler button.bs-aktiv-btn {
+    color: #ffcc33;
+    border-color: #ffcc33;
+}
+
+@media (max-width: 768px) {
+    #bildspur-fenster { top: auto; right: auto; width: 100%; }
+}
+
+/* ===================================================================
+   JOB-87: Transport + Shuttle, echtes Vollbild (Fullscreen API)
+   .bs-vollbild wird gesetzt, wenn das Fenster im Browser-Vollbild ist
+   (oder als Rueckfall ohne Element-Vollbild-Unterstuetzung, z.B. iPhone).
+   =================================================================== */
+.bs-transport {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 15px;
+    border-top: 1px solid var(--bs-border);
+    font-size: 12px;
+    transition: opacity 0.25s;
+}
+.bs-transport button {
+    background: var(--bs-bg);
+    color: #ccc;
+    border: 1px solid var(--bs-border);
+    border-radius: 3px;
+    min-width: 34px;
+    height: 30px;
+    padding: 0 8px;
+    font-family: var(--bs-font);
+    font-size: 12px;
+    cursor: pointer;
+}
+.bs-transport button:hover,
+.bs-transport button:focus-visible { color: #fff; border-color: #fff; outline: none; }
+.bs-t-zeit { order: 3; margin-left: auto; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bs-t-vollbild { order: 4; }
+.bs-t-shuttle { order: 5; flex: 1 1 100%; width: 100%; height: 24px; margin: 0; cursor: pointer; accent-color: #fff; }
+.bs-t-shuttle:disabled { cursor: default; opacity: 0.4; }
+#bildspur-fenster.bs-minimiert .bs-transport { display: none; }
+
+#bildspur-fenster.bs-vollbild {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border: none;
+    border-radius: 0;
+    background: #000;
+    backdrop-filter: none;
+    z-index: 2000 !important;
+    justify-content: center;
+}
+#bildspur-fenster.bs-vollbild .bs-header,
+#bildspur-fenster.bs-vollbild .bs-debug,
+#bildspur-fenster.bs-vollbild .bs-chat-regler { display: none; }
+#bildspur-fenster.bs-vollbild .bs-kopf { font-size: 16px; padding: 6px 20px; border-bottom: none; }
+#bildspur-fenster.bs-vollbild .bs-buehne {
+    width: min(100%, calc((100dvh - 34px) * 16 / 9));
+    max-height: calc(100dvh - 34px);
+    margin: 0 auto;
+}
+#bildspur-fenster.bs-vollbild .bs-transport {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 28px 20px 14px;
+    gap: 10px;
+    border-top: none;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.88));
+    z-index: 5;
+}
+#bildspur-fenster.bs-vollbild .bs-transport button { min-width: 44px; height: 44px; font-size: 15px; background: rgba(20,20,20,0.85); }
+#bildspur-fenster.bs-vollbild .bs-t-shuttle { order: 2; flex: 1 1 200px; width: auto; height: 32px; }
+#bildspur-fenster.bs-vollbild .bs-t-zeit { order: 3; margin-left: 0; font-size: 15px; }
+#bildspur-fenster.bs-vollbild.bs-bar-aus .bs-transport { opacity: 0; pointer-events: none; }
+#bildspur-fenster.bs-vollbild.bs-bar-aus { cursor: none; }
+@media (max-width: 600px) {
+    #bildspur-fenster.bs-vollbild .bs-t-shuttle { order: 5; flex: 1 1 100%; }
+    #bildspur-fenster.bs-vollbild .bs-t-zeit { margin-left: auto; }
+}
+
+/* ===================================================================
+   JOB-100: Shader hinter der Bildspur. Canvas (Spiegel von #shader-bg) liegt UNTER den
+   Elementen; Skizzen (weisse/goldene Linien auf Schwarz) liegen per mix-blend-mode "screen"
+   darueber -> Schwarz wird durchlaessig, Linien bleiben voll deckend hell. Text-Cues bleiben
+   normal gemischt mit dunklem Halo, damit Tafeln/Formeln fuehren. Shader 100 % (Rico 24.09.),
+   Tafeln/Zitate freigestellt (kein Kasten), Lesbarkeit nur ueber den Text-Halo. Auch die Schwarzphasen zeigen jetzt Shader.
+   =================================================================== */
+.bs-buehne { isolation: isolate; }
+.bs-shader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 1; /* Rico 24.09. 09:20: "nicht gedimmt. 100 prozent" -> Shader wie auf der Seite */
+    pointer-events: none;
+    z-index: 0;
+}
+#bildspur-fenster.bs-shader-an .bs-shader { display: block; }
+.bs-ruhe { position: relative; }
+/* JOB-103 (v3.16): Zeichnung deckend statt screen: normal zeichnen, Schwarz per SVG-Filter #bs-deckend
+   durchsichtig, Linien voll deckend (Alpha aus Helligkeit) mit dunklem Saum. Shader bleibt 100 %. */
+#bildspur-fenster.bs-shader-an .bs-typ-skizze { mix-blend-mode: normal; }
+#bildspur-fenster.bs-shader-an .bs-typ-skizze img { mix-blend-mode: normal; filter: url(#bs-deckend); }
+#bildspur-fenster.bs-shader-an .bs-label {
+    color: #fff;
+    -webkit-text-stroke: 3px #000;
+    paint-order: stroke fill;
+    text-shadow: 0 0 3px #000, 0 0 8px #000;
+}
+#bildspur-fenster.bs-shader-an .bs-typ-tafel,
+#bildspur-fenster.bs-shader-an .bs-typ-zitat,
+#bildspur-fenster.bs-shader-an .bs-typ-ueberschrift,
+#bildspur-fenster.bs-shader-an .bs-typ-verortung,
+#bildspur-fenster.bs-shader-an .bs-typ-formel,
+#bildspur-fenster.bs-shader-an .bs-typ-rechnung {
+    color: #fff;
+    opacity: 1;
+    -webkit-text-stroke: 3px #000;
+    paint-order: stroke fill;
+    text-shadow: 0 0 2px #000, 0 0 5px #000, 0 0 12px #000, 0 0 24px rgba(0,0,0,0.95);
+}
+#bildspur-fenster.bs-shader-an .bs-typ-tafel:not(.bs-schlusstafel) { color: #fff; }
+#bildspur-fenster.bs-shader-an .bs-typ-verortung { color: #fff; }
+#bildspur-fenster.bs-shader-an .bs-typ-zitat { background: transparent; border-color: transparent; } /* Rico: Tafeln freigestellt davor */
+.bs-t-shader { order: 4; }
+.bs-t-shader[aria-expanded="true"] { color: #ffcc33; border-color: #ffcc33; }
+.bs-t-shader[hidden] { display: none; }
+
+/* ===================================================================
+   JOB-105: Shader-Feld (ausklappbar aus der Transportleiste). Sitzt IN der Leiste,
+   blendet daher im Vollbild mit ihr aus. Steuerung = die der Seite (conf), keine eigene Logik.
+   =================================================================== */
+.bs-shpanel {
+    order: 6;
+    flex: 1 1 100%;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 8px 10px;
+    border: 1px solid var(--bs-border);
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.55);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.bs-shpanel[hidden] { display: none; }
+.bs-shzeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.bs-shpanel .bs-shb { flex: 1 1 auto; min-width: 48px; height: 28px; }
+.bs-shpanel .bs-shb[hidden] { display: none; }
+.bs-shpanel .bs-shb.bs-an { background: #fff; color: #000; font-weight: bold; border-color: #fff; }
+.bs-shpanel .bs-shb.bs-an:hover { color: #000; }
+.bs-shhinweis { color: #999; font-size: 11px; }
+.bs-shr { display: flex; flex-direction: column; gap: 2px; flex: 1 1 90px; color: #ddd; }
+.bs-shr span { font-size: 11px; }
+.bs-shr input[type="range"] { width: 100%; margin: 0; accent-color: #fff; cursor: pointer; }
+.bs-shblock { border-left: 2px solid var(--bs-accent); padding-left: 10px; margin-bottom: 6px; }
+.bs-shtitel { color: #fff; margin-bottom: 4px; }
+.bs-shauto > span { color: #fff; flex: 1 1 100%; }
+.bs-shpanel:not(.bs-sh-advmodus) .bs-shadv { display: none; }
+.bs-shpanel.bs-sh-advmodus .bs-shstd { display: none; }
+#bildspur-fenster.bs-vollbild .bs-shpanel { max-height: 45vh; background: rgba(0, 0, 0, 0.8); }
+#bildspur-fenster.bs-vollbild .bs-shpanel .bs-shb { height: 36px; font-size: 14px; }
+#bildspur-fenster.bs-vollbild .bs-transport { max-height: 100dvh; }
+#bildspur-fenster .bs-shpanel .bs-shb.bs-an { background: #fff; color: #000; border-color: #fff; }
+#bildspur-fenster .bs-shpanel .bs-sh-imbild { flex: 0 0 auto; }
