@@ -1569,6 +1569,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
             });
             refreshDynamicTexts();
+            if (window.bsChatBegruessung) window.bsChatBegruessung();   // Rico 24.09. "chat a"
             
             if(!audioPlayer.paused && audioPlayer.currentTime > 0) {
                 audioBtn.innerText = i18n[lang]['audio_pause'] || 'PAUSE';
@@ -1591,7 +1592,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 getBuiltinLang: () => localStorage.getItem('lang') || 'en',
                 setActiveLang: (c) => { aktuelleSprache = c; },
                 changeLanguage: changeLanguage,
-                onApplied: () => { refreshDynamicTexts(); try { audioBtn.innerText = (!audioPlayer.paused && audioPlayer.currentTime > 0) ? t('audio_pause') : t('audio_play'); } catch (e) {} }
+                onApplied: () => { refreshDynamicTexts(); if (window.bsChatBegruessung) window.bsChatBegruessung(); try { audioBtn.innerText = (!audioPlayer.paused && audioPlayer.currentTime > 0) ? t('audio_pause') : t('audio_play'); } catch (e) {} }
             });
             SpracheFrei.mount(document.getElementById('sf-host'));
         }
@@ -2848,6 +2849,17 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         }
         // HOOK AP2: Chatverlauf lokal (max. 40 Nachrichten). Später kommt er aus GET /v1/session.chat.
         function saveChat() { try { localStorage.setItem('chat_history', JSON.stringify(chatHistory.slice(-40))); } catch (e) {} }
+        // Rico 24.09. "chat a": Beim Sprachwechsel neue Begruessung unten im Chat, wenn schon ein Verlauf da ist
+        // (ohne Verlauf wechselt die feste Begruessung oben ohnehin mit). Nicht im Verlauf gespeichert;
+        // mehrere Wechsel hintereinander ersetzen die letzte Wechsel-Begruessung statt zu stapeln.
+        window.bsChatBegruessung = function () {
+            if (!window.bsChatBereit || chatHistory.length === 0) return;
+            const letzte = chatVerlauf.lastElementChild;
+            if (letzte && letzte.classList.contains('sprachwechsel')) letzte.remove();
+            const div = zeigeNachricht(t('chat_welcome'), 'enzyklopedia', { silent: true });
+            div.classList.add('sprachwechsel');
+            chatVerlauf.scrollTop = chatVerlauf.scrollHeight;
+        };
         function restoreChat() {
             try {
                 const h = JSON.parse(localStorage.getItem('chat_history') || '[]');
@@ -3256,6 +3268,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         }
         layoutTopWindows();
         restoreChat();
+        window.bsChatBereit = true;
 
         // Audio dort weiter, wo aufgehört wurde (kein Autoplay, Browser-Policy)
         if (saved && saved.audio && saved.audio.file && !saved.audio.radio) {
