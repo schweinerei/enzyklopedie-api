@@ -1171,10 +1171,28 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 if (apiOnline !== true) setOffline(false);
                 return res;
             } catch (e) {
-                if (e.name !== 'AbortError') setOffline(true);
+                if (e.name !== 'AbortError') pruefeErreichbarkeit();   // Rico 24.09.: ein einzelner Netzhaenger (Ruhezustand, WLAN) ist kein OFFLINE
                 throw e;
             } finally { clearTimeout(timer); }
         }
+
+        // Nach einem gescheiterten Request: erst nachpruefen (zwei Health-Pings), dann ggf. OFFLINE.
+        // Beim Zurueckkommen (Tab sichtbar, Netz wieder da) wird OFFLINE erneut geprueft und aufgehoben.
+        let pruefLaeuft = null;
+        function pruefeErreichbarkeit() {
+            if (pruefLaeuft) return pruefLaeuft;
+            pruefLaeuft = (async () => {
+                const node = API_NODES.find(n => n.url === API_BASE_URL) || API_NODES[0];
+                const ok = await attemptNode(node);
+                setOffline(!ok);
+                pruefLaeuft = null;
+                return ok;
+            })();
+            return pruefLaeuft;
+        }
+        document.addEventListener('visibilitychange', () => { if (!document.hidden && apiOnline === false) pruefeErreichbarkeit(); });
+        window.addEventListener('online', () => { if (apiOnline === false) pruefeErreichbarkeit(); });
+        setInterval(() => { if (!document.hidden && apiOnline === false) pruefeErreichbarkeit(); }, 60000);
 
         // Weckruf + weiche Erreichbarkeitsprüfung.
         // NACHBESSERUNG (Rico-Freigabe 2026-09-20): kein AbortController mehr auf dem Weckruf selbst -
