@@ -246,6 +246,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         .window-content { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
         .script-window.minimized .window-content { display: none !important; }
 
+        /* JOB-147: Bildspur fuehrt die Transportleiste (eigene ◀ Kap/-10/Play/+10/Kap ▶/Suche/⛶); audio.sh zeigt dann nur Baum + Status */
+        #window-audio.bild-fuehrt .audio-bs-hide { display: none !important; }
+
         /* ========================================== */
         /* 3. INHALTS-STYLES                          */
         /* ========================================== */
@@ -613,13 +616,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         </div>
         
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
-            <button id="audio-play-btn" class="action-btn" style="padding: 8px 25px; font-size: 16px;">PLAY</button>
-            <button id="audio-skip-btn" class="action-btn" style="padding: 8px 15px; font-size: 16px;" data-i18n="audio_next">NEXT</button>
+            <button id="audio-play-btn" class="action-btn audio-bs-hide" style="padding: 8px 25px; font-size: 16px;">PLAY</button>
+            <button id="audio-skip-btn" class="action-btn audio-bs-hide" style="padding: 8px 15px; font-size: 16px;" data-i18n="audio_next">NEXT</button>
             <button id="audio-bild-btn" class="action-btn" style="padding: 8px 12px; font-size: 14px;" type="button" data-i18n="audio_bild" aria-pressed="true">IMAGE</button>
-            <span id="audio-time" style="font-family: var(--font-mono); font-size: 14px; color: #ffffff; margin-left: 10px;">0:00 / 0:00</span>
+            <span id="audio-time" class="audio-bs-hide" style="font-family: var(--font-mono); font-size: 14px; color: #ffffff; margin-left: 10px;">0:00 / 0:00</span>
         </div>
 
-        <input type="range" id="audio-progress" class="full-width" min="0" max="100" value="0" step="0.1" style="margin-bottom: 20px;">
+        <!-- JOB-147: fuehrt die Bildspur (aktiver Regie-Inhalt, Fenster offen), uebernimmt SIE die Transportleiste; PLAY/NEXT/Zeit/Suche bleiben hier nur ohne Bildspur -->
+        <input type="range" id="audio-progress" class="full-width audio-bs-hide" min="0" max="100" value="0" step="0.1" style="margin-bottom: 20px;">
 
         <!-- WEBRADIO SCHALTER GANZ UNTEN PLATZIERT -->
         <div style="border-top: 1px dashed var(--term-border); padding-top: 15px; display: flex; justify-content: center;">

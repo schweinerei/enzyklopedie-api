@@ -394,6 +394,8 @@
             this.el.dispatchEvent(new CustomEvent('bildspur-zu', { detail: { zu: false }, bubbles: true }));
         }
         istZu() { return this.el.classList.contains('bs-zu'); }
+        // JOB-147: hat das geladene Kapitel echte Bildspur-Cues (im Unterschied zu {cues:[]} bei reinem Audio)?
+        hatInhalt() { return !!(this.cues && this.cues.length > 0); }
 
         // Shader hinter den Bildern: spiegelt das Shader-Canvas der Seite (#shader-bg, Quelle
         // bleibt der Seiten-Code) in die Buehne. Dort liegt es unter den Bildern, die per

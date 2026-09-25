@@ -543,8 +543,16 @@
         const bildspur = Bildspur.erstelle(audioPlayer, { container: '#bildspur-fenster' });
         // JOB-142: BILD-Schalter im Player oeffnet/schliesst das Bildspur-Fenster (Audio laeuft unberuehrt weiter)
         const audioBildBtn = document.getElementById('audio-bild-btn');
+        // JOB-147: EINE Transportleiste - fuehrt die Bildspur (Inhalt vorhanden + Fenster offen), blendet
+        // audio.sh seine eigene Leiste (PLAY/NEXT/Zeit/Suche) aus; sie fuehrt dann selbst per bs-transport.
+        function syncBildFuehrt() {
+            const win = document.getElementById('window-audio');
+            if (!win) return;
+            const fuehrt = !!(bildspur && typeof bildspur.hatInhalt === 'function' && bildspur.hatInhalt() && !bildspur.istZu());
+            win.classList.toggle('bild-fuehrt', fuehrt);
+        }
         if (audioBildBtn) {
-            const bildZeige = () => { const an = !bildspur.istZu(); audioBildBtn.classList.toggle('active', an); audioBildBtn.setAttribute('aria-pressed', an ? 'true' : 'false'); };
+            const bildZeige = () => { const an = !bildspur.istZu(); audioBildBtn.classList.toggle('active', an); audioBildBtn.setAttribute('aria-pressed', an ? 'true' : 'false'); syncBildFuehrt(); };
             audioBildBtn.addEventListener('click', () => { if (bildspur.istZu()) bildspur.oeffne(); else bildspur.schliesse(); });
             document.getElementById('bildspur-fenster').addEventListener('bildspur-zu', bildZeige);
             bildZeige();
@@ -552,8 +560,8 @@
         // Regie zu einer Audio-Datei laden (auch fuer Wiederaufnahme aus localStorage / Hoerproben)
         function bildspurFuerDatei(datei) {
             const f = stueckZuDatei(datei);
-            if (f && f.st.regie) bildspur.ladeRegie(f.st.regie, f.st.titel).catch(() => {});
-            else bildspur.ladeRegie({ cues: [] });
+            if (f && f.st.regie) bildspur.ladeRegie(f.st.regie, f.st.titel).catch(() => {}).finally(syncBildFuehrt);
+            else bildspur.ladeRegie({ cues: [] }).finally(syncBildFuehrt);
             return f ? f.st : null;
         }
         
@@ -883,9 +891,10 @@
             audioPlayer.setAttribute('data-last-played', stueck.datei);
             if (stueck.regie) {
                 bildspur.ladeRegie(stueck.regie, stueck.titel)
-                    .catch(() => { /* Buch ohne Bildspur (noch) — Fenster bleibt leer, kein Fehler sichtbar */ });
+                    .catch(() => { /* Buch ohne Bildspur (noch) — Fenster bleibt leer, kein Fehler sichtbar */ })
+                    .finally(syncBildFuehrt);
             } else {
-                bildspur.ladeRegie({ cues: [] }); // kein Regie-Buch: Fenster auf Ruhezustand, kein Fetch noetig
+                bildspur.ladeRegie({ cues: [] }).finally(syncBildFuehrt); // kein Regie-Buch: Fenster auf Ruhezustand, kein Fetch noetig
             }
             audioFilename.innerText = stueck.titel;
             audioFilename.setAttribute('title', stueck.titel);
@@ -2427,13 +2436,27 @@
             // Leitstand 24.09.: nur mobil (Ricos Befund war die Handy-Fassung); Desktop behaelt das Fenster wie bisher.
             const nurMobil = () => window.matchMedia('(max-width: 768px), (pointer: coarse)').matches;
             let versteckTimer = null;
+            // JOB-147: Hoer-Schirm mobil - bildspur nie ueber dem Audiofenster. Solange sie fuehrt
+            // (Inhalt vorhanden, sichtbar), klappt audio.sh selbst zu (SND-Dock); sonst kein zweites
+            // Fenster im gleichen Bereich. Nur automatisch, was wir selbst zugeklappt haben (autoZu).
+            const audioWin = document.getElementById('window-audio');
+            let audioAutoZu = false;
+            const audioZuKlappen = () => {
+                if (!audioWin || !nurMobil() || !(bildspur && bildspur.hatInhalt && bildspur.hatInhalt())) return;
+                if (!audioWin.classList.contains('minimized')) { audioWin.classList.add('minimized'); audioAutoZu = true; }
+            };
+            const audioWiederOeffnen = () => {
+                if (audioWin && audioAutoZu) { audioWin.classList.remove('minimized'); audioAutoZu = false; }
+            };
             const zeigen = () => {
                 clearTimeout(versteckTimer);
                 if (bs.classList.contains('bs-versteckt')) { bs.classList.remove('bs-versteckt'); vorn(); if (bildspur && bildspur._shPlan) bildspur._shPlan(); }
+                audioZuKlappen();
             };
             const verstecken = () => {
                 clearTimeout(versteckTimer);
                 versteckTimer = setTimeout(() => {
+                    audioWiederOeffnen();
                     if (!nurMobil() || (!audioPlayer.paused && !audioPlayer.ended)) return;
                     if (bs.classList.contains('bs-maximiert') || bs.classList.contains('bs-vollbild')) return;
                     bs.classList.add('bs-versteckt');
@@ -2444,7 +2467,7 @@
             audioPlayer.addEventListener('pause', verstecken);
             audioPlayer.addEventListener('ended', verstecken);
             if (audioPlayer.paused && nurMobil()) bs.classList.add('bs-versteckt');
-            window.addEventListener('resize', () => { if (!nurMobil()) bs.classList.remove('bs-versteckt'); else if (audioPlayer.paused) verstecken(); });
+            window.addEventListener('resize', () => { if (!nurMobil()) { bs.classList.remove('bs-versteckt'); audioWiederOeffnen(); } else if (audioPlayer.paused) verstecken(); });
         })();
 
         document.addEventListener('mousemove', moveDrag);
