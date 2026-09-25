@@ -270,6 +270,30 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         .auto-btn { font-size: 13px; }
         .mode-btn.active, .lang-btn.active, .audio-lang-btn.active, .audio-kap-btn.active, .bg-btn.active, .shader-btn.active, .radio-btn.active, .auto-btn.active { background: #ffffff; color: #000000; font-weight: bold; border-color: #ffffff; }
 
+        /* KATALOG-BAUM (JOB-132): Verzeichnisbaum im Player, kompakt, scrollt intern */
+        #baum-fenster { margin-bottom: 14px; font-family: var(--font-mono); }
+        #baum-kopf { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 6px; min-height: 22px; }
+        .baum-prompt { color: var(--term-accent); font-size: 13px; white-space: nowrap; }
+        .baum-weiter { background: var(--term-bg); color: #ffffff; border: 1px solid var(--term-accent); border-radius: 4px; padding: 3px 9px; font-family: var(--font-mono); font-size: 13px; cursor: pointer; min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .baum-weiter:hover, .baum-weiter:focus-visible { background: #ffffff; color: #000000; outline: none; }
+        #baum { max-height: min(160px, 24vh); overflow-y: auto; overflow-x: hidden; border: 1px solid var(--term-border); border-radius: 4px; background: rgba(0, 0, 0, 0.35); padding: 3px 0; overscroll-behavior: contain; }
+        .baum-zeile { display: flex; align-items: center; gap: 6px; min-height: 26px; padding: 1px 8px 1px 6px; font-size: 13.5px; line-height: 1.25; color: #cccccc; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+        .baum-zeile:hover { background: rgba(255, 255, 255, 0.07); }
+        .baum-zeile:focus-visible { outline: 1px solid #ffffff; outline-offset: -1px; background: rgba(255, 255, 255, 0.1); }
+        .baum-zeile .baum-glyph { flex: 0 0 1.1em; color: var(--term-accent); text-align: center; }
+        .baum-zeile .baum-text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .baum-zeile .baum-info { flex: 0 0 auto; color: #888888; font-size: 12px; }
+        .baum-zeile .baum-marke { flex: 0 0 1.3em; text-align: center; color: var(--term-accent); }
+        .baum-zeile[data-art="buch"] { color: #ffffff; font-weight: bold; }
+        .baum-zeile[data-art="eintrag"].folgt { color: #777777; cursor: default; }
+        .baum-zeile.aktiv { color: #ffffff; background: rgba(255, 255, 255, 0.12); }
+        .baum-zeile.aktiv .baum-glyph { color: #ffffff; }
+        #baum-legende { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: #888888; margin-right: auto; }
+        #baum-meldung { min-height: 0; font-size: 12px; color: #bbbbbb; }
+        #baum-meldung:empty { display: none; }
+        @media (pointer: coarse) { .baum-zeile { min-height: 36px; font-size: 14.5px; } #baum { max-height: min(150px, 24vh); } }
+        @media (max-width: 768px) { .baum-prompt { display: none; } #baum-fenster { margin-bottom: 10px; } }
+
         #eingabe-bereich { display: flex; padding: 8px 20px 18px 20px; background: var(--term-panel); gap: 10px; }
         #chat-eingabe, .promo-input { flex-grow: 1; padding: 12px 15px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--term-accent); color: #ffffff; border-radius: 4px; outline: none; font-family: var(--font-mono); font-size: 18px; }
         #chat-eingabe:focus, .promo-input:focus { border-color: #ffffff; }
@@ -557,16 +581,19 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
     </div>
     <div class="window-content text-content" style="height: auto; padding: 25px;">
         
-        <!-- AUDIO SPRACH-SWITCH -->
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button class="audio-lang-btn active" data-alang="en">EN</button>
-            <button class="audio-lang-btn" data-alang="de">DE</button>
-            <button class="audio-lang-btn" data-alang="ru">РУ</button>
-        </div>
-        <!-- KAPITELWAHL Bildspur: nur DE (nur dort gibt es Kapitel mit Bildspur) -->
-        <div id="audio-kapitel" style="display: none; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-            <button class="audio-kap-btn" data-akap="k01">PHYSIK K1</button>
-            <button class="audio-kap-btn" data-akap="k02">PHYSIK K2</button>
+        <!-- KATALOG-BAUM: Buch > Sprache > Teil > Eintrag, gespeist aus bildspur/katalog.json -->
+        <div id="baum-fenster">
+            <div id="baum-kopf">
+                <span class="baum-prompt" aria-hidden="true">$ ls -R store.dir</span>
+                <div id="baum-legende" aria-hidden="true">
+                    <span>◉ <span data-i18n="baum_st_bebildert">illustrated</span></span>
+                    <span>♪ <span data-i18n="baum_st_audio">audio only</span></span>
+                    <span>… <span data-i18n="baum_st_folgt">coming</span></span>
+                </div>
+                <button type="button" id="baum-weiter" class="baum-weiter" hidden></button>
+            </div>
+            <div id="baum" role="tree" data-i18n-aria="baum_aria" aria-label="Audio catalog"></div>
+            <div id="baum-meldung" role="status" aria-live="polite"></div>
         </div>
 
         <div style="color: var(--term-accent); font-family: var(--font-mono); margin-bottom: 15px;">
@@ -923,6 +950,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audio_loaded: "> loaded: ",
             audio_play: "PLAY",
             audio_pause: "PAUSE",
+            baum_aria: "Audio catalog", baum_st_bebildert: "illustrated", baum_st_audio: "audio only", baum_st_folgt: "coming", baum_weiter: "continue", baum_gesperrt: "Locked – not part of your access yet.", baum_folgt: "Coming soon.", baum_err: "Catalog unavailable.",
             
             guestbook_header: ">_ tail -f public_log.txt",
             guestbook_placeholder: "Enter public message...",
@@ -1031,6 +1059,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audio_loaded: "> geladen: ",
             audio_play: "PLAY",
             audio_pause: "PAUSE",
+            baum_aria: "Audio-Katalog", baum_st_bebildert: "bebildert", baum_st_audio: "nur Audio", baum_st_folgt: "folgt", baum_weiter: "weiter hören", baum_gesperrt: "Gesperrt – noch nicht in deinem Zugang.", baum_folgt: "Folgt bald.", baum_err: "Katalog nicht verfügbar.",
             
             guestbook_header: ">_ tail -f public_log.txt",
             guestbook_placeholder: "Öffentliche Nachricht eingeben...",
@@ -1139,6 +1168,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audio_loaded: "> загружено: ",
             audio_play: "PLAY",
             audio_pause: "PAUSE",
+            baum_aria: "Каталог аудио", baum_st_bebildert: "с картинками", baum_st_audio: "только аудио", baum_st_folgt: "скоро", baum_weiter: "слушать дальше", baum_gesperrt: "Закрыто – пока не входит в ваш доступ.", baum_folgt: "Скоро.", baum_err: "Каталог недоступен.",
             
             guestbook_header: ">_ tail -f public_log.txt",
             guestbook_placeholder: "Введите публичное сообщение...",
@@ -1340,46 +1370,36 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // ----------------------------------------------------
         // 0. AUDIO PLAYER LOGIC
         // ----------------------------------------------------
-        const audioDateien = {
-            en: [
-                { datei: 'audio/en_roman_vorwort.mp3',
-                  titel: 'The Invitation · Foreword' },
-                { datei: 'audio/en_roman_prolog.mp3',
-                  titel: 'The Invitation · Prologue' },
-                { datei: 'audio/en_roman_k01.mp3',
-                  titel: 'The Invitation · Chapter 1. From Alpha-Stall into the Depths of the Forests' },
-                { datei: 'audio/en_traktat_vorwort.mp3',
-                  titel: 'The Physics of Relations · Foreword. The Quiet Scandal' },
-                { datei: 'audio/en_traktat_k01.mp3',
-                  titel: 'The Physics of Relations · Chapter 1. The Hollow Cavity Resonator Earth' }
-            ],
-            de: [
-                { datei: 'audio/de_roman_prolog.mp3',
-                  titel: 'Die Einladung · Prolog' },
-                { datei: 'audio/de_roman_k01.mp3',
-                  titel: 'Die Einladung · Kapitel 1. Vom Alpha-Stall in die Tiefe der Wälder' },
-                { datei: 'audio/de_traktat_vorwort.mp3',
-                  titel: 'Physik der Beziehungen · Vorwort. Der stille Skandal' },
-                { datei: 'audio/de_traktat_k01.mp3',
-                  titel: 'Physik der Beziehungen · Kapitel 1. Der Hohlraumresonator Erde',
-                  slug: 'traktat', kapitel: 'k01' },
-                { datei: 'audio/de_traktat_k02.mp3',
-                  titel: 'Physik der Beziehungen · Kapitel 2. Die Kondensation des inneren Kerns',
-                  slug: 'traktat', kapitel: 'k02' }
-            ],
-            ru: [
-                { datei: 'audio/ru_roman_vorwort.mp3',
-                  titel: 'Приглашение · Предисловие' },
-                { datei: 'audio/ru_roman_prolog.mp3',
-                  titel: 'Приглашение · Пролог' },
-                { datei: 'audio/ru_roman_k01.mp3',
-                  titel: 'Приглашение · Глава 1. Из Альфа-стойла в глубь лесов' },
-                { datei: 'audio/ru_traktat_vorwort.mp3',
-                  titel: 'Физика отношений · Предисловие. Тихий скандал' },
-                { datei: 'audio/ru_traktat_k01.mp3',
-                  titel: 'Физика отношений · Глава 1. Полостной резонатор Земля' }
-            ]
-        };
+        // Katalog (bildspur/katalog.json, Fallback bildspur/katalog-inline.js fuer file://) speist Player und Baum.
+        // audioDateien[lang] = abspielbare Eintraege (Audio-Pfad vorhanden) in Katalogreihenfolge.
+        let katalog = { buecher: [], eintraege: [] };
+        const audioDateien = { en: [], de: [], ru: [] };
+        const BAUM_SPRACHEN = ['de', 'en', 'ru'];
+        const eintragsId = e => `${e.buch}/${e.sprache}/${e.teil}/${e.nr || e.label || '0'}`;
+        const buchDef = id => katalog.buecher.find(b => b.id === id) || { id, titel: {}, teile: [] };
+        const teilDef = (buch, id) => (buchDef(buch).teile || []).find(x => x.id === id) || { id, titel: {} };
+        function anzeigeTitel(e) {
+            const l = e.sprache, tl = teilDef(e.buch, e.teil), pre = tl.nr_prefix && tl.nr_prefix[l];
+            const kopf = e.label ? e.label : (e.nr ? ((pre || '') + e.nr) : ((tl.titel || {})[l] || ''));
+            return `${(buchDef(e.buch).titel || {})[l] || e.buch} · ${kopf}${e.titel ? '. ' + e.titel : ''}`;
+        }
+        function setzeKatalog(k) {
+            katalog = { ...k, eintraege: (k.eintraege || []).map(e => ({ ...e, id: eintragsId(e) })) };
+            BAUM_SPRACHEN.forEach(l => { audioDateien[l] = []; });
+            katalog.eintraege.forEach(e => {
+                if (!e.audio || !audioDateien[e.sprache]) return;
+                audioDateien[e.sprache].push({ id: e.id, datei: e.audio, titel: anzeigeTitel(e), regie: e.regie || null, eintrag: e });
+            });
+        }
+        function stueckZuDatei(datei) {
+            const name = String(datei || '').split('/').pop();
+            for (const lang of BAUM_SPRACHEN) {
+                const st = audioDateien[lang].find(x => x.datei.split('/').pop() === name);
+                if (st) return { lang, st };
+            }
+            return null;
+        }
+        if (window.KATALOG_INLINE) setzeKatalog(window.KATALOG_INLINE);
 
         // Merkt sich je Sprache, wo man stehengeblieben ist.
         const audioStelle = { en: 0, de: 0, ru: 0 };
@@ -1392,19 +1412,13 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         const bildspur = Bildspur.erstelle(audioPlayer, { container: '#bildspur-fenster' });
         // Regie zu einer Audio-Datei laden (auch fuer Wiederaufnahme aus localStorage / Hoerproben)
         function bildspurFuerDatei(datei) {
-            const name = String(datei || '').split('/').pop();
-            for (const lang of Object.keys(audioDateien)) {
-                const st = (audioDateien[lang] || []).find(x => x.datei.split('/').pop() === name);
-                if (st && st.slug && st.kapitel) {
-                    bildspur.ladeRegie(`bildspur/${st.slug}-${lang}-${st.kapitel}.regie.json`, st.titel).catch(() => {});
-                    return st;
-                }
-            }
-            bildspur.ladeRegie({ cues: [] });
-            return null;
+            const f = stueckZuDatei(datei);
+            if (f && f.st.regie) bildspur.ladeRegie(f.st.regie, f.st.titel).catch(() => {});
+            else bildspur.ladeRegie({ cues: [] });
+            return f ? f.st : null;
         }
         
-        let aktuelleAudioSprache = "en"; 
+        let aktuelleAudioSprache = BAUM_SPRACHEN.includes(aktuelleSprache) ? aktuelleSprache : "en";   // Vorauswahl = Seitensprache
         let isRadioActive = false;
 
         const audioBtn = document.getElementById('audio-play-btn');
@@ -1415,29 +1429,256 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         const audioTimeText = document.getElementById('audio-time');
         const radioToggleBtn = document.getElementById('radio-toggle-btn');
 
-        // Kapitelwahl (Bildspur): Tasten nur bei DE sichtbar, aktiv = laufendes Stueck.
-        const audioKapitel = document.getElementById('audio-kapitel');
-        function aktualisiereKapitelWahl(datei) {
-            audioKapitel.style.display = aktuelleAudioSprache === 'de' ? 'flex' : 'none';
-            const name = String(datei || '').split('/').pop();
-            const st = (audioDateien.de || []).find(x => x.datei.split('/').pop() === name);
-            audioKapitel.querySelectorAll('.audio-kap-btn').forEach(b =>
-                b.classList.toggle('active', !!(st && st.kapitel === b.getAttribute('data-akap'))));
+        // ----------------------------------------------------
+        // KATALOG-BAUM (JOB-132): Buch > Sprache > Teil > Eintrag. Datenquelle: setzeKatalog().
+        // Zustand (offene Ordner, letzte Stelle) in localStorage 'baum_state'.
+        // ----------------------------------------------------
+        const baumEl = document.getElementById('baum');
+        const baumWeiterBtn = document.getElementById('baum-weiter');
+        const baumMeldungEl = document.getElementById('baum-meldung');
+        const BAUM_KEY = 'baum_state';
+        let bz = {};
+        try { bz = JSON.parse(localStorage.getItem(BAUM_KEY) || '{}') || {}; } catch (e) { bz = {}; }
+        const baumOffen = new Set(Array.isArray(bz.offen) ? bz.offen : []);
+        let baumManuell = !!bz.manuell;          // true, sobald der Nutzer selbst Ordner auf-/zuklappt
+        let baumWeiter = bz.weiter || null;      // { id, pos } = letzte Hoerstelle
+        let baumAktuellId = null, baumFokusId = null, baumZeilenCache = [], baumMeldungTimer = null;
+        const BAUM_MARKE = { bebildert: '◉', audio: '♪', folgt: '…' };
+        // Vorbereitung Kaufstatus: heute ist alles 'frei'. Spaeter: window.BS_ZUGANG(eintrag) -> true, wenn freigeschaltet.
+        const zugangErlaubt = e => (e.zugang || 'frei') === 'frei' || (typeof window.BS_ZUGANG === 'function' && !!window.BS_ZUGANG(e));
+
+        function baumSpeichern() {
+            try { localStorage.setItem(BAUM_KEY, JSON.stringify({ offen: [...baumOffen], manuell: baumManuell, weiter: baumWeiter })); } catch (e) {}
         }
-        audioKapitel.querySelectorAll('.audio-kap-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (isRadioActive) {
-                    isRadioActive = false;
-                    radioToggleBtn.classList.remove('active');
-                }
-                const idx = audioDateien.de.findIndex(x => x.kapitel === btn.getAttribute('data-akap'));
-                if (idx < 0) return;
-                document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-alang') === 'de'));
-                aktuelleAudioSprache = 'de';
-                audioStelle.de = idx;
-                loadAudioForLanguage('de', !audioPlayer.paused && audioPlayer.currentTime > 0);
+        function baumMeldung(text) {
+            baumMeldungEl.textContent = text;
+            clearTimeout(baumMeldungTimer);
+            if (text) baumMeldungTimer = setTimeout(() => { baumMeldungEl.textContent = ''; }, 4000);
+        }
+        function eintragText(e) {
+            return (e.nr ? e.nr + ' ' : '') + (e.label ? e.label + (e.titel ? '. ' : '') : '') + (e.titel || '');
+        }
+        function baumZaehle(es) { return `${es.filter(e => e.audio).length}/${es.length}`; }
+        function baumStandardOffen() {
+            const sp = BAUM_SPRACHEN.includes(aktuelleSprache) ? aktuelleSprache : 'en';
+            baumOffen.clear();
+            baumOffen.add('b:physik'); baumOffen.add('b:physik/' + sp);
+        }
+        function baumOeffneBis(e) {
+            const b = 'b:' + e.buch, s = `${b}/${e.sprache}`;
+            if (!baumManuell) baumOffen.clear();
+            baumOffen.add(b); baumOffen.add(s); baumOffen.add(`${s}/${e.teil}`);
+        }
+
+        function baumZeilen() {
+            const z = [], ui = aktuelleSprache;
+            katalog.buecher.forEach(b => {
+                const es = katalog.eintraege.filter(e => e.buch === b.id);
+                if (!es.length) return;
+                const bid = 'b:' + b.id;
+                z.push({ id: bid, art: 'buch', ebene: 1, text: (b.titel || {})[ui] || (b.titel || {}).en || b.id, ordner: true, info: baumZaehle(es) });
+                if (!baumOffen.has(bid)) return;
+                BAUM_SPRACHEN.forEach(sp => {
+                    const se = es.filter(e => e.sprache === sp);
+                    if (!se.length) return;
+                    const sid = `${bid}/${sp}`;
+                    z.push({ id: sid, art: 'sprache', ebene: 2, text: (sp === 'ru' ? 'РУ' : sp.toUpperCase()) + '/', ordner: true, info: baumZaehle(se), sprache: sp });
+                    if (!baumOffen.has(sid)) return;
+                    (b.teile || []).forEach(tl => {
+                        const te = se.filter(e => e.teil === tl.id);
+                        if (!te.length) return;
+                        const tid = `${sid}/${tl.id}`;
+                        z.push({ id: tid, art: 'teil', ebene: 3, text: ((tl.titel || {})[sp] || tl.id) + '/', ordner: true, info: baumZaehle(te) });
+                        if (!baumOffen.has(tid)) return;
+                        te.forEach(e => z.push({ id: e.id, art: 'eintrag', ebene: 4, text: eintragText(e), eintrag: e }));
+                    });
+                });
             });
+            return z;
+        }
+
+        function baumRender() {
+            baumZeilenCache = baumZeilen();
+            baumEl.textContent = '';
+            if (!baumZeilenCache.length) { baumEl.textContent = t('baum_err'); return; }
+            if (!baumZeilenCache.some(z => z.id === baumFokusId)) baumFokusId = (baumZeilenCache.find(z => z.id === baumAktuellId) || baumZeilenCache[0]).id;
+            const frag = document.createDocumentFragment();
+            baumZeilenCache.forEach(z => {
+                const e = z.eintrag, d = document.createElement('div');
+                d.className = 'baum-zeile';
+                d.setAttribute('role', 'treeitem');
+                d.setAttribute('aria-level', z.ebene);
+                d.dataset.id = z.id; d.dataset.art = z.art;
+                d.style.paddingLeft = (6 + (z.ebene - 1) * 13) + 'px';
+                d.tabIndex = z.id === baumFokusId ? 0 : -1;
+                const g = document.createElement('span'); g.className = 'baum-glyph'; g.setAttribute('aria-hidden', 'true');
+                const tx = document.createElement('span'); tx.className = 'baum-text'; tx.textContent = z.text; tx.title = z.text;
+                if (z.ordner) {
+                    const offen = baumOffen.has(z.id);
+                    d.setAttribute('aria-expanded', offen ? 'true' : 'false');
+                    g.textContent = offen ? '▾' : '▸';
+                    d.append(g, tx);
+                    const info = document.createElement('span'); info.className = 'baum-info'; info.textContent = z.info; d.append(info);
+                } else {
+                    const gesperrt = !zugangErlaubt(e), frei = e.audio && !gesperrt;
+                    const aktiv = z.id === baumAktuellId;
+                    d.classList.toggle('aktiv', aktiv);
+                    d.classList.toggle('folgt', !frei);
+                    d.setAttribute('aria-selected', aktiv ? 'true' : 'false');
+                    if (!frei) d.setAttribute('aria-disabled', 'true');
+                    g.textContent = aktiv ? '>' : '·';
+                    const m = document.createElement('span'); m.className = 'baum-marke';
+                    const st = gesperrt ? '$' : (BAUM_MARKE[e.status] || BAUM_MARKE.audio);
+                    m.textContent = st;
+                    const stName = gesperrt ? t('baum_gesperrt') : t('baum_st_' + (e.status || 'audio'));
+                    m.title = stName;
+                    d.setAttribute('aria-label', `${z.text}, ${stName}`);
+                    d.append(g, tx, m);
+                }
+                frag.appendChild(d);
+            });
+            baumEl.appendChild(frag);
+        }
+        function baumZeileEl(id) { return Array.from(baumEl.children).find(c => c.dataset.id === id); }
+        function baumFokus(id, scroll) {
+            baumFokusId = id;
+            baumEl.querySelectorAll('.baum-zeile').forEach(c => { c.tabIndex = c.dataset.id === id ? 0 : -1; });
+            const el = baumZeileEl(id);
+            if (el) { el.focus({ preventScroll: true }); if (scroll !== false) el.scrollIntoView({ block: 'nearest' }); }
+        }
+        function baumUmschalten(z, an) {
+            const offen = an === undefined ? !baumOffen.has(z.id) : an;
+            if (offen === baumOffen.has(z.id)) return;
+            offen ? baumOffen.add(z.id) : baumOffen.delete(z.id);
+            baumManuell = true;
+            baumSpeichern(); baumRender(); baumFokus(z.id);
+        }
+        function baumSpiele(e, pos) {
+            if (isRadioActive) { isRadioActive = false; radioToggleBtn.classList.remove('active'); }
+            const l = e.sprache, i = audioDateien[l].findIndex(x => x.id === e.id);
+            if (i < 0) return;
+            aktuelleAudioSprache = l;
+            audioStelle[l] = i;
+            loadAudioForLanguage(l, true);
+            if (pos > 0) audioPlayer.addEventListener('loadedmetadata', () => { if (pos < audioPlayer.duration) audioPlayer.currentTime = pos; }, { once: true });
+        }
+        function baumAktivieren(z) {
+            if (z.ordner) return baumUmschalten(z);
+            const e = z.eintrag;
+            if (!e.audio) { baumMeldung(t('baum_folgt')); return; }
+            if (!zugangErlaubt(e)) { baumMeldung(t('baum_gesperrt')); return; }
+            baumMeldung('');
+            baumSpiele(e);
+        }
+
+        // Aktives Stueck im Baum markieren und (beim Wechsel) seine Ordner oeffnen.
+        function aktualisiereKapitelWahl(datei) {
+            const f = stueckZuDatei(datei);
+            baumAktuellId = f ? f.st.id : null;
+            if (f) {
+                baumOeffneBis(f.st.eintrag);
+                audioStelle[f.lang] = audioDateien[f.lang].indexOf(f.st);
+                baumFokusId = f.st.id;
+                baumSpeichern();
+            }
+            baumRender();
+            const el = baumAktuellId && baumZeileEl(baumAktuellId);
+            if (el) el.scrollIntoView({ block: 'nearest' });
+            baumWeiterZeigen();
+        }
+
+        baumEl.addEventListener('click', ev => {
+            const el = ev.target.closest('.baum-zeile');
+            if (!el) return;
+            const z = baumZeilenCache.find(x => x.id === el.dataset.id);
+            if (!z) return;
+            baumFokusId = z.id;
+            baumAktivieren(z);
+            const neu = baumZeileEl(z.id);
+            if (neu) baumFokus(z.id, false);
         });
+        baumEl.addEventListener('keydown', ev => {
+            const el = ev.target.closest('.baum-zeile');
+            if (!el || ev.altKey || ev.ctrlKey || ev.metaKey) return;
+            const i = baumZeilenCache.findIndex(x => x.id === el.dataset.id);
+            if (i < 0) return;
+            const z = baumZeilenCache[i];
+            let ziel = null;
+            switch (ev.key) {
+                case 'ArrowDown': ziel = baumZeilenCache[Math.min(i + 1, baumZeilenCache.length - 1)]; break;
+                case 'ArrowUp': ziel = baumZeilenCache[Math.max(i - 1, 0)]; break;
+                case 'Home': ziel = baumZeilenCache[0]; break;
+                case 'End': ziel = baumZeilenCache[baumZeilenCache.length - 1]; break;
+                case 'ArrowRight':
+                    if (z.ordner && !baumOffen.has(z.id)) { baumUmschalten(z, true); ev.preventDefault(); return; }
+                    if (z.ordner) ziel = baumZeilenCache[i + 1]; break;
+                case 'ArrowLeft':
+                    if (z.ordner && baumOffen.has(z.id)) { baumUmschalten(z, false); ev.preventDefault(); return; }
+                    for (let k = i - 1; k >= 0; k--) if (baumZeilenCache[k].ebene < z.ebene) { ziel = baumZeilenCache[k]; break; }
+                    break;
+                case 'Enter': case ' ': ev.preventDefault(); baumAktivieren(z); return;
+                default: return;
+            }
+            ev.preventDefault();
+            if (ziel) baumFokus(ziel.id);
+        });
+
+        // "weiter hoeren": letzte Stelle merken (alle ~5 s beim Hoeren, sicher bei Pause/Verlassen).
+        function baumWeiterMerken(erzwingen) {
+            if (isRadioActive) return;
+            const f = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+            const pos = audioPlayer.currentTime;
+            if (!f || !isFinite(pos)) return;
+            if (!erzwingen && baumWeiter && baumWeiter.id === f.st.id && Math.abs(pos - baumWeiter.pos) < 5) return;
+            baumWeiter = { id: f.st.id, pos: Math.floor(pos) };
+            baumSpeichern(); baumWeiterZeigen();
+        }
+        function baumWeiterZeigen() {
+            const f = baumWeiter && katalog.eintraege.find(x => x.id === baumWeiter.id && x.audio);
+            const laeuft = !audioPlayer.paused && !isRadioActive;
+            baumWeiterBtn.hidden = !f || laeuft;
+            if (!f) return;
+            baumWeiterBtn.textContent = `▶ ${t('baum_weiter')} · ${f.sprache.toUpperCase()} ${eintragText(f)} · ${formatTime(baumWeiter.pos)}`;
+        }
+        baumWeiterBtn.addEventListener('click', () => {
+            const e = baumWeiter && katalog.eintraege.find(x => x.id === baumWeiter.id && x.audio);
+            if (e && zugangErlaubt(e)) baumSpiele(e, baumWeiter.pos);
+        });
+        audioPlayer.addEventListener('timeupdate', () => { if (!audioPlayer.paused) baumWeiterMerken(false); });
+        audioPlayer.addEventListener('pause', () => { baumWeiterMerken(true); baumWeiterZeigen(); });
+        audioPlayer.addEventListener('play', baumWeiterZeigen);
+        window.addEventListener('beforeunload', () => { if (!audioPlayer.paused) baumWeiterMerken(true); });
+
+        // Seitensprache wechselt: Beschriftungen neu, ungewaehlt folgt der Baum der Sprache (Vorauswahl).
+        function baumNachSprachwechsel() {
+            if (!baumManuell && katalog.eintraege.length) {
+                baumStandardOffen();
+                const f = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+                if (f) baumOeffneBis(f.st.eintrag);
+                baumSpeichern();
+            }
+            baumRender(); baumWeiterZeigen();
+        }
+        function baumNachKatalog() {
+            if (!bz.offen && !baumOffen.size && katalog.eintraege.length) baumStandardOffen();
+            const letzte = audioPlayer.getAttribute('data-last-played');
+            if (letzte) aktualisiereKapitelWahl(letzte); else { baumRender(); baumWeiterZeigen(); }
+        }
+        async function katalogVomServer() {
+            if (location.protocol === 'file:') return;   // dort blockiert der Browser fetch(): Inline-Katalog gilt
+            try {
+                const r = await fetch('bildspur/katalog.json', { cache: 'no-cache' });
+                if (!r.ok) return;
+                const k = await r.json();
+                if (window.KATALOG_INLINE && JSON.stringify(k) === JSON.stringify(window.KATALOG_INLINE)) return;
+                setzeKatalog(k);
+                baumNachKatalog();
+            } catch (e) { /* file:// oder offline: Inline-Katalog bleibt */ }
+        }
+        // Boot: Inline-Katalog steht synchron bereit (file://); ein Server-Katalog ersetzt ihn, wenn er abweicht.
+        const katalogBereit = window.KATALOG_INLINE ? (katalogVomServer(), Promise.resolve()) : katalogVomServer();
+        baumNachKatalog();
+        katalogBereit.then(() => baumNachKatalog());
 
         function formatTime(seconds) {
             if(isNaN(seconds) || !isFinite(seconds)) return "LIVE";
@@ -1460,8 +1701,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             audioWollteSpielen = autoPlay;
             audioPlayer.src = stueck.datei;
             audioPlayer.setAttribute('data-last-played', stueck.datei);
-            if (stueck.slug && stueck.kapitel) {
-                bildspur.ladeRegie(`bildspur/${stueck.slug}-${lang}-${stueck.kapitel}.regie.json`, stueck.titel)
+            if (stueck.regie) {
+                bildspur.ladeRegie(stueck.regie, stueck.titel)
                     .catch(() => { /* Buch ohne Bildspur (noch) — Fenster bleibt leer, kein Fehler sichtbar */ });
             } else {
                 bildspur.ladeRegie({ cues: [] }); // kein Regie-Buch: Fenster auf Ruhezustand, kein Fetch noetig
@@ -1544,8 +1785,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             // Endet ein Kapitel mit einer Schlusstafel, bleibt sie mindestens 8 s ruhig stehen,
             // bevor das naechste Stueck startet (Rico 24.09. "schluss2 b": Kap. 2 endet 2,8 s nach der Tafel).
             let halteSek = 0;
-            const m = (audioPlayer.getAttribute('data-last-played') || '').match(/(\w+?)_(\w+?)_(k\d+)\.mp3$/);
-            const inl = m && window.BILDSPUR_INLINE ? window.BILDSPUR_INLINE[`${m[2]}-${m[1]}-${m[3]}`] : null;
+            const fl = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+            const rk = fl && fl.st.regie ? (/([^\/]+)\.regie\.json$/.exec(fl.st.regie) || [])[1] : null;
+            const inl = rk && window.BILDSPUR_INLINE ? window.BILDSPUR_INLINE[rk] : null;
             const cues = inl && inl.regie && inl.regie.cues;
             const letzter = cues && cues.length ? cues[cues.length - 1] : null;
             if (letzter && letzter.typ === 'tafel' && isFinite(audioPlayer.duration)) {
@@ -1555,21 +1797,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 if (!audioPlayer.ended) return; // Nutzer hat inzwischen selbst weitergeschaltet
                 loadAudioForLanguage(aktuelleAudioSprache, true, 1);
             }, halteSek * 1000);
-        });
-
-        document.querySelectorAll('.audio-lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (isRadioActive) {
-                    isRadioActive = false;
-                    radioToggleBtn.classList.remove('active');
-                }
-                document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                aktuelleAudioSprache = btn.getAttribute('data-alang');
-                
-                const wasPlaying = !audioPlayer.paused && audioPlayer.currentTime > 0;
-                loadAudioForLanguage(aktuelleAudioSprache, wasPlaying);
-            });
         });
 
         audioBtn.addEventListener('click', () => {
@@ -1647,6 +1874,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             });
             refreshDynamicTexts();
             if (window.bsChatBegruessung) window.bsChatBegruessung();   // Rico 24.09. "chat a"
+            try { baumNachSprachwechsel(); } catch (e) {}   // JOB-132: Baum-Beschriftung + Sprach-Vorauswahl
             
             if(!audioPlayer.paused && audioPlayer.currentTime > 0) {
                 audioBtn.innerText = i18n[lang]['audio_pause'] || 'PAUSE';
@@ -3585,6 +3813,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 if (isRadioActive) { isRadioActive = false; radioToggleBtn.classList.remove('active'); }
                 audioPlayer.src = a.href; audioPlayer.setAttribute('data-last-played', a.href);
                 const probeStueck = bildspurFuerDatei(a.href);
+                aktualisiereKapitelWahl(a.href);
                 audioFilename.innerText = probeStueck ? probeStueck.titel : a.href.split('/').pop();
                 audioPlayer.play().then(() => { audioBtn.innerText = t('audio_pause'); audioBtn.classList.add('active'); }).catch(() => {});
                 const aw = document.getElementById('window-audio');
@@ -3784,10 +4013,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         window.bsChatBereit = true;
 
         // Audio dort weiter, wo aufgehört wurde (kein Autoplay, Browser-Policy)
+        katalogBereit.then(() => {
         if (saved && saved.audio && saved.audio.file && !saved.audio.radio) {
-            const aLang = saved.audio.lang || 'en';
-            document.querySelectorAll('.audio-lang-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-alang') === aLang));
-            aktuelleAudioSprache = aLang;
+            aktuelleAudioSprache = BAUM_SPRACHEN.includes(saved.audio.lang) ? saved.audio.lang : aktuelleAudioSprache;
             const file = String(saved.audio.file); const pos = Number(saved.audio.pos) || 0;
             audioPlayer.src = file; audioPlayer.setAttribute('data-last-played', file);
             const wiederStueck = bildspurFuerDatei(file);
@@ -3799,6 +4027,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 audioTimeText.innerText = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
             }, { once: true });
         }
+        });
 
         // Zustand sichern: Regler, Buttons, Audio
         document.addEventListener('input', (e) => { if (e.target && e.target.matches('input[type=range]')) persistState(); });
@@ -3828,6 +4057,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 
 <script src="vendor/katex/katex.min.js"></script>
 <script src="bildspur/regie-inline.js"></script>
+<script src="bildspur/katalog-inline.js"></script>
 <script src="bildspur.js"></script>
 
 </body>

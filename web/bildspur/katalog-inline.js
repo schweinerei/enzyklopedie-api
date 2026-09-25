@@ -1,0 +1,674 @@
+// AUTOGENERIERT von scripts/katalog_inline_build.py - nicht von Hand pflegen.
+window.KATALOG_INLINE = {
+ "version": 1,
+ "hinweis": "EIN Katalog fuer den Player. Neues Kapitel = Eintrag in eintraege + Dateien. Nach Aenderung: python3 scripts/katalog_inline_build.py (erzeugt web/bildspur/katalog-inline.js fuer file://).",
+ "buecher": [
+  {
+   "id": "physik",
+   "titel": {
+    "de": "Physik der Beziehungen",
+    "en": "The Physics of Relations",
+    "ru": "Физика отношений"
+   },
+   "teile": [
+    {
+     "id": "vorwort",
+     "titel": {
+      "de": "Vorwort",
+      "en": "Foreword",
+      "ru": "Предисловие"
+     }
+    },
+    {
+     "id": "kapitel",
+     "titel": {
+      "de": "Kapitel",
+      "en": "Chapters",
+      "ru": "Главы"
+     },
+     "nr_prefix": {
+      "de": "Kapitel ",
+      "en": "Chapter ",
+      "ru": "Глава "
+     }
+    },
+    {
+     "id": "anhaenge",
+     "titel": {
+      "de": "Anhänge",
+      "en": "Appendices",
+      "ru": "Приложения"
+     }
+    },
+    {
+     "id": "glossar",
+     "titel": {
+      "de": "Glossar",
+      "en": "Glossary",
+      "ru": "Глоссарий"
+     }
+    }
+   ]
+  },
+  {
+   "id": "roman",
+   "titel": {
+    "de": "Schweinerei 1 – Die Einladung",
+    "en": "Schweinerei 1 – The Invitation",
+    "ru": "Schweinerei 1 – Приглашение"
+   },
+   "teile": [
+    {
+     "id": "vorwort",
+     "titel": {
+      "de": "Vorwort · Prolog",
+      "en": "Foreword · Prologue",
+      "ru": "Предисловие · Пролог"
+     }
+    },
+    {
+     "id": "kapitel",
+     "titel": {
+      "de": "Kapitel",
+      "en": "Chapters",
+      "ru": "Главы"
+     },
+     "nr_prefix": {
+      "de": "Kapitel ",
+      "en": "Chapter ",
+      "ru": "Глава "
+     }
+    }
+   ]
+  }
+ ],
+ "eintraege": [
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "vorwort",
+   "nr": "",
+   "titel": "Der stille Skandal",
+   "audio": "audio/de_traktat_vorwort.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "Der Hohlraumresonator Erde",
+   "audio": "audio/de_traktat_k01.mp3",
+   "regie": "bildspur/traktat-de-k01.regie.json",
+   "status": "bebildert",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "2",
+   "titel": "Die Kondensation des inneren Kerns",
+   "audio": "audio/de_traktat_k02.mp3",
+   "regie": "bildspur/traktat-de-k02.regie.json",
+   "status": "bebildert",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "3",
+   "titel": "Der planetare Laser",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "4",
+   "titel": "Die Kratone: Die Glocken des planetaren Lasers",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "5",
+   "titel": "Die Krise der Quantenelektrodynamik",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "6",
+   "titel": "Das Elektron als Kavitation im Vakuum",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "7",
+   "titel": "Das Wesen der Kavitation: Die strenge Geometrisierung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "8",
+   "titel": "Paarvernichtung als inverse Chirurgie",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "9",
+   "titel": "Das Photon als Scherwelle: Der Private Handshake",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "10",
+   "titel": "Die Abwicklung in Thurston-Kaskaden: Die Geometrien des Standardmodells",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "11",
+   "titel": "Fraktalität und die Geburt der Baryonen",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "12",
+   "titel": "Die mathematische Struktur: Die Perelman-Gleichung und ihre Bestandteile",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "13",
+   "titel": "Die Emergenz der Feinstrukturkonstante",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "14",
+   "titel": "Der geometrische Katalog der Naturkonstanten",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "15",
+   "titel": "Das Ende der Gravitonen: Eine ästhetische Notwendigkeit",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "16",
+   "titel": "Die Geometrie des Kegels",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "17",
+   "titel": "Das Sonnensystem als Kegelorchester",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "18",
+   "titel": "Lagrange-Punkte und Swing-by – Die Geometrie der Kegelinterferenz",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "19",
+   "titel": "Das Informationsfeld der Gravitation",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "20",
+   "titel": "Die Waage im Sonnensystem: Eine Nullmessung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "21",
+   "titel": "Die Geometrie der Galaxien: Die Dunkle Materie als Wirkung des leeren Brennpunkts",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "22",
+   "titel": "Das Universum als stehende Welle: Die Filamente und die Polarität der Galaxien",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "23",
+   "titel": "Der kosmische Kegel",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "24",
+   "titel": "Die Zeit als gequanteltes Grundrauschen",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "25",
+   "titel": "Finale: Der Kosmos als Gedächtnis – Das Ende der isolierten Dinge",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "",
+   "titel": "Vorbemerkung zu den Anhängen",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.0",
+   "titel": "Die drei Postulate – Länge, Tick und Wirkung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.1",
+   "titel": "Der Gedankenweg – Von der Steifigkeit zur Körnung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.2",
+   "titel": "Thurston-Geometrien und das Standardmodell – Formale Präzisierung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.3",
+   "titel": "Das Massenspektrum – Die Topologie der Trägheit",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.4",
+   "titel": "Die Emergenz der Quantenmechanik – Die Thermodynamik der Metrik",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.5",
+   "titel": "Der CMB als Phononen-Echo der Ur-Kavitation",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.6",
+   "titel": "Der Zug des Nichts – Dunkle Energie und die beschleunigte Expansion",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.7",
+   "titel": "Das Horizontproblem und die fließende Lichtgeschwindigkeit",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.8",
+   "titel": "Der makroskopische Riss – Schwarze Löcher als Gewebeversagen des Vakuums",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.9",
+   "titel": "Das Periodensystem des Raumes – Die acht Thurston-Geometrien und ihre Teilchen",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.10",
+   "titel": "Offene Fronten – Drei Skizzen zur geometrischen Übersetzung",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.11",
+   "titel": "Der geometrische Katalog der Naturkonstanten",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.12",
+   "titel": "Das Labor des Nichts – Acht Prüfsteine und zwei Gräber",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.13",
+   "titel": "Der planetare Laser – Vom Paradoxon der Kerngenese zur Kohärenz des Dynamos",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.14",
+   "titel": "Die Waage geeicht – Kosmische Exzentrizität und die Grenze des Messbaren",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.15",
+   "titel": "Die flache Kurve – Rotationskurven ohne Dunkle Materie",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.16",
+   "titel": "Der fossile Akkord – Die Titius-Bode-Reihe als Eigenmode des solaren Kegels",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "anhaenge",
+   "nr": "A.17",
+   "titel": "Raumfahrt als Experiment – Navigation in der Kegelwaage",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "de",
+   "teil": "glossar",
+   "nr": "",
+   "titel": "Glossar",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "en",
+   "teil": "vorwort",
+   "nr": "",
+   "titel": "The Quiet Scandal",
+   "audio": "audio/en_traktat_vorwort.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "en",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "The Hollow Cavity Resonator Earth",
+   "audio": "audio/en_traktat_k01.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "ru",
+   "teil": "vorwort",
+   "nr": "",
+   "titel": "Тихий скандал",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "ru",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "Полостной резонатор Земля",
+   "audio": null,
+   "status": "folgt",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "de",
+   "teil": "vorwort",
+   "nr": "",
+   "label": "Prolog",
+   "titel": "",
+   "audio": "audio/de_roman_prolog.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "de",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "Vom Alpha-Stall in die Tiefe der Wälder",
+   "audio": "audio/de_roman_k01.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "en",
+   "teil": "vorwort",
+   "nr": "",
+   "label": "Foreword",
+   "titel": "",
+   "audio": "audio/en_roman_vorwort.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "en",
+   "teil": "vorwort",
+   "nr": "",
+   "label": "Prologue",
+   "titel": "",
+   "audio": "audio/en_roman_prolog.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "en",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "From Alpha-Stall into the Depths of the Forests",
+   "audio": "audio/en_roman_k01.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "ru",
+   "teil": "vorwort",
+   "nr": "",
+   "label": "Предисловие",
+   "titel": "",
+   "audio": "audio/ru_roman_vorwort.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "ru",
+   "teil": "vorwort",
+   "nr": "",
+   "label": "Пролог",
+   "titel": "",
+   "audio": "audio/ru_roman_prolog.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  },
+  {
+   "buch": "roman",
+   "sprache": "ru",
+   "teil": "kapitel",
+   "nr": "1",
+   "titel": "Из Альфа-стойла в глубь лесов",
+   "audio": "audio/ru_roman_k01.mp3",
+   "status": "audio",
+   "zugang": "frei"
+  }
+ ]
+};
