@@ -632,7 +632,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 <button class="shader-btn" style="flex: 1;" data-shader="1">SH 1</button>
                 <button class="shader-btn" style="flex: 1;" data-shader="2">SH 2</button>
                 <button class="shader-btn" style="flex: 1;" data-shader="3">SH 3</button>
+                <button class="shader-btn" style="flex: 1;" data-shader="4">SH 4</button>
             </div>
+            <div data-i18n="sh4_hint" style="font-size: 11px; color: #aaaaaa; margin: -17px 0 18px 0;">SH 4: wild boars trot along the screen edges. Music running: bigger herd, faster trot.</div>
 
             <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
@@ -674,6 +676,15 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">INT</span><input type="range" class="adv-intensity" data-target="3" style="width: 100%;" min="0.0" max="1.5" step="0.05" value="0.3"></div>
                     <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">SPD</span><input type="range" class="adv-speed" data-target="3" style="width: 100%;" min="0.0" max="5.0" step="0.05" value="0.2"></div>
                     <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">HUE</span><input type="range" class="adv-hue" data-target="3" style="width: 100%;" min="0.0" max="1.0" step="0.01" value="0.0"></div>
+                </div>
+            </div>
+            <!-- SH 4 -->
+            <div style="border-left: 2px solid var(--term-accent); padding-left: 12px;">
+                <span style="font-size: 14px; color: #fff;" data-i18n="sh4_name">SH 4: SWINE</span>
+                <div style="display: flex; gap: 15px; margin-top: 8px;">
+                    <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">INT</span><input type="range" class="adv-intensity" data-target="4" style="width: 100%;" min="0.0" max="1.5" step="0.05" value="0.5"></div>
+                    <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">SPD</span><input type="range" class="adv-speed" data-target="4" style="width: 100%;" min="0.0" max="5.0" step="0.05" value="0.2"></div>
+                    <div style="flex: 1;"><span style="font-size: 11px; color: #ccc;">HUE</span><input type="range" class="adv-hue" data-target="4" style="width: 100%;" min="0.0" max="1.0" step="0.01" value="0.0"></div>
                 </div>
             </div>
             <!-- TRACE CONTROLS -->
@@ -894,6 +905,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
+            sh4_name: "SH 4: SWINE",
+            sh4_hint: "SH 4: wild boars trot along the screen edges. Music running: bigger herd, faster trot.",
             settings_speed: "SPEED",
             settings_battery: "> battery impact",
             
@@ -997,6 +1010,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
+            sh4_name: "SH 4: SCHWEINE",
+            sh4_hint: "SH 4: Wildschweine traben an den Bildschirmkanten entlang. Bei laufender Musik: größere Rotte, schnellerer Trab.",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
             
@@ -1100,6 +1115,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
+            sh4_name: "SH 4: СВИНЬИ",
+            sh4_hint: "SH 4: кабаны трусят вдоль краёв экрана. При музыке: стая больше, бег быстрее.",
             settings_speed: "СКОРОСТЬ",
             settings_battery: "> расход батареи",
             
@@ -1279,13 +1296,13 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         // ADVANCED SHADER SETTINGS
         let isAdvancedMode = localStorage.getItem('adv_mode') === 'true';
         let currentAutoMode = localStorage.getItem('adv_auto_mode') || 'off'; // LFO State
-        let advIntensity = [0.0, 0.3, 0.3, 0.3];
-        let advSpeed = [0.0, 1.5, 0.2, 0.2];
-        let advHue = [0.0, 0.0, 0.0, 0.0];
-        let advTime = [0.0, 0.0, 0.0, 0.0];
+        let advIntensity = [0.0, 0.3, 0.3, 0.3, 0.5];
+        let advSpeed = [0.0, 1.5, 0.2, 0.2, 0.2];
+        let advHue = [0.0, 0.0, 0.0, 0.0, 0.0];
+        let advTime = [0.0, 0.0, 0.0, 0.0, 0.0];
         let advTrace = parseFloat(localStorage.getItem('adv_trace')) || 0.0;
         
-        for(let i=1; i<=3; i++) {
+        for(let i=1; i<=4; i++) {
             let sI = localStorage.getItem(`adv_intensity_${i}`);
             let sS = localStorage.getItem(`adv_speed_${i}`);
             let sH = localStorage.getItem(`adv_hue_${i}`);
@@ -1299,7 +1316,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         
         // Caching slider nodes for fast visual LFO updates
         const sliderNodes = { int: [], spd: [], hue: [] };
-        for(let i=1; i<=3; i++) {
+        for(let i=1; i<=4; i++) {
             sliderNodes.int[i] = document.querySelector(`.adv-intensity[data-target="${i}"]`);
             sliderNodes.spd[i] = document.querySelector(`.adv-speed[data-target="${i}"]`);
             sliderNodes.hue[i] = document.querySelector(`.adv-hue[data-target="${i}"]`);
@@ -1984,6 +2001,90 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 }
             `;
 
+            // SWINE (Randlaeufer: Keiler-Silhouetten aus Punktraster, JS simuliert Rotte/Trab/Stoebern)
+            const fragShader4 = `
+                precision highp float;
+                uniform vec2 u_resolution; uniform float u_time; uniform float u_brightness; uniform float u_hue;
+                uniform vec4 u_pA[5]; // x, y (Auflagepunkt in Pixel), Kantenwinkel, Richtung*Skalierung
+                uniform vec4 u_pB[5]; // Gangphase, Bewegung 0..1, Kopf-runter 0..1, Deckkraft
+
+                vec3 hueShift(vec3 color, float hueOffset) {
+                    const vec3 k = vec3(0.57735, 0.57735, 0.57735);
+                    float cosAngle = cos(hueOffset * 6.2831853);
+                    return color * cosAngle + cross(k, color) * sin(hueOffset * 6.2831853) + k * dot(k, color) * (1.0 - cosAngle);
+                }
+                float sdCap(vec2 p, vec2 a, vec2 b, float r) {
+                    vec2 pa = p - a; vec2 ba = b - a;
+                    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+                    return length(pa - ba * h) - r;
+                }
+                float sdEll(vec2 p, vec2 c, vec2 r) { return (length((p - c) / r) - 1.0) * min(r.x, r.y); }
+                float sdLeg(vec2 p, float hx, float ph, float mv, float kneeDir) {
+                    vec2 hip = vec2(hx, 0.62);
+                    vec2 foot = vec2(hx + 0.27 * mv * cos(ph), 0.05 + 0.17 * mv * max(0.0, -sin(ph)));
+                    vec2 knee = mix(hip, foot, 0.5) + vec2(0.07 * kneeDir, 0.0);
+                    return min(sdCap(p, hip, knee, 0.15), sdCap(p, knee, foot, 0.105));
+                }
+                // Keiler in Einheiten: Koerperlaenge ~2.2, Ruecken ~1.3 hoch, Blick nach +x
+                float pig(vec2 pw, float gait, float mv, float hd) {
+                    vec2 p = pw;
+                    p.y -= 0.16 + 0.035 * mv * sin(gait * 2.0);   // Rumpf ueber den Beinen, wippt im Trab
+                    float d = sdEll(p, vec2(-0.05, 0.78), vec2(0.95, 0.46));
+                    d = min(d, sdEll(p, vec2(0.30, 0.86), vec2(0.62, 0.50)));   // Schulterbuckel
+                    d = min(d, sdEll(p, vec2(-0.62, 0.72), vec2(0.48, 0.40)));  // Hinterhand tiefer
+                    // Borstenkamm
+                    float top = max(0.78 + 0.46 * sqrt(max(0.0, 1.0 - pow((p.x + 0.05) / 0.95, 2.0))),
+                                    0.86 + 0.50 * sqrt(max(0.0, 1.0 - pow((p.x - 0.30) / 0.62, 2.0))));
+                    float sp = 1.0 - abs(fract(p.x * 5.0) * 2.0 - 1.0);
+                    float crest = max(p.y - (top + 0.24 * sp), max(top - 0.16 - p.y, abs(p.x - 0.0) - 0.78));
+                    d = min(d, crest);
+                    // Beine: Trab = Diagonalpaare
+                    d = min(d, sdLeg(pw, 0.62, gait, mv, 1.0));
+                    d = min(d, sdLeg(pw, 0.44, gait + 3.14159, mv, 1.0));
+                    d = min(d, sdLeg(pw, -0.62, gait + 3.14159, mv, -1.0));
+                    d = min(d, sdLeg(pw, -0.44, gait, mv, -1.0));
+                    // Ringelschwanz
+                    d = min(d, sdCap(p, vec2(-1.0, 0.98), vec2(-1.22, 1.14), 0.07));
+                    // Kopf am Hals (0.85,0.92), Winkel nach unten beim Stoebern
+                    float a = -0.18 - hd * 0.95;
+                    vec2 q = p - vec2(0.85, 0.92);
+                    q = vec2(cos(a) * q.x + sin(a) * q.y, -sin(a) * q.x + cos(a) * q.y);
+                    float h = sdEll(q, vec2(0.30, -0.02), vec2(0.46, 0.33));
+                    h = min(h, sdCap(q, vec2(0.52, -0.04), vec2(0.90, -0.10), 0.15));   // Ruessel
+                    h = min(h, sdCap(q, vec2(0.66, -0.14), vec2(0.84, 0.16), 0.085));    // Hauer
+                    h = min(h, sdEll(q, vec2(0.02, 0.30), vec2(0.13, 0.19)));           // Ohr
+                    h = max(h, -(length(q - vec2(0.44, 0.09)) - 0.055));               // Auge
+                    return min(d, h);
+                }
+
+                void main() {
+                    float unit = clamp(min(u_resolution.x, u_resolution.y) * 0.07, 32.0, 64.0);
+                    float cell = unit * 0.1;
+                    vec2 cc = (floor(gl_FragCoord.xy / cell) + 0.5) * cell;
+                    float dist = length(gl_FragCoord.xy - cc);
+                    float v = 0.0;
+                    for(int i = 0; i < 5; i++) {
+                        float al = u_pB[i].w;
+                        if(al < 0.002) continue;
+                        float sc = abs(u_pA[i].w);
+                        float a = u_pA[i].z;
+                        vec2 xa = vec2(cos(a), sin(a));
+                        vec2 ya = vec2(-sin(a), cos(a));
+                        vec2 d = (cc - u_pA[i].xy) / (unit * sc);
+                        vec2 l = vec2(dot(d, xa) * sign(u_pA[i].w), dot(d, ya));
+                        if(l.x < -1.5 || l.x > 2.0 || l.y < -0.15 || l.y > 2.0) continue;
+                        float sd = pig(l, u_pB[i].x, u_pB[i].y, u_pB[i].z);
+                        if(sd < 0.0) v = max(v, mix(0.5, 1.0, smoothstep(-0.16, -0.03, sd)) * al);
+                    }
+                    if(v <= 0.0) { gl_FragColor = vec4(0.0); return; }
+                    float r = cell * 0.36;
+                    float dotm = smoothstep(r, r * 0.55, dist);
+                    vec3 baseCol = hueShift(vec3(0.0, 1.0, 0.3), u_hue);
+                    float intensity = clamp(v * dotm * u_brightness * 2.2, 0.0, 1.0);
+                    gl_FragColor = vec4(baseCol * intensity, intensity);
+                }
+            `;
+
             // ASTRO (TRUE 3D VOLUMETRIC RAYMARCHER)
             const fragShader3 = `
                 precision highp float;
@@ -2107,12 +2208,98 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 };
             }
 
-            compile(1, fragShader1); compile(2, fragShader2); compile(3, fragShader3);
+            compile(1, fragShader1); compile(2, fragShader2); compile(3, fragShader3); compile(4, fragShader4);
+            locations[4].pA = gl.getUniformLocation(programs[4], 'u_pA');
+            locations[4].pB = gl.getUniformLocation(programs[4], 'u_pB');
             compile('fade', fragShaderFade);
 
             const buffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]), gl.STATIC_DRAW);
+
+            // SH 4: Rotten-Simulation (Randlaeufer). Nur JS-Zustand; gezeichnet wird im Fragment-Shader.
+            const swine = { pigs: [], spawnIn: 0, t: 0, lvl: 0, init: false };
+            const swineA = new Float32Array(20), swineB = new Float32Array(20);
+            function swineLevel() {
+                // Pegel 0..1: ein Analyser-Haken (window.bsAudioLevel) hat Vorrang; sonst gilt "Musik laeuft" als 0.5.
+                try {
+                    if (typeof window.bsAudioLevel === 'function') return Math.max(0, Math.min(1, +window.bsAudioLevel() || 0));
+                    if (audioPlayer && !audioPlayer.paused && audioPlayer.currentTime > 0) return 0.5;
+                } catch (e) { /* ruhiger Standardtrab */ }
+                return 0;
+            }
+            function swineUnit() { return Math.max(32, Math.min(64, Math.min(canvas.width, canvas.height) * 0.07)); }
+            function swineEdgeLen(edge) { return (edge === 0 || edge === 1) ? canvas.width : canvas.height; }
+            function swineSpawn(edge, m, t, speedMul) {
+                swine.pigs.push({ edge, m, t, sc: 0.85 + Math.random() * 0.3, vm: speedMul * (0.9 + Math.random() * 0.2),
+                    mv: 1, gait: Math.random() * 6.28, hd: 0.12, root: 0, walk: 2 + Math.random() * 4, al: 0, rt: 0 });
+            }
+            function swineSpawnGroup(n, inView) {
+                const r = Math.random();
+                const edge = r < 0.4 ? 0 : r < 0.6 ? 1 : r < 0.8 ? 2 : 3; // unten, oben, links, rechts
+                const m = Math.random() < 0.5 ? 1 : -1;
+                const u = swineUnit(), L = swineEdgeLen(edge);
+                let t0 = inView ? L * (0.15 + Math.random() * 0.5) : (m > 0 ? -3.2 * u : L + 3.2 * u);
+                const vm = 0.95 + Math.random() * 0.1;
+                for (let k = 0; k < n; k++) {
+                    swineSpawn(edge, m, t0 - m * k * u * (2.6 + Math.random() * 0.8), vm);
+                    if (inView) swine.pigs[swine.pigs.length - 1].al = 1;
+                }
+            }
+            function swineStep(dt, spd) {
+                const u = swineUnit();
+                swine.t += dt;
+                swine.lvl += (swineLevel() - swine.lvl) * Math.min(1, dt * 2);
+                const f = Math.min(8, 0.25 + 3 * spd) * (1 + 0.5 * swine.lvl);
+                const maxN = 3 + (swine.lvl > 0.3 ? 1 : 0) + (swine.lvl > 0.7 ? 1 : 0);
+                if (!swine.init) { swine.init = true; swineSpawnGroup(2, true); swine.spawnIn = 1.5; }
+                swine.spawnIn -= dt;
+                if (swine.spawnIn <= 0 && swine.pigs.length < maxN) {
+                    swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false);
+                    swine.spawnIn = 2 + Math.random() * 5;
+                }
+                for (let i = swine.pigs.length - 1; i >= 0; i--) {
+                    const p = swine.pigs[i], L = swineEdgeLen(p.edge);
+                    // Zustandswechsel: traben <-> stoebern (nur im sichtbaren Mittelstueck der Kante)
+                    p.walk -= dt;
+                    if (p.root > 0) { p.root -= dt; if (p.root <= 0) p.walk = 3 + Math.random() * 5; }
+                    else if (p.walk <= 0 && p.t > L * 0.12 && p.t < L * 0.88) p.root = 1.5 + Math.random() * 2.2;
+                    else if (p.walk <= 0) p.walk = 1;
+                    const goal = p.root > 0 ? 0 : 1;
+                    p.mv += (goal - p.mv) * Math.min(1, dt * 3.5);
+                    const v = u * 1.0 * f * p.vm * p.mv;
+                    p.t += p.m * v * dt;
+                    p.gait += Math.min(9, 5.24 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
+                    const hdGoal = p.root > 0 ? 0.9 + 0.1 * Math.sin(swine.t * 9 + i) : 0.12 + 0.05 * Math.sin(p.gait * 2);
+                    p.hd += (hdGoal - p.hd) * Math.min(1, dt * 5);
+                    const out = 3.4 * u;
+                    p.al = Math.min(1, p.al + dt * 2);
+                    if ((p.m > 0 && p.t > L + out) || (p.m < 0 && p.t < -out)) swine.pigs.splice(i, 1);
+                }
+            }
+            function swineUniforms(loc, dt, spd) {
+                swineStep(dt * 0.001, spd);
+                const u = swineUnit(), W = canvas.width, H = canvas.height, mg = u * 0.15;
+                // Player-Vollbild spiegelt das Canvas mit "cover" in eine 16:9-Buehne: Randlaeufer bleiben im sichtbaren 16:9-Kern.
+                const ar = W / H;
+                const sy = (ar < 1.7778 && ar > 1.2) ? (H - W / 1.7778) / 2 : 0;
+                const sx = (ar > 1.7778 && ar < 2.6) ? (W - H * 1.7778) / 2 : 0;
+                swineA.fill(0); swineB.fill(0);
+                const n = Math.min(5, swine.pigs.length);
+                for (let i = 0; i < n; i++) {
+                    const p = swine.pigs[i];
+                    // Kante: 0 unten (Fuesse zeigen zum Rand), 1 oben (kopfueber), 2 links, 3 rechts
+                    let x, y, a, ax;
+                    if (p.edge === 0) { x = p.t; y = mg + sy; a = 0; ax = 1; }
+                    else if (p.edge === 1) { x = p.t; y = H - mg - sy; a = Math.PI; ax = -1; }
+                    else if (p.edge === 2) { x = mg + sx; y = p.t; a = -Math.PI / 2; ax = -1; }
+                    else { x = W - mg - sx; y = p.t; a = Math.PI / 2; ax = 1; }
+                    swineA[i*4] = x; swineA[i*4+1] = y; swineA[i*4+2] = a; swineA[i*4+3] = p.m * ax * p.sc;
+                    swineB[i*4] = p.gait; swineB[i*4+1] = p.mv; swineB[i*4+2] = p.hd; swineB[i*4+3] = p.al;
+                }
+                gl.uniform4fv(loc.pA, swineA);
+                gl.uniform4fv(loc.pB, swineB);
+            }
 
             // F15: Canvas nur bei Resize dimensionieren, nicht pro Frame
             const RENDER_SCALE = 0.75;
@@ -2187,10 +2374,11 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                         };
                         const c = lfo[currentAutoMode];
                         
-                        for(let i=1; i<=3; i++) {
+                        for(let i=1; i<=4; i++) {
+                            const k = (i-1) % 3;
                             let phase = i * 2.3;
-                            let nInt = c.ib + c.ia * Math.sin(t * c.fi[i-1] + phase);
-                            let nSpd = c.sb[i-1] + c.sa[i-1] * Math.sin(t * c.fs[i-1] + phase);
+                            let nInt = c.ib + c.ia * Math.sin(t * c.fi[k] + phase);
+                            let nSpd = c.sb[k] + c.sa[k] * Math.sin(t * c.fs[k] + phase);
                             let nHue = (advHue[i] + c.hs * deltaTime * 0.001) % 1.0; 
                             
                             nInt = Math.max(0, Math.min(1.5, nInt));
@@ -2207,7 +2395,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                         }
                     }
 
-                    for(let i = 1; i <= 3; i++) {
+                    for(let i = 1; i <= 4; i++) {
                         advTime[i] += deltaTime * advSpeed[i] * BASE_SPEED_MULT;
                         
                         if(advIntensity[i] > 0.0) {
@@ -2224,6 +2412,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                             gl.uniform1f(loc.bright, advIntensity[i]);
                             if(loc.min_b) gl.uniform1f(loc.min_b, 0.0); 
                             if(loc.hue) gl.uniform1f(loc.hue, advHue[i]); 
+                            if(i === 4) swineUniforms(loc, deltaTime, advSpeed[4]);
                             
                             gl.drawArrays(gl.TRIANGLES, 0, 6);
                         }
@@ -2250,6 +2439,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     gl.uniform1f(loc.bright, Math.max(0.1, currentBrightness * (window.throneDim || 1)));
                     if(loc.min_b) gl.uniform1f(loc.min_b, 0.1); 
                     if(loc.hue) gl.uniform1f(loc.hue, 0.0); 
+                    if(activeShader === 4) swineUniforms(loc, deltaTime, currentSpeed);
                     
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
                 }

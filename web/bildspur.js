@@ -433,7 +433,7 @@
             const reg = (klasse, sel, min, max, step, beschr) =>
                 `<label class="bs-shr"><span>${beschr}</span><input type="range" class="${klasse}" data-sel="${sel}" min="${min}" max="${max}" step="${step}" aria-label="${beschr}"></label>`;
             let adv = '';
-            [[1, 'SH 1: PLASMA'], [2, 'SH 2: GRID'], [3, 'SH 3: ASTRO']].forEach(([n, t]) => {
+            [[1, 'SH 1: PLASMA'], [2, 'SH 2: GRID'], [3, 'SH 3: ASTRO'], [4, 'SH 4: SWINE']].forEach(([n, t]) => {
                 adv += `<div class="bs-shblock"><div class="bs-shtitel">${t}</div><div class="bs-shzeile">`
                     + reg('bs-shi', `.adv-intensity[data-target='${n}']`, 0, 1.5, 0.05, 'INT')
                     + reg('bs-shi', `.adv-speed[data-target='${n}']`, 0, 5, 0.05, 'SPD')
@@ -449,6 +449,7 @@
                     <button type="button" class="bs-shb" data-m="1">SH 1</button>
                     <button type="button" class="bs-shb" data-m="2">SH 2</button>
                     <button type="button" class="bs-shb" data-m="3">SH 3</button>
+                    <button type="button" class="bs-shb" data-m="4">SH 4</button>
                     <button type="button" class="bs-shb" data-m="adv">ADVANCED</button>
                 </div>
                 <div class="bs-shstd bs-shzeile">
