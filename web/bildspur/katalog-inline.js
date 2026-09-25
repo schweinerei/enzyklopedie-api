@@ -121,9 +121,10 @@ window.KATALOG_INLINE = {
    "teil": "kapitel",
    "nr": "3",
    "titel": "Der planetare Laser",
-   "audio": null,
-   "status": "folgt",
-   "zugang": "frei"
+   "audio": "audio/de_traktat_k03.mp3",
+   "status": "bebildert",
+   "zugang": "frei",
+   "regie": "bildspur/traktat-de-k03.regie.json"
   },
   {
    "buch": "physik",
