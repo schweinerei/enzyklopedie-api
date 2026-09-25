@@ -115,14 +115,43 @@ LEMON_WEBHOOK_SECRET = os.environ.get("LEMON_WEBHOOK_SECRET", "")
 LEMON_ACTIVATION_NAME = os.environ.get("LEMON_ACTIVATION_NAME", "open-book")
 DEVICE_LIMIT_FALLBACK = int(os.environ.get("DEVICE_LIMIT", "5"))
 
-app = FastAPI(title="Enzyklopedia API")
+# JOB-146 (Chat-Schutz): /docs, /redoc, /openapi.json nur mit ENABLE_DOCS=1 (Produktion: aus).
+ENABLE_DOCS = os.environ.get("ENABLE_DOCS", "0").strip().lower() in ("1", "true", "yes", "on")
+app = FastAPI(
+    title="Enzyklopedia API",
+    docs_url="/docs" if ENABLE_DOCS else None,
+    redoc_url="/redoc" if ENABLE_DOCS else None,
+    openapi_url="/openapi.json" if ENABLE_DOCS else None,
+)
+
+# JOB-146: CORS-Allowlist statt Origin-Spiegelung. Die Seite nutzt keine Cookies/Sessions -> allow_credentials=False.
+#   CORS_ORIGINS      kommagetrennt, Default = Produktions-Origins der Seite
+#   CORS_ALLOW_NULL   "1" (Default): Origin "null" erlaubt, damit Rico die Seite per Doppelklick (file://) testen kann.
+#                     Schutz vor Kostenmissbrauch liefern ohnehin Rate-Limit + Tageskappe; auf "0" stellen, wenn der
+#                     Doppelklick-Test nicht mehr gebraucht wird.
+_CORS_DEFAULT = "https://schweinerei.xyz,https://www.schweinerei.xyz"
+CORS_ORIGINS = [o.strip().rstrip("/") for o in os.environ.get("CORS_ORIGINS", _CORS_DEFAULT).split(",") if o.strip()]
+if os.environ.get("CORS_ALLOW_NULL", "1").strip().lower() in ("1", "true", "yes", "on"):
+    CORS_ORIGINS.append("null")
+
+@app.middleware("http")
+async def sperre_fremde_origin(request: Request, call_next):
+    """JOB-146: CORS verhindert nur das LESEN der Antwort; ein fremder Browser koennte per 'simple request'
+    (text/plain, ohne Preflight) trotzdem /ask ausloesen. Daher: POST mit Origin-Header, der nicht auf der Allowlist
+    steht, wird abgewiesen. Ohne Origin (curl, Server, Webhooks z. B. Lemon Squeezy) bleibt erlaubt; dort greift das Rate-Limit."""
+    origin = request.headers.get("origin")
+    if request.method == "POST" and origin is not None and origin.rstrip("/") not in CORS_ORIGINS:
+        return JSONResponse(content={"error": {"code": "origin_not_allowed", "message": "Origin not allowed."}}, status_code=403)
+    return await call_next(request)
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # HOOK AP2: auf die Frontend-Domain einschränken, sobald der Session-Cookie kommt
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
+    max_age=600,
 )
 
 # ==========================================
@@ -348,14 +377,54 @@ def speichere_im_hintergrund(*args):
 
 
 # ==========================================
-# RATE-LIMIT (in-memory, pro IP; reicht für eine Instanz, Caddy übernimmt später)
+# RATE-LIMIT (in-memory, pro IP; gilt pro Instanz - Render laeuft mit genau einer)
+# JOB-146: teure Endpunkte (LLM/Whisper/Uebersetzung) laufen zusaetzlich durch chat_guard():
+#   pro IP je Minute, pro IP je 24 h, dazu globale Tageskappe (UTC-Tag) als Kostenbremse. Alles per Env.
+#   CHAT_LIMIT_PER_MIN (10)  CHAT_LIMIT_PER_DAY (200)  CHAT_GLOBAL_PER_DAY (1500)
+# Werte: 10/min = zuegiges Tippen/Nachfragen, Skript-Flut faellt sofort auf; 200/Tag = sehr fleissiger Leser
+# (eine Sitzung hat selten >50 Fragen); 1500/Tag global = harte Obergrenze der LLM-Rechnung, auch wenn ein Angreifer
+# die IP wechselt. Nach dem Neustart der Instanz beginnen die Zaehler bei 0 (Grenze der In-Memory-Loesung).
 # ==========================================
+CHAT_LIMIT_PER_MIN = int(os.environ.get("CHAT_LIMIT_PER_MIN", "10"))
+CHAT_LIMIT_PER_DAY = int(os.environ.get("CHAT_LIMIT_PER_DAY", "200"))
+CHAT_GLOBAL_PER_DAY = int(os.environ.get("CHAT_GLOBAL_PER_DAY", "1500"))
 _hits: dict = {}
+_global_day = {"day": "", "n": 0}
+
+# Meldung fuer die Seite (Terminal-Stil). Die Seite liest error.code == "rate_limited" und error.scope und setzt
+# ihren eigenen uebersetzten Text; message/message_i18n sind Fallback.
+RATE_MESSAGES = {
+    "minute": {"en": "> TOO MANY REQUESTS. Please wait a moment and try again.",
+               "de": "> ZU VIELE ANFRAGEN. Bitte einen Moment warten und erneut versuchen.",
+               "ru": "> СЛИШКОМ МНОГО ЗАПРОСОВ. Подождите немного и повторите."},
+    "day": {"en": "> DAILY LIMIT REACHED for this connection. Please come back tomorrow.",
+            "de": "> TAGESLIMIT fuer diese Verbindung erreicht. Bitte morgen wieder versuchen.",
+            "ru": "> ДНЕВНОЙ ЛИМИТ для этого соединения исчерпан. Возвращайтесь завтра."},
+    "global": {"en": "> The archive is resting for today (daily capacity reached). Please come back tomorrow.",
+               "de": "> Das Archiv ruht fuer heute (Tageskapazitaet erreicht). Bitte morgen wieder versuchen.",
+               "ru": "> Архив на сегодня закрыт (дневная квота исчерпана). Возвращайтесь завтра."},
+}
+
+
+def limit_response(scope: str, retry_after: int) -> JSONResponse:
+    msgs = RATE_MESSAGES.get(scope, RATE_MESSAGES["minute"])
+    return JSONResponse(
+        content={"error": {"code": "rate_limited", "scope": scope, "retry_after": retry_after,
+                           "message": msgs["en"], "message_i18n": msgs}},
+        status_code=429, headers={"Retry-After": str(retry_after)})
 
 
 def client_ip(request: Request) -> str:
+    """Echte Client-IP. Hinter Cloudflare/Render setzt Cloudflare CF-Connecting-IP (vom Client nicht faelschbar,
+    sofern der Zugriff ueber Cloudflare/Render laeuft); danach True-Client-IP, dann X-Forwarded-For (links), sonst Peer."""
+    for h in ("cf-connecting-ip", "true-client-ip"):
+        v = request.headers.get(h)
+        if v and v.strip():
+            return v.split(",")[0].strip()
     fwd = request.headers.get("x-forwarded-for")
-    return (fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?"))
+    if fwd and fwd.strip():
+        return fwd.split(",")[0].strip()
+    return request.client.host if request.client else "?"
 
 
 def rate_limited(request: Request, bucket: str, limit: int, window: int = 60) -> Optional[JSONResponse]:
@@ -365,10 +434,41 @@ def rate_limited(request: Request, bucket: str, limit: int, window: int = 60) ->
     while q and q[0] < now - window:
         q.popleft()
     if len(q) >= limit:
-        return JSONResponse(content={"error": {"code": "rate_limited", "message": "Too many requests."}},
-                            status_code=429, headers={"Retry-After": str(window)})
+        wait = max(1, int(q[0] + window - now) + 1)
+        return limit_response("day" if window >= 3600 else "minute", wait)
     q.append(now)
     if len(_hits) > 20000:   # Speicher deckeln
+        for k in list(_hits.keys())[:5000]:
+            _hits.pop(k, None)
+    return None
+
+
+def chat_guard(request: Request, bucket: str = "chat") -> Optional[JSONResponse]:
+    """Kostenbremse fuer LLM-Endpunkte. None = durchgelassen, sonst fertige 429-Antwort."""
+    if request.method == "OPTIONS":
+        return None
+    now = time.time()
+    today = time.strftime("%Y-%m-%d", time.gmtime(now))
+    if _global_day["day"] != today:
+        _global_day["day"], _global_day["n"] = today, 0
+    if _global_day["n"] >= CHAT_GLOBAL_PER_DAY:
+        secs = 86400 - int(now % 86400)
+        return limit_response("global", secs)
+    ip = client_ip(request)
+    qm = _hits.setdefault(("min", ip), deque())
+    qd = _hits.setdefault(("day", ip), deque())
+    while qm and qm[0] < now - 60:
+        qm.popleft()
+    while qd and qd[0] < now - 86400:
+        qd.popleft()
+    if len(qm) >= CHAT_LIMIT_PER_MIN:
+        return limit_response("minute", max(1, int(qm[0] + 60 - now) + 1))
+    if len(qd) >= CHAT_LIMIT_PER_DAY:
+        return limit_response("day", max(1, int(qd[0] + 86400 - now) + 1))
+    qm.append(now)
+    qd.append(now)
+    _global_day["n"] += 1
+    if len(_hits) > 20000:
         for k in list(_hits.keys())[:5000]:
             _hits.pop(k, None)
     return None
@@ -1496,7 +1596,7 @@ async def lese_ask_body(request: Request):
 @app.post("/ask/stream")
 async def ask_stream(request: Request):
     """SSE. Vertrag: Abschnitt 4 des Projektplans."""
-    if (rl := rate_limited(request, "chat", 10)):
+    if (rl := chat_guard(request)):
         return rl
     payload, sprache, _ = await lese_ask_body(request)
     if payload is None:
@@ -1514,7 +1614,7 @@ async def ask_stream(request: Request):
 @app.post("/ask")
 async def ask_question(request: Request):
     """Alt-Endpoint, unverändertes Format (Plaintext). Läuft über dieselbe Pipeline."""
-    if (rl := rate_limited(request, "chat", 10)):
+    if (rl := chat_guard(request)):
         return rl
     payload, sprache, _ = await lese_ask_body(request)
     if payload is None:
@@ -1538,6 +1638,7 @@ async def transkribiere(audio: UploadFile) -> str:
 
 @app.post("/ask-voice/stream")
 async def ask_voice_stream(
+    request: Request,
     audio: UploadFile = File(...),
     modus: str = Form("standard"),
     sprache: str = Form("de"),
@@ -1546,6 +1647,8 @@ async def ask_voice_stream(
     conversation_id: str = Form(""),
 ):
     """SSE: erst transcript, dann dieselben Events wie /ask/stream."""
+    if (rl := chat_guard(request)):
+        return rl
     try:
         parsed_history = json.loads(history)
     except Exception:
@@ -1576,6 +1679,7 @@ async def ask_voice_stream(
 
 @app.post("/ask-voice")
 async def ask_voice(
+    request: Request,
     audio: UploadFile = File(...),
     modus: str = Form("standard"),
     sprache: str = Form("de"),
@@ -1584,6 +1688,8 @@ async def ask_voice(
     conversation_id: str = Form(""),
 ):
     """Alt-Endpoint, JSON wie bisher."""
+    if (rl := chat_guard(request)):
+        return rl
     t0 = time.perf_counter()
     try:
         text = await transkribiere(audio)
