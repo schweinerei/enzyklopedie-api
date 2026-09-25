@@ -61,7 +61,7 @@
             arch_author: "the author", arch_prophet: "the prophet", arch_clerk: "the bureaucrat", arch_star: "the influencer",
             timing_cached: "cached",
             
-            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh", vis_cmd_aria: "Command line", vis_cmd_on: "root@schweinerei:~# mixer, trace, flash, auto mod unlocked — type 'exit' to lock again", vis_cmd_off: "root@schweinerei:~# locked", vis_cmd_unknown: "command not found",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
             sh4_name: "SH 4: SWINE",
@@ -170,7 +170,7 @@
             arch_author: "der Autor", arch_prophet: "der Prophet", arch_clerk: "der Bürokrat", arch_star: "der Influencer",
             timing_cached: "aus Cache",
             
-            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh", vis_cmd_aria: "Befehlszeile", vis_cmd_on: "root@schweinerei:~# mischpult, trace, flash, auto mod frei — 'exit' schliesst wieder ab", vis_cmd_off: "root@schweinerei:~# abgeschlossen", vis_cmd_unknown: "command not found",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
             sh4_name: "SH 4: SCHWEINE",
@@ -279,7 +279,7 @@
             arch_author: "автор", arch_prophet: "пророк", arch_clerk: "чиновник", arch_star: "инфлюенсер",
             timing_cached: "из кэша",
             
-            settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh", vis_cmd_aria: "Командная строка", vis_cmd_on: "root@schweinerei:~# микшер, trace, flash, auto mod открыты — 'exit' снова закрывает", vis_cmd_off: "root@schweinerei:~# заблокировано", vis_cmd_unknown: "command not found",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             sh4_name: "SH 4: СВИНЬИ",
@@ -1239,6 +1239,28 @@
                 isAdvancedMode = !isAdvancedMode;
                 localStorage.setItem('adv_mode', isAdvancedMode);
                 toggleAdvancedUI();
+            });
+        }
+
+        // JOB-147: "sudo vis" statt sichtbarem ADVANCED-Knopf - Mischpult/TRACE/FLASH/AUTO MOD (+ Player-
+        // Shaderfeld, das denselben advBtn anklickt) fuer alle da, nur nicht beworben (Rico-Entscheid root a).
+        // "exit" nimmt es zurueck. Zustand bleibt der bestehende 'adv_mode' (ueberlebt Reload wie gehabt).
+        const visInput = document.getElementById('vis-cmd-input');
+        const visEcho = document.getElementById('vis-cmd-echo');
+        if (visInput) {
+            visInput.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                const cmd = visInput.value.trim().toLowerCase();
+                visInput.value = '';
+                if (cmd === 'sudo vis') {
+                    if (!isAdvancedMode && advBtn) advBtn.click();
+                    visEcho.textContent = t('vis_cmd_on');
+                } else if (cmd === 'exit') {
+                    if (isAdvancedMode && advBtn) advBtn.click();
+                    visEcho.textContent = t('vis_cmd_off');
+                } else if (cmd) {
+                    visEcho.textContent = t('vis_cmd_unknown');
+                }
             });
         }
 

@@ -550,6 +550,9 @@
             P.querySelectorAll('.bs-shmodus button').forEach((b) => {
                 const m = b.dataset.m;
                 b.classList.toggle('bs-an', m === 'adv' ? !!z.adv : (!z.adv && String(z.aktiv) === m));
+                // JOB-147: ADVANCED-Einstieg im Player nur sichtbar, solange root ("sudo vis") frei ist -
+                // dieselbe Sperre wie im Fenster conf vis, kein zweiter, staendig sichtbarer Zugang.
+                if (m === 'adv') b.hidden = !z.adv;
             });
             const bild = P.querySelector('.bs-sh-imbild');
             bild.textContent = this._shAn ? 'IM PLAYER: AN' : 'IM PLAYER: AUS';
