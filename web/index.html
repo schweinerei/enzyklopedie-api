@@ -289,6 +289,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         .baum-zeile.aktiv { color: #ffffff; background: rgba(255, 255, 255, 0.12); }
         .baum-zeile.aktiv .baum-glyph { color: #ffffff; }
         #baum-legende { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: #888888; margin-right: auto; }
+        #baum-sprache { display: flex; align-items: center; font-size: 13px; }
+        #baum-sprache button { background: none; border: 0; padding: 3px 5px; margin: 0; min-width: 0; font-family: var(--font-mono); font-size: 13px; color: #cccccc; cursor: pointer; }
+        #baum-sprache button:hover, #baum-sprache button:focus-visible { color: #000000; background: #ffffff; outline: none; }
+        #baum-sprache button.aktiv { color: #ffffff; font-weight: bold; text-decoration: underline; text-underline-offset: 3px; }
+        #baum-sprache button.aus { color: #666666; cursor: default; text-decoration: line-through; }
+        #baum-sprache button.aus:hover, #baum-sprache button.aus:focus-visible { color: #999999; background: none; }
+        #baum-sprache .trenner { color: #555555; }
+        @media (pointer: coarse) { #baum-sprache button { padding: 8px 7px; } }
         #baum-meldung { min-height: 0; font-size: 12px; color: #bbbbbb; }
         #baum-meldung:empty { display: none; }
         @media (pointer: coarse) { .baum-zeile { min-height: 36px; font-size: 14.5px; } #baum { max-height: min(150px, 24vh); } }
@@ -590,6 +598,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     <span>♪ <span data-i18n="baum_st_audio">audio only</span></span>
                     <span>… <span data-i18n="baum_st_folgt">coming</span></span>
                 </div>
+                <div id="baum-sprache" role="group" data-i18n-aria="baum_sprache_aria" aria-label="Audio language"></div>
                 <button type="button" id="baum-weiter" class="baum-weiter" hidden></button>
             </div>
             <div id="baum" role="tree" data-i18n-aria="baum_aria" aria-label="Audio catalog"></div>
@@ -603,6 +612,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
             <button id="audio-play-btn" class="action-btn" style="padding: 8px 25px; font-size: 16px;">PLAY</button>
             <button id="audio-skip-btn" class="action-btn" style="padding: 8px 15px; font-size: 16px;" data-i18n="audio_next">NEXT</button>
+            <button id="audio-bild-btn" class="action-btn" style="padding: 8px 12px; font-size: 14px;" type="button" data-i18n="audio_bild" aria-pressed="true">IMAGE</button>
             <span id="audio-time" style="font-family: var(--font-mono); font-size: 14px; color: #ffffff; margin-left: 10px;">0:00 / 0:00</span>
         </div>
 
@@ -935,7 +945,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "the author", arch_prophet: "the prophet", arch_clerk: "the bureaucrat", arch_star: "the influencer",
             timing_cached: "cached",
             
-            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
             sh4_name: "SH 4: SWINE",
@@ -1044,7 +1054,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "der Autor", arch_prophet: "der Prophet", arch_clerk: "der Bürokrat", arch_star: "der Influencer",
             timing_cached: "aus Cache",
             
-            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
             sh4_name: "SH 4: SCHWEINE",
@@ -1153,7 +1163,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             arch_author: "автор", arch_prophet: "пророк", arch_clerk: "чиновник", arch_star: "инфлюенсер",
             timing_cached: "из кэша",
             
-            settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh",
+            settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             sh4_name: "SH 4: СВИНЬИ",
@@ -1410,6 +1420,14 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         const audioPlayer = new Audio();
         audioPlayer.crossOrigin = null;
         const bildspur = Bildspur.erstelle(audioPlayer, { container: '#bildspur-fenster' });
+        // JOB-142: BILD-Schalter im Player oeffnet/schliesst das Bildspur-Fenster (Audio laeuft unberuehrt weiter)
+        const audioBildBtn = document.getElementById('audio-bild-btn');
+        if (audioBildBtn) {
+            const bildZeige = () => { const an = !bildspur.istZu(); audioBildBtn.classList.toggle('active', an); audioBildBtn.setAttribute('aria-pressed', an ? 'true' : 'false'); };
+            audioBildBtn.addEventListener('click', () => { if (bildspur.istZu()) bildspur.oeffne(); else bildspur.schliesse(); });
+            document.getElementById('bildspur-fenster').addEventListener('bildspur-zu', bildZeige);
+            bildZeige();
+        }
         // Regie zu einer Audio-Datei laden (auch fuer Wiederaufnahme aus localStorage / Hoerproben)
         function bildspurFuerDatei(datei) {
             const f = stueckZuDatei(datei);
@@ -1538,7 +1556,48 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 frag.appendChild(d);
             });
             baumEl.appendChild(frag);
+            baumSpracheRender();
         }
+        // JOB-142: Sprachschalter DE | EN | RU im Kopf der Baum-Zeile. Gleiches Kapitel in der anderen Sprache; fehlend = ausgegraut "folgt".
+        const baumSpracheEl = document.getElementById('baum-sprache');
+        const LABEL_GRUPPEN = { prolog: 'prolog', prologue: 'prolog', 'пролог': 'prolog', vorwort: 'vorwort', foreword: 'vorwort', 'предисловие': 'vorwort' };
+        const labelKey = l => l ? (LABEL_GRUPPEN[String(l).toLowerCase()] || String(l).toLowerCase()) : '';
+        function eintragInSprache(e, l) {
+            if (!e) return null;
+            return katalog.eintraege.find(x => x.sprache === l && x.buch === e.buch && x.teil === e.teil
+                && String(x.nr || '') === String(e.nr || '') && labelKey(x.label) === labelKey(e.label)) || null;
+        }
+        function baumSpracheRender() {
+            if (!baumSpracheEl) return;
+            const f = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+            const cur = isRadioActive ? null : (f && f.st.eintrag);
+            baumSpracheEl.textContent = '';
+            BAUM_SPRACHEN.forEach((l, i) => {
+                if (i) { const sp = document.createElement('span'); sp.className = 'trenner'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = '|'; baumSpracheEl.appendChild(sp); }
+                const b = document.createElement('button'); b.type = 'button'; b.dataset.l = l; b.textContent = l.toUpperCase();
+                const ziel = cur ? eintragInSprache(cur, l) : null;
+                const ok = cur ? !!(ziel && ziel.audio && zugangErlaubt(ziel)) : audioDateien[l].length > 0 && !isRadioActive;
+                const aktiv = cur ? cur.sprache === l : (!isRadioActive && l === aktuelleAudioSprache);
+                b.classList.toggle('aktiv', aktiv);
+                b.classList.toggle('aus', !ok);
+                b.setAttribute('aria-pressed', aktiv ? 'true' : 'false');
+                if (!ok) { b.setAttribute('aria-disabled', 'true'); b.title = l.toUpperCase() + ' · ' + t('baum_sprache_folgt'); }
+                baumSpracheEl.appendChild(b);
+            });
+        }
+        if (baumSpracheEl) baumSpracheEl.addEventListener('click', ev => {
+            const b = ev.target.closest('button[data-l]');
+            if (!b) return;
+            const l = b.dataset.l;
+            if (b.classList.contains('aus')) { baumMeldung(t('baum_folgt')); return; }
+            if (b.classList.contains('aktiv')) return;
+            baumMeldung('');
+            const f = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+            const laeuft = !audioPlayer.paused && !audioPlayer.ended;
+            const ziel = f ? eintragInSprache(f.st.eintrag, l) : null;
+            if (ziel) baumSpiele(ziel, 0, laeuft);
+            else { aktuelleAudioSprache = l; loadAudioForLanguage(l, false); }
+        });
         function baumZeileEl(id) { return Array.from(baumEl.children).find(c => c.dataset.id === id); }
         function baumFokus(id, scroll) {
             baumFokusId = id;
@@ -1553,13 +1612,13 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             baumManuell = true;
             baumSpeichern(); baumRender(); baumFokus(z.id);
         }
-        function baumSpiele(e, pos) {
+        function baumSpiele(e, pos, autoPlay = true) {
             if (isRadioActive) { isRadioActive = false; radioToggleBtn.classList.remove('active'); }
             const l = e.sprache, i = audioDateien[l].findIndex(x => x.id === e.id);
             if (i < 0) return;
             aktuelleAudioSprache = l;
             audioStelle[l] = i;
-            loadAudioForLanguage(l, true);
+            loadAudioForLanguage(l, autoPlay);
             if (pos > 0) audioPlayer.addEventListener('loadedmetadata', () => { if (pos < audioPlayer.duration) audioPlayer.currentTime = pos; }, { once: true });
         }
         function baumAktivieren(z) {
@@ -1746,6 +1805,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 radioToggleBtn.classList.remove('active');
                 loadAudioForLanguage(aktuelleAudioSprache, false);
             }
+            baumSpracheRender();
         });
 
 

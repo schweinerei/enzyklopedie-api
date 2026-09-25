@@ -30,6 +30,7 @@
 }
 
 #bildspur-fenster.bs-versteckt { display: none; }
+#bildspur-fenster.bs-zu { display: none !important; }   /* JOB-142: vom Nutzer geschlossen, bleibt zu bis er es oeffnet */
 
 .bs-header {
     display: flex;
@@ -50,7 +51,8 @@
 }
 
 .bs-header .bs-toggle,
-.bs-header .bs-maximize {
+.bs-header .bs-maximize,
+.bs-header .bs-close {
     background: transparent;
     border: none;
     color: #888;
@@ -65,7 +67,8 @@
     transition: color 0.2s;
 }
 .bs-header .bs-toggle:hover,
-.bs-header .bs-maximize:hover { color: #fff; }
+.bs-header .bs-maximize:hover,
+.bs-header .bs-close:hover { color: #fff; }
 
 /* JOB-48: maximierter Zustand — Bildfenster deckt den Viewport, Bildflaeche bleibt 16:9
    und skaliert auf die groesstmoegliche Breite/Hoehe, Fusszeile/Regler bleiben unten (kein
@@ -401,7 +404,8 @@ html.bs-debug-an .bs-debug { display: flex; }
 .bs-header { touch-action: none; }
 @media (max-width: 768px), (pointer: coarse) {
     .bs-header .bs-toggle,
-    .bs-header .bs-maximize { width: 44px; height: 44px; font-size: 20px; margin: -10px 0; }
+    .bs-header .bs-maximize,
+    .bs-header .bs-close { width: 44px; height: 44px; font-size: 20px; margin: -10px 0; }
     .bs-header-controls { gap: 0; }
 }
 
@@ -645,13 +649,13 @@ html.bs-debug-an .bs-debug { display: flex; }
    Kopf-, Kopfzeilen-, Transport- und Reglerleiste behalten eine dezente Halbtransparenz (Lesbarkeit der Knoepfe).
    SHADER-Knopf und Shader-Feld gibt es nur im Vollbild.
    =================================================================== */
-#bildspur-fenster:not(.bs-vollbild) { background: transparent; backdrop-filter: none; }
+#bildspur-fenster:not(.bs-vollbild) { background: var(--term-bg, rgba(10, 10, 10, 0.5)); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }   /* JOB-142: Glasoptik wie .script-window (Unschaerfe 8 px + Toenung), vorher JOB-118 transparent */
 #bildspur-fenster:not(.bs-vollbild) .bs-buehne { background: transparent; }
 #bildspur-fenster:not(.bs-vollbild) .bs-dunkel { background: transparent; }
 #bildspur-fenster:not(.bs-vollbild) .bs-header,
 #bildspur-fenster:not(.bs-vollbild) .bs-kopf,
 #bildspur-fenster:not(.bs-vollbild) .bs-transport,
 #bildspur-fenster:not(.bs-vollbild) .bs-chat-regler,
-#bildspur-fenster:not(.bs-vollbild) .bs-debug { background: rgba(0, 0, 0, 0.5); }
+#bildspur-fenster:not(.bs-vollbild) .bs-debug { background: rgba(0, 0, 0, 0.25); }
 #bildspur-fenster:not(.bs-vollbild) .bs-t-shader,
 #bildspur-fenster:not(.bs-vollbild) .bs-shpanel { display: none !important; }

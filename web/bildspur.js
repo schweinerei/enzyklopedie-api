@@ -223,6 +223,7 @@
                     <div class="bs-header-controls">
                         <button class="bs-maximize" type="button" aria-label="Bildfenster maximieren">&#9633;</button>
                         <button class="bs-toggle" type="button" aria-label="Bildfenster minimieren">–</button>
+                        <button class="bs-close" type="button" aria-label="Bildfenster schliessen">&times;</button>
                     </div>
                 </div>
                 <div class="bs-kopf"></div>
@@ -281,6 +282,7 @@
                 root.classList.toggle('bs-minimiert');
                 if (this._shPlan) this._shPlan();
             });
+            root.querySelector('.bs-close').addEventListener('click', () => this.schliesse());
             root.querySelector('.bs-maximize').addEventListener('click', () => {
                 root.classList.remove('bs-minimiert');
                 this._toggleVollbild();
@@ -378,6 +380,20 @@
             if (a.paused) { const p = a.play(); if (p && p.catch) p.catch(() => {}); }
             else a.pause();
         }
+
+        // JOB-142: Fenster schliessen/oeffnen (Nutzeraktion). Audio laeuft weiter, Regie-Cues/Kapitelwechsel oeffnen nicht von selbst.
+        schliesse() {
+            this._beendeVollbild();
+            this.el.classList.add('bs-zu');
+            if (this._shPlan) this._shPlan();
+            this.el.dispatchEvent(new CustomEvent('bildspur-zu', { detail: { zu: true }, bubbles: true }));
+        }
+        oeffne() {
+            this.el.classList.remove('bs-zu', 'bs-versteckt', 'bs-minimiert');
+            if (this._shPlan) this._shPlan();
+            this.el.dispatchEvent(new CustomEvent('bildspur-zu', { detail: { zu: false }, bubbles: true }));
+        }
+        istZu() { return this.el.classList.contains('bs-zu'); }
 
         // Shader hinter den Bildern: spiegelt das Shader-Canvas der Seite (#shader-bg, Quelle
         // bleibt der Seiten-Code) in die Buehne. Dort liegt es unter den Bildern, die per
