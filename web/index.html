@@ -634,7 +634,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 <button class="shader-btn" style="flex: 1;" data-shader="3">SH 3</button>
                 <button class="shader-btn" style="flex: 1;" data-shader="4">SH 4</button>
             </div>
-            <div data-i18n="sh4_hint" style="font-size: 11px; color: #aaaaaa; margin: -17px 0 18px 0;">SH 4: wild boars trot along the screen edges. Music running: bigger herd, faster trot.</div>
+            <div data-i18n="sh4_hint" style="font-size: 11px; color: #aaaaaa; margin: -17px 0 18px 0;">SH 4: wild boars (line figures) trot along the bottom and top edge. Music running: bigger herd, faster trot.</div>
 
             <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                 <div style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
@@ -693,6 +693,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     <span style="font-size: 14px; color: #fff; width: 45px;">TRACE</span>
                     <input type="range" id="adv-trace" style="width: 100%;" min="0.0" max="0.99" step="0.01" value="0.0">
                 </div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px;">
+                    <button id="adv-flash-btn" class="action-btn" style="padding: 2px 10px; font-size: 13px; height: auto;" data-i18n="flash_btn">FLASH</button>
+                    <button id="adv-flash-auto" class="action-btn" style="padding: 2px 10px; font-size: 13px; height: auto;" aria-pressed="false">AUTO: OFF</button>
+                    <button id="adv-flash-mode" class="action-btn" style="padding: 2px 10px; font-size: 13px; height: auto;">INVERT + RESET</button>
+                </div>
+                <div id="adv-flash-hint" data-i18n="flash_hint" style="font-size: 11px; color: #aaaaaa; margin-top: 8px;">FLASH: short inverted flash over the shader picture (max. 3 per second). AUTO fires when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.</div>
             </div>
             <!-- AUTO MODULATION CONTROLS -->
             <div style="border-top: 1px dashed var(--term-border); padding-top: 15px; margin-top: -5px;">
@@ -906,7 +912,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
             sh4_name: "SH 4: SWINE",
-            sh4_hint: "SH 4: wild boars trot along the screen edges. Music running: bigger herd, faster trot.",
+            sh4_hint: "SH 4: wild boars (line figures) trot along the bottom and top edge. Music running: bigger herd, faster trot.",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
+            flash_reduced: "Flash off: reduced motion is set", flash_wait: "Flash: max. 3 per second",
+            flash_hint: "FLASH: short inverted flash over the shader picture (max. 3 per second). AUTO fires when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
             settings_speed: "SPEED",
             settings_battery: "> battery impact",
             
@@ -1011,7 +1020,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
             sh4_name: "SH 4: SCHWEINE",
-            sh4_hint: "SH 4: Wildschweine traben an den Bildschirmkanten entlang. Bei laufender Musik: größere Rotte, schnellerer Trab.",
+            sh4_hint: "SH 4: Wildschweine (Strichfiguren) traben am unteren und oberen Rand entlang. Bei laufender Musik: größere Rotte, schnellerer Trab.",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
+            flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
+            flash_hint: "FLASH: kurzer Invers-Blitz über dem Shaderbild (höchstens 3 pro Sekunde). AUTO löst aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
             
@@ -1116,7 +1128,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             sh4_name: "SH 4: СВИНЬИ",
-            sh4_hint: "SH 4: кабаны трусят вдоль краёв экрана. При музыке: стая больше, бег быстрее.",
+            sh4_hint: "SH 4: кабаны (контурные фигуры) трусят вдоль нижнего и верхнего края. При музыке: стая больше, бег быстрее.",
+            flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
+            flash_reduced: "Вспышка выключена: включено уменьшение анимации", flash_wait: "Вспышка: не чаще 3 раз в секунду",
+            flash_hint: "ВСПЫШКА: короткая инверсия картинки шейдера (не чаще 3 раз в секунду). АВТО срабатывает при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
             settings_speed: "СКОРОСТЬ",
             settings_battery: "> расход батареи",
             
@@ -1609,6 +1624,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         function refreshDynamicTexts() {
             const fs = document.getElementById('os-fullscreen-btn');
             if (fs) fs.innerText = document.fullscreenElement ? t('settings_fs_exit') : t('settings_fs_enter');
+            if (window.bsFlashUi) window.bsFlashUi();   // JOB-129b: FLASH-Beschriftungen
         }
         function changeLanguage(lang) {
             aktuelleSprache = lang;
@@ -2001,10 +2017,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 }
             `;
 
-            // SWINE (Randlaeufer: Keiler-Silhouetten aus Punktraster, JS simuliert Rotte/Trab/Stoebern)
+            // SWINE (Randlaeufer: Keiler als Konturfigur/Strichfigur aus Punktraster, JS simuliert Rotte/Trab/Stoebern)
             const fragShader4 = `
                 precision highp float;
-                uniform vec2 u_resolution; uniform float u_time; uniform float u_brightness; uniform float u_hue;
+                uniform vec2 u_resolution; uniform float u_time; uniform float u_brightness; uniform float u_hue; uniform float u_unit;
                 uniform vec4 u_pA[5]; // x, y (Auflagepunkt in Pixel), Kantenwinkel, Richtung*Skalierung
                 uniform vec4 u_pB[5]; // Gangphase, Bewegung 0..1, Kopf-runter 0..1, Deckkraft
 
@@ -2013,55 +2029,80 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     float cosAngle = cos(hueOffset * 6.2831853);
                     return color * cosAngle + cross(k, color) * sin(hueOffset * 6.2831853) + k * dot(k, color) * (1.0 - cosAngle);
                 }
-                float sdCap(vec2 p, vec2 a, vec2 b, float r) {
+                float sdSeg(vec2 p, vec2 a, vec2 b) {
                     vec2 pa = p - a; vec2 ba = b - a;
                     float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-                    return length(pa - ba * h) - r;
+                    return length(pa - ba * h);
+                }
+                float sdCone(vec2 p, vec2 a, vec2 b, float r1, float r2) {
+                    vec2 pa = p - a; vec2 ba = b - a;
+                    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+                    return length(pa - ba * h) - mix(r1, r2, h);
                 }
                 float sdEll(vec2 p, vec2 c, vec2 r) { return (length((p - c) / r) - 1.0) * min(r.x, r.y); }
-                float sdLeg(vec2 p, float hx, float ph, float mv, float kneeDir) {
-                    vec2 hip = vec2(hx, 0.62);
-                    vec2 foot = vec2(hx + 0.27 * mv * cos(ph), 0.05 + 0.17 * mv * max(0.0, -sin(ph)));
-                    vec2 knee = mix(hip, foot, 0.5) + vec2(0.07 * kneeDir, 0.0);
-                    return min(sdCap(p, hip, knee, 0.15), sdCap(p, knee, foot, 0.105));
+                // Duenner Strich-Bein (Hueft-, Knie-, Fusspunkt) mit Huf; wird unter dem Rumpf abgeschnitten.
+                float sdLeg(vec2 p, float hx, float ph, float mv, float kneeDir, float sw) {
+                    vec2 hip = vec2(hx, 0.60);
+                    vec2 foot = vec2(hx + 0.19 * mv * cos(ph), 0.06 + 0.13 * mv * max(0.0, -sin(ph)));
+                    vec2 knee = mix(hip, foot, 0.5) + vec2(0.06 * kneeDir, 0.0);
+                    float d = min(sdSeg(p, hip, knee), sdSeg(p, knee, foot)) - sw;
+                    d = min(d, sdSeg(p, foot - vec2(0.03, 0.0), foot + vec2(0.09, 0.0)) - sw * 1.2);
+                    return max(d, p.y - 0.58);
                 }
-                // Keiler in Einheiten: Koerperlaenge ~2.2, Ruecken ~1.3 hoch, Blick nach +x
-                float pig(vec2 pw, float gait, float mv, float hd) {
+                float topY(float x) {
+                    return max(1.0 + 0.50 * sqrt(max(0.0, 1.0 - pow((x - 0.22) / 0.62, 2.0))),
+                               0.94 + 0.38 * sqrt(max(0.0, 1.0 - pow((x + 0.5) / 0.5, 2.0))));
+                }
+                // Keiler im Profil, Einheiten: Nase bei x~1.8, Schwanz bei x~-1.3, Blick nach +x. Rueckgabe: Helligkeit 0..1.
+                float pig(vec2 pw, float gait, float mv, float hd, float hs, float sw) {   // sw = halbe Strichbreite (~1 Rasterzelle)
                     vec2 p = pw;
-                    p.y -= 0.16 + 0.035 * mv * sin(gait * 2.0);   // Rumpf ueber den Beinen, wippt im Trab
-                    float d = sdEll(p, vec2(-0.05, 0.78), vec2(0.95, 0.46));
-                    d = min(d, sdEll(p, vec2(0.30, 0.86), vec2(0.62, 0.50)));   // Schulterbuckel
-                    d = min(d, sdEll(p, vec2(-0.62, 0.72), vec2(0.48, 0.40)));  // Hinterhand tiefer
-                    // Borstenkamm
-                    float top = max(0.78 + 0.46 * sqrt(max(0.0, 1.0 - pow((p.x + 0.05) / 0.95, 2.0))),
-                                    0.86 + 0.50 * sqrt(max(0.0, 1.0 - pow((p.x - 0.30) / 0.62, 2.0))));
-                    float sp = 1.0 - abs(fract(p.x * 5.0) * 2.0 - 1.0);
-                    float crest = max(p.y - (top + 0.24 * sp), max(top - 0.16 - p.y, abs(p.x - 0.0) - 0.78));
-                    d = min(d, crest);
-                    // Beine: Trab = Diagonalpaare
-                    d = min(d, sdLeg(pw, 0.62, gait, mv, 1.0));
-                    d = min(d, sdLeg(pw, 0.44, gait + 3.14159, mv, 1.0));
-                    d = min(d, sdLeg(pw, -0.62, gait + 3.14159, mv, -1.0));
-                    d = min(d, sdLeg(pw, -0.44, gait, mv, -1.0));
-                    // Ringelschwanz
-                    d = min(d, sdCap(p, vec2(-1.0, 0.98), vec2(-1.22, 1.14), 0.07));
-                    // Kopf am Hals (0.85,0.92), Winkel nach unten beim Stoebern
-                    float a = -0.18 - hd * 0.95;
-                    vec2 q = p - vec2(0.85, 0.92);
+                    p.y += 0.04 - 0.03 * mv * sin(gait * 2.0);   // Rumpf sitzt tief (kurze Beine), wippt im Trab
+                    // Rumpf: Schulterbuckel vorne hoch, Ruecken faellt nach hinten ab
+                    float dB = min(sdEll(p, vec2(0.22, 1.0), vec2(0.62, 0.50)), sdEll(p, vec2(-0.5, 0.94), vec2(0.5, 0.38)));
+                    // Kopf: langer Keil am Hals (0.72,1.25); nickt im Takt, beim Stoebern nach unten
+                    float a = -0.16 - hd * 0.95 + 0.07 * mv * sin(gait * 2.0 + 1.0);
+                    vec2 q = p - vec2(0.72, 1.25);
                     q = vec2(cos(a) * q.x + sin(a) * q.y, -sin(a) * q.x + cos(a) * q.y);
-                    float h = sdEll(q, vec2(0.30, -0.02), vec2(0.46, 0.33));
-                    h = min(h, sdCap(q, vec2(0.52, -0.04), vec2(0.90, -0.10), 0.15));   // Ruessel
-                    h = min(h, sdCap(q, vec2(0.66, -0.14), vec2(0.84, 0.16), 0.085));    // Hauer
-                    h = min(h, sdEll(q, vec2(0.02, 0.30), vec2(0.13, 0.19)));           // Ohr
-                    h = max(h, -(length(q - vec2(0.44, 0.09)) - 0.055));               // Auge
-                    return min(d, h);
+                    float dH = sdCone(q, vec2(0.0, 0.0), vec2(0.90, -0.13), 0.33, 0.16);
+                    float outer = min(dB, dH);
+                    float v = 0.0;
+                    if(abs(outer) < sw * 1.3) v = 1.0;                           // Umriss
+                    else if(outer < -0.14 && hs < 0.05) v = 0.28;        // ganz sparsame Innenpunkte
+                    float f = 1e3;                                        // gefuellte Strichteile
+                    f = min(f, sdEll(q, vec2(1.03, -0.14), vec2(0.06, 0.16)));                  // Ruesselscheibe
+                    f = min(f, length(q - vec2(0.55, 0.03)) - sw);                            // Auge
+                    f = min(f, sdSeg(q, vec2(0.10, 0.26), vec2(0.15, 0.64)) - sw);            // Ohr, aufgestellt und spitz
+                    f = min(f, sdSeg(q, vec2(0.15, 0.64), vec2(0.34, 0.24)) - sw);
+                    f = min(f, sdSeg(q, vec2(0.62, -0.20), vec2(0.86, 0.12)) - sw);           // Hauer
+                    f = min(f, sdSeg(q, vec2(0.86, 0.12), vec2(0.80, 0.36)) - sw);
+                    // Beine: Trab = Diagonalpaare (vorne 0.66 mit hinten -0.80, vorne 0.26 mit hinten -0.40)
+                    f = min(f, sdLeg(pw, 0.66, gait, mv, 1.0, sw));
+                    f = min(f, sdLeg(pw, 0.26, gait + 3.14159, mv, 1.0, sw));
+                    f = min(f, sdLeg(pw, -0.40, gait + 3.14159, mv, -1.0, sw));
+                    f = min(f, sdLeg(pw, -0.80, gait, mv, -1.0, sw));
+                    // Schwanz: duenner Stiel mit Ringel
+                    f = min(f, sdSeg(p, vec2(-0.96, 1.10), vec2(-1.10, 1.30)) - sw);
+                    f = min(f, abs(length(p - vec2(-1.17, 1.41)) - 0.10) - sw);
+                    // Borstenkamm: sparsame Striche auf dem Ruecken
+                    if(p.x > -0.85 && p.x < 0.75) {
+                        float tp = topY(p.x);
+                        float fx = fract(p.x / 0.24 + 0.3);
+                        float ds = max(abs(fx - 0.5) * 0.24 - sw, max(p.y - (tp + 0.17), tp - 0.02 - p.y));
+                        f = min(f, ds);
+                    }
+                    if(f < 0.0) v = 1.0;
+                    return v;
                 }
+                float hash21(vec2 c) { return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
 
                 void main() {
-                    float unit = clamp(min(u_resolution.x, u_resolution.y) * 0.07, 32.0, 64.0);
-                    float cell = unit * 0.1;
-                    vec2 cc = (floor(gl_FragCoord.xy / cell) + 0.5) * cell;
+                    float unit = u_unit;
+                    float cell = max(2.0, floor(unit * 0.055 + 0.5));
+                    float sw = max(0.035, cell / unit * 0.62);   // Strichbreite ~1,2 Zellen
+                    vec2 cid = floor(gl_FragCoord.xy / cell);
+                    vec2 cc = (cid + 0.5) * cell;
                     float dist = length(gl_FragCoord.xy - cc);
+                    float hs = hash21(cid);
                     float v = 0.0;
                     for(int i = 0; i < 5; i++) {
                         float al = u_pB[i].w;
@@ -2072,13 +2113,12 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                         vec2 ya = vec2(-sin(a), cos(a));
                         vec2 d = (cc - u_pA[i].xy) / (unit * sc);
                         vec2 l = vec2(dot(d, xa) * sign(u_pA[i].w), dot(d, ya));
-                        if(l.x < -1.5 || l.x > 2.0 || l.y < -0.15 || l.y > 2.0) continue;
-                        float sd = pig(l, u_pB[i].x, u_pB[i].y, u_pB[i].z);
-                        if(sd < 0.0) v = max(v, mix(0.5, 1.0, smoothstep(-0.16, -0.03, sd)) * al);
+                        if(l.x < -1.45 || l.x > 2.0 || l.y < -0.15 || l.y > 1.95) continue;
+                        v = max(v, pig(l, u_pB[i].x, u_pB[i].y, u_pB[i].z, hs, sw) * al);
                     }
                     if(v <= 0.0) { gl_FragColor = vec4(0.0); return; }
-                    float r = cell * 0.36;
-                    float dotm = smoothstep(r, r * 0.55, dist);
+                    float r = cell * 0.44;
+                    float dotm = smoothstep(r, r * 0.6, dist);
                     vec3 baseCol = hueShift(vec3(0.0, 1.0, 0.3), u_hue);
                     float intensity = clamp(v * dotm * u_brightness * 2.2, 0.0, 1.0);
                     gl_FragColor = vec4(baseCol * intensity, intensity);
@@ -2211,6 +2251,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             compile(1, fragShader1); compile(2, fragShader2); compile(3, fragShader3); compile(4, fragShader4);
             locations[4].pA = gl.getUniformLocation(programs[4], 'u_pA');
             locations[4].pB = gl.getUniformLocation(programs[4], 'u_pB');
+            locations[4].unit = gl.getUniformLocation(programs[4], 'u_unit');
             compile('fade', fragShaderFade);
 
             const buffer = gl.createBuffer();
@@ -2228,23 +2269,27 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 } catch (e) { /* ruhiger Standardtrab */ }
                 return 0;
             }
-            function swineUnit() { return Math.max(32, Math.min(64, Math.min(canvas.width, canvas.height) * 0.07)); }
-            function swineEdgeLen(edge) { return (edge === 0 || edge === 1) ? canvas.width : canvas.height; }
+            // Figurlaenge (Schwanz bis Nase) ~3.1 Einheiten, +-10 % je Tier: Desktop ~135 Canvas-px (161-197 CSS-px), Handy ~80 Canvas-px (95-117 CSS-px)
+            function swineUnit() { return Math.max(80, Math.min(135, Math.min(canvas.width, canvas.height) * 0.22)) / 3.1; }
+            function swineEdgeLen(edge) { return canvas.width; }   // nur unten/oben: seitlich gedrehte Tiere waeren unlesbar
             function swineSpawn(edge, m, t, speedMul) {
-                swine.pigs.push({ edge, m, t, sc: 0.85 + Math.random() * 0.3, vm: speedMul * (0.9 + Math.random() * 0.2),
+                swine.pigs.push({ edge, m, t, sc: 0.9 + Math.random() * 0.2, vm: speedMul * (0.9 + Math.random() * 0.2),
                     mv: 1, gait: Math.random() * 6.28, hd: 0.12, root: 0, walk: 2 + Math.random() * 4, al: 0, rt: 0 });
             }
             function swineSpawnGroup(n, inView) {
-                const r = Math.random();
-                const edge = r < 0.4 ? 0 : r < 0.6 ? 1 : r < 0.8 ? 2 : 3; // unten, oben, links, rechts
+                let edge = Math.random() < 0.65 ? 0 : 1; // unten (Fuesse am Rand), oben (kopfueber)
+                // Pro Kante hoechstens eine Rotte gleichzeitig (sonst laufen Tiere ineinander)
+                if (swine.pigs.some(p => p.edge === edge)) edge = 1 - edge;
+                if (swine.pigs.some(p => p.edge === edge)) return false;
                 const m = Math.random() < 0.5 ? 1 : -1;
                 const u = swineUnit(), L = swineEdgeLen(edge);
                 let t0 = inView ? L * (0.15 + Math.random() * 0.5) : (m > 0 ? -3.2 * u : L + 3.2 * u);
                 const vm = 0.95 + Math.random() * 0.1;
                 for (let k = 0; k < n; k++) {
-                    swineSpawn(edge, m, t0 - m * k * u * (2.6 + Math.random() * 0.8), vm);
+                    swineSpawn(edge, m, t0 - m * k * u * (3.7 + Math.random() * 0.8), vm);
                     if (inView) swine.pigs[swine.pigs.length - 1].al = 1;
                 }
+                return true;
             }
             function swineStep(dt, spd) {
                 const u = swineUnit();
@@ -2255,8 +2300,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 if (!swine.init) { swine.init = true; swineSpawnGroup(2, true); swine.spawnIn = 1.5; }
                 swine.spawnIn -= dt;
                 if (swine.spawnIn <= 0 && swine.pigs.length < maxN) {
-                    swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false);
-                    swine.spawnIn = 2 + Math.random() * 5;
+                    const ok = swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false);
+                    swine.spawnIn = ok ? 2 + Math.random() * 5 : 1;
                 }
                 for (let i = swine.pigs.length - 1; i >= 0; i--) {
                     const p = swine.pigs[i], L = swineEdgeLen(p.edge);
@@ -2265,11 +2310,13 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     if (p.root > 0) { p.root -= dt; if (p.root <= 0) p.walk = 3 + Math.random() * 5; }
                     else if (p.walk <= 0 && p.t > L * 0.12 && p.t < L * 0.88) p.root = 1.5 + Math.random() * 2.2;
                     else if (p.walk <= 0) p.walk = 1;
-                    const goal = p.root > 0 ? 0 : 1;
+                    // Nicht auflaufen: bleibt das Tier vor mir stehen (Stoebern), warte ich hinter ihm
+                    const blocked = swine.pigs.some(q => q !== p && q.edge === p.edge && q.m === p.m && (q.t - p.t) * p.m > 0 && (q.t - p.t) * p.m < 3.5 * u * p.sc);
+                    const goal = (p.root > 0 || blocked) ? 0 : 1;
                     p.mv += (goal - p.mv) * Math.min(1, dt * 3.5);
                     const v = u * 1.0 * f * p.vm * p.mv;
                     p.t += p.m * v * dt;
-                    p.gait += Math.min(9, 5.24 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
+                    p.gait += Math.min(9, 5.0 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
                     const hdGoal = p.root > 0 ? 0.9 + 0.1 * Math.sin(swine.t * 9 + i) : 0.12 + 0.05 * Math.sin(p.gait * 2);
                     p.hd += (hdGoal - p.hd) * Math.min(1, dt * 5);
                     const out = 3.4 * u;
@@ -2277,8 +2324,25 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                     if ((p.m > 0 && p.t > L + out) || (p.m < 0 && p.t < -out)) swine.pigs.splice(i, 1);
                 }
             }
+            // Schmalbildschirm (Handy): Fensterleisten oben/unten freihalten, sonst laufen die Tiere unsichtbar dahinter.
+            let swineInsetT = 0, swineInsetB = 0, swineInsetAt = -1e9;
+            function swineInsets() {
+                const now = performance.now();
+                if (now - swineInsetAt < 500) return;
+                swineInsetAt = now; swineInsetT = 0; swineInsetB = 0;
+                if (window.innerWidth > 700) return;
+                const k = canvas.height / window.innerHeight, hh = window.innerHeight / 2;
+                document.querySelectorAll('.script-window').forEach(w => {
+                    const r = w.getBoundingClientRect();
+                    if (r.width < 1 || r.height < 1) return;
+                    if (r.top > hh) swineInsetB = Math.max(swineInsetB, (window.innerHeight - r.top) * k);
+                    else swineInsetT = Math.max(swineInsetT, r.bottom * k);
+                });
+                swineInsetT = Math.min(swineInsetT, canvas.height * 0.3); swineInsetB = Math.min(swineInsetB, canvas.height * 0.3);
+            }
             function swineUniforms(loc, dt, spd) {
                 swineStep(dt * 0.001, spd);
+                swineInsets();
                 const u = swineUnit(), W = canvas.width, H = canvas.height, mg = u * 0.15;
                 // Player-Vollbild spiegelt das Canvas mit "cover" in eine 16:9-Buehne: Randlaeufer bleiben im sichtbaren 16:9-Kern.
                 const ar = W / H;
@@ -2288,18 +2352,180 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 const n = Math.min(5, swine.pigs.length);
                 for (let i = 0; i < n; i++) {
                     const p = swine.pigs[i];
-                    // Kante: 0 unten (Fuesse zeigen zum Rand), 1 oben (kopfueber), 2 links, 3 rechts
+                    // Kante: 0 unten (Fuesse zeigen zum Rand), 1 oben (kopfueber)
                     let x, y, a, ax;
-                    if (p.edge === 0) { x = p.t; y = mg + sy; a = 0; ax = 1; }
-                    else if (p.edge === 1) { x = p.t; y = H - mg - sy; a = Math.PI; ax = -1; }
-                    else if (p.edge === 2) { x = mg + sx; y = p.t; a = -Math.PI / 2; ax = -1; }
-                    else { x = W - mg - sx; y = p.t; a = Math.PI / 2; ax = 1; }
+                    if (p.edge === 0) { x = p.t; y = mg + sy + swineInsetB; a = 0; ax = 1; }
+                    else { x = p.t; y = H - mg - sy - swineInsetT; a = Math.PI; ax = -1; }
                     swineA[i*4] = x; swineA[i*4+1] = y; swineA[i*4+2] = a; swineA[i*4+3] = p.m * ax * p.sc;
                     swineB[i*4] = p.gait; swineB[i*4+1] = p.mv; swineB[i*4+2] = p.hd; swineB[i*4+3] = p.al;
                 }
+                gl.uniform1f(loc.unit, u);
                 gl.uniform4fv(loc.pA, swineA);
                 gl.uniform4fv(loc.pB, swineB);
             }
+
+
+            // ------------------------------------------------------------------
+            // FLASH (JOB-129b): kurzer Invers-Flash ueber dem Shaderbild (nur diese Flaeche, nie Texte/Fenster).
+            // Ablauf: Bild des Trace-Puffers in eine Textur sichern, Negativ darueber zeichnen, im naechsten Frame das
+            // gesicherte Bild exakt zurueckschreiben (bei "Invers + Reset" stattdessen leeren -> Ausbrennung baut neu auf).
+            // SH1-3 bleiben unberuehrt: ohne aktiven Flash laeuft kein einziger zusaetzlicher GL-Aufruf.
+            // ------------------------------------------------------------------
+            const FLASH_MAX_PER_SEC = 3;         // harte Grenze (auch manuell)
+            const FLASH_MIN_GAP_MS = 334;        // > 1000/3 ms: nie mehr als 3 in einer Sekunde
+            const FLASH_HOLD_MS = 90;            // voll invertiert
+            const FLASH_FADE_MS = 180;           // weich zurueck
+            const FLASH_LEVEL = 0.85;            // Negativ nie ganz weiss
+            const FLASH_AUTO_PAUSE_MS = [2000, 5500];   // zufaellige Pause zwischen AUTO-Flashes (Mittel ~3,75 s)
+            const FLASH_SAT_THR = 0.16;          // mittlere Helligkeit des Trace-Puffers, ab der AUTO ausloest
+            const flash = { active: false, t0: 0, reset: false, restore: false, log: [], count: 0, autoCount: 0,
+                            auto: localStorage.getItem('adv_flash_auto') === '1',
+                            mode: localStorage.getItem('adv_flash_mode') === 'inv' ? 'inv' : 'reset',
+                            notBefore: 0, nextCheck: 0, sat: 0, lvlAvg: 0, hintUntil: 0, tex: null, tw: 0, th: 0 };
+            const fragShaderFlash = `
+                precision mediump float;
+                uniform sampler2D u_tex; uniform vec2 u_res; uniform float u_s; uniform float u_level;
+                void main() {
+                    vec4 c = texture2D(u_tex, gl_FragCoord.xy / u_res);
+                    vec3 neg = u_level * (1.0 - c.rgb);
+                    gl_FragColor = vec4(mix(c.rgb, neg, u_s), mix(c.a, 1.0, u_s));
+                }
+            `;
+            compile('flash', fragShaderFlash);
+            locations['flash'].tex = gl.getUniformLocation(programs['flash'], 'u_tex');
+            locations['flash'].ures = gl.getUniformLocation(programs['flash'], 'u_res');
+            locations['flash'].s = gl.getUniformLocation(programs['flash'], 'u_s');
+            locations['flash'].level = gl.getUniformLocation(programs['flash'], 'u_level');
+            const flashMini = document.createElement('canvas'); flashMini.width = 16; flashMini.height = 9;
+            const flashMiniCtx = flashMini.getContext('2d', { willReadFrequently: true });
+            function flashReduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
+            function flashEnv(ms) {
+                if (ms < 0) return 0;
+                if (ms < FLASH_HOLD_MS) return Math.max(0.5, Math.min(1, ms / 30));
+                const f = 1 - (ms - FLASH_HOLD_MS) / FLASH_FADE_MS;
+                return f > 0 ? f : 0;
+            }
+            function flashSaveFrame() {
+                const w = canvas.width, h = canvas.height;
+                if (!flash.tex) {
+                    flash.tex = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, flash.tex);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                }
+                gl.bindTexture(gl.TEXTURE_2D, flash.tex);
+                if (flash.tw !== w || flash.th !== h) {
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+                    flash.tw = w; flash.th = h;
+                }
+                gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
+            }
+            // Zeichnet die gesicherte Textur, s = 0: Originalbild (Rueckschreiben), s > 0: Richtung Negativ.
+            function flashDrawTex(s) {
+                const p = programs['flash'], loc = locations['flash'];
+                gl.disable(gl.BLEND);
+                gl.useProgram(p);
+                gl.enableVertexAttribArray(loc.pos);
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.vertexAttribPointer(loc.pos, 2, gl.FLOAT, false, 0, 0);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, flash.tex);
+                gl.uniform1i(loc.tex, 0);
+                gl.uniform2f(loc.ures, canvas.width, canvas.height);
+                gl.uniform1f(loc.s, s);
+                gl.uniform1f(loc.level, FLASH_LEVEL);
+                gl.drawArrays(gl.TRIANGLES, 0, 6);
+            }
+            function flashSaturation() {
+                // Mittlere Helligkeit des Trace-Puffers: Canvas auf 16x9 herunterrechnen, Mittel aus max(r,g,b) * alpha
+                try {
+                    flashMiniCtx.clearRect(0, 0, 16, 9);
+                    flashMiniCtx.drawImage(canvas, 0, 0, 16, 9);
+                    const d = flashMiniCtx.getImageData(0, 0, 16, 9).data;
+                    let sum = 0;
+                    for (let i = 0; i < d.length; i += 4) sum += Math.max(d[i], d[i + 1], d[i + 2]) * d[i + 3];
+                    return sum / (144 * 255 * 255);
+                } catch (e) { return 0; }
+            }
+            function flashLevelNow() {
+                try { if (typeof window.bsAudioLevel === 'function') return Math.max(0, Math.min(1, +window.bsAudioLevel() || 0)); } catch (e) { /* kein Pegel */ }
+                return -1;
+            }
+            function flashUi() {
+                const b = document.getElementById('adv-flash-btn'), a = document.getElementById('adv-flash-auto'), m = document.getElementById('adv-flash-mode');
+                if (!b) return;
+                const hint = performance.now() < flash.hintUntil;
+                b.textContent = hint ? t(flashReduced() ? 'flash_reduced' : 'flash_wait') : t('flash_btn');
+                a.textContent = t(flash.auto ? 'flash_auto_on' : 'flash_auto_off');
+                a.classList.toggle('active', flash.auto); a.setAttribute('aria-pressed', flash.auto ? 'true' : 'false');
+                m.textContent = t(flash.mode === 'inv' ? 'flash_mode_inv' : 'flash_mode_reset');
+            }
+            window.bsFlashUi = flashUi;
+            function flashMsg() {
+                flash.hintUntil = performance.now() + 2500;
+                flashUi();
+                setTimeout(flashUi, 2600);
+            }
+            // Ausloesen (manuell oder AUTO). false = nicht ausgeloest (reduced motion, Ratenbegrenzung, kein Renderlauf).
+            function flashTrigger(quelle) {
+                if (flashReduced()) { if (quelle !== 'auto') flashMsg(); return false; }
+                if (!animationFrameId) return false;
+                const now = performance.now();
+                flash.log = flash.log.filter(x => now - x < 1000);
+                if (flash.log.length >= FLASH_MAX_PER_SEC || (flash.log.length && now - flash.log[flash.log.length - 1] < FLASH_MIN_GAP_MS)) {
+                    if (quelle !== 'auto') flashMsg();
+                    return false;
+                }
+                flash.log.push(now);
+                flash.count++; if (quelle === 'auto') flash.autoCount++;
+                flash.active = true; flash.t0 = now; flash.reset = flash.mode === 'reset';
+                return true;
+            }
+            // Vor dem Fade/Clear des Frames: Flash-Bild des Vorframes zuruecknehmen. true = Puffer leeren statt Fade.
+            function flashBeforeFrame(currentTrace) {
+                if (!flash.restore) return false;
+                flash.restore = false;
+                if (flash.reset || currentTrace <= 0.0) return true;
+                flashDrawTex(0.0);
+                return false;
+            }
+            // Nach dem Zeichnen des Frames: Flash-Bild darueberlegen.
+            function flashAfterFrame() {
+                if (flash.active) {
+                    const s = flashEnv(performance.now() - flash.t0);
+                    if (s > 0) { flashSaveFrame(); flashDrawTex(s); flash.restore = true; }
+                    else flash.active = false;
+                    return;
+                }
+                if (!flash.auto || flashReduced()) return;
+                const now = performance.now();
+                if (now < flash.nextCheck) return;
+                flash.nextCheck = now + 250;
+                flash.sat = flashSaturation();
+                const lvl = flashLevelNow();
+                let peak = false;
+                if (lvl >= 0) { peak = lvl > 0.7 && lvl - flash.lvlAvg > 0.25; flash.lvlAvg += (lvl - flash.lvlAvg) * 0.2; }
+                if (now < flash.notBefore) return;
+                if (flash.sat > FLASH_SAT_THR || peak) {
+                    if (flashTrigger('auto')) flash.notBefore = now + FLASH_AUTO_PAUSE_MS[0] + Math.random() * (FLASH_AUTO_PAUSE_MS[1] - FLASH_AUTO_PAUSE_MS[0]);
+                }
+            }
+            const flashBtnEl = document.getElementById('adv-flash-btn');
+            if (flashBtnEl) flashBtnEl.addEventListener('click', () => flashTrigger('hand'));
+            const flashAutoEl = document.getElementById('adv-flash-auto');
+            if (flashAutoEl) flashAutoEl.addEventListener('click', () => {
+                flash.auto = !flash.auto; localStorage.setItem('adv_flash_auto', flash.auto ? '1' : '0');
+                if (flash.auto) flash.notBefore = performance.now() + FLASH_AUTO_PAUSE_MS[0];
+                flashUi();
+            });
+            const flashModeEl = document.getElementById('adv-flash-mode');
+            if (flashModeEl) flashModeEl.addEventListener('click', () => {
+                flash.mode = flash.mode === 'inv' ? 'reset' : 'inv'; localStorage.setItem('adv_flash_mode', flash.mode);
+                flashUi();
+            });
+            flashUi();
 
             // F15: Canvas nur bei Resize dimensionieren, nicht pro Frame
             const RENDER_SCALE = 0.75;
@@ -2332,8 +2558,10 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 
                 const currentTrace = isAdvancedMode ? advTrace : 0.0;
 
+                const flashClear = flashBeforeFrame(currentTrace);   // JOB-129b: Vor-Flash-Bild zurueckschreiben
+
                 // 1. FADE PASS FÜR TRACE/MOTION BLUR
-                if (currentTrace > 0.0) {
+                if (currentTrace > 0.0 && !flashClear) {
                     gl.enable(gl.BLEND);
                     gl.blendEquation(gl.FUNC_ADD);
                     gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
@@ -2447,6 +2675,8 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
                 gl.disable(gl.BLEND);
                 gl.blendEquation(gl.FUNC_ADD);
 
+                flashAfterFrame();   // JOB-129b: FLASH (nur bei aktivem Flash bzw. AUTO-Pruefung alle 250 ms)
+
                 animationFrameId = requestAnimationFrame(render);
             }
 
@@ -2489,6 +2719,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
             // Die Bildspur spiegelt dieses Canvas in ihre Buehne (auch im Vollbild sichtbar).
             window.bsShaderApi = {
                 canvas: () => canvas,
+                t: (k) => t(k),
+                flash: () => flashTrigger('hand'),
+                flashZustand: () => ({ auto: flash.auto, mode: flash.mode, reduced: flashReduced(), hinweis: performance.now() < flash.hintUntil, zaehler: flash.count, autoZaehler: flash.autoCount, saettigung: flash.sat, aktiv: flash.active }),
                 laeuft: () => !!animationFrameId,
                 wahl: () => isAdvancedMode ? 'mix' : String(activeShader),
                 sicherstellen() {

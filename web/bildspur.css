@@ -591,6 +591,8 @@ html.bs-debug-an .bs-debug { display: flex; }
 }
 .bs-shtracelabel { color: #fff; font-size: 11px; letter-spacing: 0.05em; }
 .bs-shtraceval { color: #ccc; font-size: 11px; }
+/* JOB-129b: FLASH-Zeile direkt unter dem TRACE-Fader (Knopf, AUTO, Modus) */
+.bs-shflashzeile .bs-sh-flash { flex: 2 1 auto; }
 .bs-shtrace input[type="range"] {
     -webkit-appearance: none;
     appearance: none;

@@ -465,6 +465,12 @@
                             <output class="bs-shtraceval">0.00</output>
                         </div>
                     </div>
+                    <div class="bs-shzeile bs-shflashzeile">
+                        <span>TRACE</span>
+                        <button type="button" class="bs-shb bs-sh-flash" aria-label="FLASH">FLASH</button>
+                        <button type="button" class="bs-shb bs-sh-flashauto" aria-pressed="false">AUTO</button>
+                        <button type="button" class="bs-shb bs-sh-flashmode">INV+R</button>
+                    </div>
                     <div class="bs-shzeile bs-shauto">
                         <span>AUTO MODULATION</span>
                         <button type="button" class="bs-shb bs-sh-auto">OFF</button>
@@ -491,6 +497,10 @@
                 this._shFeldAktualisieren(); this._shPlan();
             }));
             P.querySelector('.bs-sh-imbild').addEventListener('click', () => this._shSetze(!this._shAn));
+            // FLASH (JOB-129b): gleiche Original-Knoepfe der Seite, gleiche Ratenbegrenzung und reduced-motion-Sperre
+            P.querySelector('.bs-sh-flash').addEventListener('click', () => { api.klick('#adv-flash-btn'); this._shFeldAktualisieren(); });
+            P.querySelector('.bs-sh-flashauto').addEventListener('click', () => { api.klick('#adv-flash-auto'); this._shFeldAktualisieren(); });
+            P.querySelector('.bs-sh-flashmode').addEventListener('click', () => { api.klick('#adv-flash-mode'); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-auto').addEventListener('click', () => { api.klick('#adv-auto-toggle'); this._shFeldAktualisieren(); });
             P.querySelectorAll('.bs-sh-am').forEach((b) => b.addEventListener('click', () => {
                 api.klick('.auto-btn[data-auto="' + b.dataset.a + '"]'); this._shFeldAktualisieren();
@@ -542,6 +552,18 @@
                     if (out) out.textContent = (+v).toFixed(2);
                 }
             });
+            const fz = api.flashZustand ? api.flashZustand() : null;
+            if (fz) {
+                const tr = (k, d) => (api.t ? api.t(k) : d);
+                const fb = P.querySelector('.bs-sh-flash');
+                fb.textContent = fz.hinweis ? tr(fz.reduced ? 'flash_reduced' : 'flash_wait', 'FLASH') : tr('flash_btn', 'FLASH');
+                const fa = P.querySelector('.bs-sh-flashauto');
+                fa.textContent = tr('flash_auto_short', 'AUTO'); fa.classList.toggle('bs-an', !!fz.auto);
+                fa.setAttribute('aria-pressed', fz.auto ? 'true' : 'false');
+                const fm = P.querySelector('.bs-sh-flashmode');
+                fm.textContent = fz.mode === 'inv' ? tr('flash_mode_inv_short', 'INV') : tr('flash_mode_reset_short', 'INV+R');
+                fm.title = tr(fz.mode === 'inv' ? 'flash_mode_inv' : 'flash_mode_reset', '');
+            }
             const aus = z.auto === 'off';
             const ab = P.querySelector('.bs-sh-auto');
             ab.textContent = aus ? 'OFF' : 'ON'; ab.classList.toggle('bs-an', !aus);
