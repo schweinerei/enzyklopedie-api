@@ -363,8 +363,6 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         /* ========================================== */
         /* 7. NOTFIX STYLES                           */
         /* ========================================== */
-        .offline-badge { display: none; color: #dc3545; font-size: 11px; letter-spacing: 1px; margin-left: 10px; }
-        .script-window.is-offline .offline-badge { display: inline; }
         /* JOB-177: Laempchen statt Text-Badge fuer die Enzyklopaedie-Erreichbarkeit */
         .api-lamp { display: inline-block; width: 8px; height: 8px; box-sizing: border-box; border-radius: 50%; margin-left: 10px; vertical-align: middle; background: transparent; border: 1px solid #666; }   /* unbekannt: nur Ring, bis die Probe ein Ergebnis hat */
         .api-lamp.is-offline { background: #888; border-color: #888; box-shadow: 0 0 3px rgba(0,0,0,0.6); }
@@ -515,7 +513,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <div class="script-window minimized" id="window-guestbook" data-anchor="top">
     <div class="window-header">
-        <span><span data-i18n="guestbook_header">>_ tail -f public_log.txt</span><span class="offline-badge" data-i18n="badge_offline">[OFFLINE]</span></span>
+        <span><span data-i18n="guestbook_header">>_ tail -f public_log.txt</span><span class="api-lamp" id="api-lamp-gb" role="status" data-i18n-aria="api_lamp_check" aria-label="checking connection" title="checking connection"></span></span>
         <div class="window-controls">
             <button class="maximize-btn" aria-label="Maximize window" data-i18n-aria="aria_maximize">□</button>
             <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
