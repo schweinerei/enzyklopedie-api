@@ -1,4 +1,4 @@
-// AUTOGENERIERT von regie_inline_build.py — nicht von Hand pflegen.
+// AUTOGENERIERT von scripts/regie_inline_build.py — nicht von Hand pflegen.
 // Fallback fuer index.html per file:// (Doppelklick): bildspur.js liest
 // hieraus, wenn fetch() auf bildspur/*.regie.json unter file:// blockiert
 // wird oder fehlschlaegt. Auf einem echten Server bleibt fetch() der Weg.
@@ -1415,6 +1415,448 @@ window.BILDSPUR_INLINE["traktat-de-k03"] = {
         "blende": "weich 1.0",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0
+      }
+    ]
+  },
+  "labels": null
+};
+window.BILDSPUR_INLINE["traktat-de-k04"] = {
+  "regie": {
+    "buch": "traktat",
+    "kapitel": "k04",
+    "sprache": "de",
+    "audio_datei": "bildspur/audio/de_traktat_k04.mp3",
+    "audio_dauer_s": 274.99,
+    "erzeugt_aus": "traktat-de-k04.regie.md",
+    "alignment_quelle": "elevenlabs_forced_alignment",
+    "header": {
+      "text": "Physik der Beziehungen · Kapitel 4. Die Kratone: Die Glocken des planetaren Lasers"
+    },
+    "labels_datei": null,
+    "cues": [
+      {
+        "id": "cue-1",
+        "t_start": 0.52,
+        "typ": "ueberschrift",
+        "inhalt": "Die Kratone: Die Glocken des planetaren Lasers",
+        "dauer_hinweis": "6s",
+        "notiz": "t_start 0,52 s, steht 6,82 s. Wie Kapitel 2/3 Cue 1. 6 s, danach 0,8 s Shader bis 4-02.",
+        "blende": "weich 1.0",
+        "abblende": "weich 1.0"
+      },
+      {
+        "id": "cue-4-02",
+        "t_start": 7.34,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-3-Bild N1): das goldene Wellenmuster durch den ganzen Planeten. Der \"radiale Laserstrahl\" aus Kapitel 3, mit dem dieses Kapitel ansetzt.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 7,34 s, steht 8,88 s. Erstes Bild nach der Ueberschrift, darum weich 4.0 (wie 3-02). Rueckgriff mit Sinn: der Satz fasst Kapitel 3 zusammen. Traegt auch \"waere fuer die Oberflaeche ein ungehoertes Lied geblieben\" (12,6 s).",
+        "blende": "weich 4.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k03-cue3-03.png"
+      },
+      {
+        "id": "cue-4-04",
+        "t_start": 16.219,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-3-Bild N12): der Grundton 0S2, die ganze Erde waagerecht gestreckt, senkrecht gestaucht (Gold). Der \"tiefe, monolithische Bass\".",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 16,22 s, steht 6,40 s. Rueckgriff: der Grundton wird so gezeigt wie in Kapitel 3 entschieden (0S2, Quadrupol). Datei liegt vor (Kap. 3 Los 3, 24.09. 21:59, angesehen: Quadrupol-Kontur in Gold).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k03-cue3-29.png"
+      },
+      {
+        "id": "cue-4-05",
+        "t_start": 22.62,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N1, V-Bild Oberflaechen-Zoom): Ausschnitt der Aussenkontur des Master-Kreises, 10-fach vergroessert: flacher Bogen oben, Mantelschraffur darunter, sieben radiale Goldpfeile von unten gegen die Oberflaeche. Alles nur senkrecht, nichts laeuft quer.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 22,62 s, steht 9,44 s. Neue Motivfamilie (Zoom auf die Oberflaeche), Serien-Vorlage fuer 4-07 bis 4-14 und 4-30/4-32. Physik: Pfeile liegen exakt auf Erdradien (Zoom-Mittelpunkt), These \"radialer Strahl\" als Bild der These, keine Messung.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-05.png"
+      },
+      {
+        "id": "cue-4-06",
+        "t_start": 32.06,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N11): Master-Kreis mit Innenkern-Gitter (k02-basis-innenkern), an der Aussenkontur fuenf flache Linsen mit Kiel nach innen (die Kratone), alle fuenf Umrisse in Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 32,06 s, steht 7,74 s. Zurueck auf den ganzen Planeten: wo die Kratone sitzen. Traegt \"Die Kratone sind die uralten, starren Kerne der Kontinente\" (34,6 s). Physik: Lage schematisch, keine Geografie behauptet; Kieltiefe 1,5-fach ueberhoeht (sonst 16 px, unsichtbar).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-06.png"
+      },
+      {
+        "id": "cue-4-07",
+        "t_start": 39.8,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N2): Oberflaechen-Zoom aus 4-05 ohne Pfeile, darin EIN Kraton: flache Oberseite buendig mit der Oberflaeche, tiefer Kiel nach unten, Umriss Gold, innen dichte Kreuzschraffur (hartes Gestein).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 39,80 s, steht 5,86 s. Bild-zu-Bild N1 (nicht unmittelbarer Vorgaenger). Physik: 1000 x 160 px = ca. 1500 x 240 km im Zoom-Massstab (1 px = 1,52 km); Kratone haben Kiele von etwa 200-250 km: flache Oberseite, tiefer Kiel, keine symmetrische Bikonvexlinse.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-07.png"
+      },
+      {
+        "id": "cue-4-08",
+        "t_start": 45.66,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N4): 4-07 pixelgleich, dazu vier graue Stroemungslinien im Mantel, die unter dem Kiel hindurch und um ihn herum laufen (offene Pfeilspitzen in Laufrichtung). Der Kraton bleibt, der Mantel stroemt vorbei.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 45,66 s, steht 7,90 s. Bild-zu-Bild 4-07 (unmittelbarer Vorgaenger). Physik: Mantelkonvektion umstroemt die kalten, auftriebsstarken Kiele; darum ueberleben Kratone (Lehrmeinung).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-08.png"
+      },
+      {
+        "id": "cue-4-09",
+        "t_start": 53.56,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N3): 4-08, Stroemung weg, Kratonumriss nur noch Grau #888888, kein Gold. Die Lehrmeinung: ein totes, passives Herz.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 53,56 s, steht 10,34 s. Bild-zu-Bild 4-07/4-08 (gleiche Geometrie). Bewusst ohne Gold: \"tot, passiv\". Traegt \"In unserer Physik der Beziehungen sind sie das genaue Gegenteil\" (59,3 s).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-09.png"
+      },
+      {
+        "id": "cue-4-10",
+        "t_start": 63.9,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA): Glocke und Erde (Kapitel-1-Datei cue12 unveraendert). Die Glocke aus Kapitel 1 kehrt zurueck.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 63,90 s, steht 6,20 s. Rueckgriff mit Sinn: \"Glocken\" = das Kapitel-1-Bild der Glocke; Kapitel-1-Datei wird nur gezeigt.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k01-cue12.png"
+      },
+      {
+        "id": "cue-4-11",
+        "t_start": 70.1,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N5): Kraton aus 4-07 mit weissem Umriss, darunter fuenf radiale Goldpfeile von unten gegen den Kiel. Der Grundton kommt von unten an.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 70,10 s, steht 7,02 s. Montage N1 (Pfeile) + N2 (Kraton), gleiche Zoom-Geometrie.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-11.png"
+      },
+      {
+        "id": "cue-4-12",
+        "t_start": 77.12,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N6): 4-11, Pfeile jetzt Grau; entlang der Kratonoberseite eine goldene stehende Welle (vier Knoten, Baeuche an beiden Kratonenden); die weisse Oberflaechenlinie bleibt als Ruhelage.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 77,12 s, steht 6,32 s. Bild-zu-Bild 4-11. Physik: senkrecht rein, waagerecht weiter = These (Wellenumwandlung gibt es, das Ausmass ist Behauptung). Randbedingung: Baeuche an den Enden (freies Ende, Kraton steifer als Umgebung) - Leitstand pruefen (Offen 1).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-12.png"
+      },
+      {
+        "id": "cue-4-13",
+        "t_start": 83.44,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N8): drei Kratone gleicher Form, verschieden gross (1 : 0,72 : 0,5), untereinander; jeder mit seiner stehenden Welle in Gold, gleiche Modenzahl, Wellenlaenge proportional zur Laenge.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 83,44 s, steht 7,88 s. Neue Anordnung (Vergleichstafel wie cue12), Kratonform aus N2. Physik: gleiche Form + gleiches Material -> Frequenz umgekehrt proportional zur Groesse; darum gleiche Knotenzahl, laengere Linse = laengere Welle.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-13.png"
+      },
+      {
+        "id": "cue-4-14",
+        "t_start": 91.32,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N9): 4-13 pixelgleich, Gold wandert von den Wellen auf die drei Kratonumrisse (Groesse, Form), Wellen Weiss.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 91,32 s, steht 6,24 s. Bild-zu-Bild 4-13. Gold-Logik: der Satz nennt Groesse und Form. Material (Schallgeschwindigkeit) ist nicht zeichenbar und wird nicht behauptet.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-14.png"
+      },
+      {
+        "id": "cue-4-15",
+        "t_start": 97.56,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N12): Master-Kreis mit den fuenf Kratonen aus 4-06, nur zwei davon in Gold: der groesste und der kleinste. Zwei Glocken, zwei Klaenge.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 97,56 s, steht 11,62 s. Bild-zu-Bild N11. Traegt auch \"Der Tansania-Kraton hat eine andere Eigenmode\" (102,4 s). Keine Namen, keine Karte: die zwei Linsen stehen fuer \"verschieden gross = verschieden gestimmt\", nicht fuer bestimmte Kratone.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-15.png"
+      },
+      {
+        "id": "cue-4-17",
+        "t_start": 109.18,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N20): ein Carillon: fuenf Glocken derselben Form (Glocke aus cue12), nach Groesse gestaffelt, auf einer gemeinsamen Grundlinie. Kein Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 109,18 s, steht 6,28 s. Bild-zu-Bild cue12 (Glocke). Physik: aehnliche Glocken, Ton umgekehrt proportional zur Groesse. Bewusst ohne Gold (keine Glocke ist wichtiger).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-17.png"
+      },
+      {
+        "id": "cue-4-18",
+        "t_start": 115.46,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-4-Bild N8): drei Kratone, jeder mit seiner goldenen stehenden Welle.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 115,46 s, steht 5,98 s. Rueckgriff: \"ihr eigenes Muster\" = je Kraton seine Welle (4-13). Letztes Bild vor dem Unterkapitel.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-13.png"
+      },
+      {
+        "id": "cue-4-ue2",
+        "t_start": 121.44,
+        "typ": "ueberschrift",
+        "inhalt": "Die kambrische Explosion und die biologischen Radiationen",
+        "dauer_hinweis": "6s",
+        "notiz": "t_start 121,44 s, steht 6,64 s. Unterkapitel = Bildbruch (regie-format.md). 6 s, danach 0,6 s Shader bis 4-20.",
+        "blende": "tippen",
+        "abblende": "weich 1.0"
+      },
+      {
+        "id": "cue-4-20",
+        "t_start": 128.08,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N16, V-Bild Faecher): Zeit laeuft von links nach rechts; fuenf duenne graue Linien (Leben vor dem Kambrium), zwei enden frueh; eine senkrechte gestrichelte Schwelle in Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 128,08 s, steht 10,18 s. Neue Szene nach dem Unterkapitel, darum weich 4.0. Neue Motivfamilie Faecher (N16 -> N17 -> N18 -> N19). Physik: lineare Zeitachse ohne Zahl (x = 1620 - 2,2 x Mio. Jahre), Schwelle bei 540 Mio. Jahren wie im Text; Vorlaeufer (Ediacarium) existieren, darum Linien schon vor der Schwelle.",
+        "blende": "weich 4.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-20.png"
+      },
+      {
+        "id": "cue-4-21",
+        "t_start": 138.26,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N17): an der Schwelle faechern die drei ueberlebenden Linien in 32 Aeste auf, schmal (wenige Jahrmillionen), Aeste in Gold; Schwelle jetzt Grau.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 138,26 s, steht 5,22 s. Bild-zu-Bild 4-20. Physik: Faecherbreite 44 px = ca. 20 Mio. Jahre im selben Massstab (\"innerhalb weniger Jahrmillionen\").",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-21.png"
+      },
+      {
+        "id": "cue-4-22",
+        "t_start": 143.48,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N18): die Aeste laufen als Linien bis an den rechten Rand (heute); 28 von 32 erreichen ihn in Gold, vier enden frueher in Weiss.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 143,48 s, steht 5,92 s. Bild-zu-Bild 4-21. Physik: fast alle heutigen Tierstaemme erscheinen im Kambrium und bestehen fort; einige Linien sterben aus.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-22.png"
+      },
+      {
+        "id": "cue-4-23",
+        "t_start": 149.4,
+        "typ": "tafel",
+        "inhalt": "Es war ein Ereignis ohne Gleichen in der Geschichte des Planeten.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 149,40 s, steht 9,86 s. Tafel (woertlicher Teilsatz). Traegt \"die etablierte Biologie hat bis heute keine ueberzeugende Erklaerung dafuer\": dafuer gibt es kein ehrliches Bild.",
+        "blende": "weich 2.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0
+      },
+      {
+        "id": "cue-4-25",
+        "t_start": 159.26,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N21): Doppelbild (Layout k02-cue2-09): links der Innenkern mit den vier Goldlinsen (k03-cue3-21, der Seed), rechts der Faecher aus 4-21 (Weiss).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 159,26 s, steht 7,26 s. Montage aus k03-cue3-21 + N17. Physik: Gleichzeitigkeit ist die These des Textes; das Innenkern-Alter ist in der Fachliteratur umstritten (Schaetzungen etwa 0,5 bis ueber 1,5 Mrd. Jahre). Das Bild zeigt nur das Nebeneinander, keine Zeitachse.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-25.png"
+      },
+      {
+        "id": "cue-4-26",
+        "t_start": 166.52,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA): Doppelbild Vollkugel / Kugelschale mit innerem Rand, Raender Gold (k02-cue2-09c). Der Wechsel der Mannigfaltigkeit aus Kapitel 2.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 166,52 s, steht 9,26 s. Rueckgriff: Kapitel 2 nennt den Uebergang Vollkugel -> Kugelschale woertlich \"Wechsel der Mannigfaltigkeit\" (2-09c). Traegt \"die Kondensation des inneren Kerns, die Geburt des Seeds\" (169-172 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k02-cue2-09c.png"
+      },
+      {
+        "id": "cue-4-28",
+        "t_start": 175.78,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N22): Doppelbild 4-25 pixelgleich, Gold wandert: links Linsen Weiss, rechts der Faecher Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 175,78 s, steht 6,12 s. Bild-zu-Bild N21 (nicht unmittelbarer Vorgaenger). Gold-Logik: der Satz nennt jetzt das Leben. Traegt \"Das ist kein Zufall\" (180,2 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-28.png"
+      },
+      {
+        "id": "cue-4-29",
+        "t_start": 181.9,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-3-Bild N1): das goldene Wellenmuster durch den ganzen Planeten.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 181,90 s, steht 8,64 s. Rueckgriff auf 4-02: \"Seine kohaerente, monochromatische stehende Welle\" (186,4 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k03-cue3-03.png"
+      },
+      {
+        "id": "cue-4-30",
+        "t_start": 190.54,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N7): Kraton im Oberflaechen-Zoom, graue Pfeile von unten; statt einer Welle jetzt drei goldene stehende Wellen verschiedener Wellenlaenge (zwei, drei, fuenf Knoten) auf der Kratonoberseite. Aus einem Ton wird ein Spektrum.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 190,54 s, steht 6,28 s. Bild-zu-Bild N6 (4-12). Physik: Eigenmoden eines Koerpers mit freien Enden, alle mit Bauch an beiden Enden; \"Spektrum lateraler Moden\" = mehrere Moden gleichzeitig.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-30.png"
+      },
+      {
+        "id": "cue-4-32",
+        "t_start": 196.82,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N10): Oberflaechen-Zoom mit flachem Meer ueber dem Kraton (zweite Bogenlinie = Meeresspiegel), Kratonwelle (vier Knoten) Weiss; im Wasser Schwebteilchen als goldene Punkte, gesammelt in senkrechten Streifen ueber den Knoten der Welle.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 196,82 s, steht 7,94 s. Bild-zu-Bild N7 (unmittelbarer Vorgaenger, gleiche Geometrie). Traegt \"und strukturierte das Wasser\" (199,1 s). Physik: dichtere Teilchen sammeln sich in einer stehenden Schallwelle an den Druckknoten (Akustophorese, Laborphysik); die Uebertragung auf Urmeere ist These. Wasserschicht stark ueberhoeht.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-32.png"
+      },
+      {
+        "id": "cue-4-33",
+        "t_start": 204.76,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N23): Tafel-Rahmen aus Kapitel 3 (k03-cue3-07), die Seed-Welle Weiss; an jedem Knoten eine kleine Spirale, alle mit demselben Drehsinn (Gold); zwischen den Knoten Spiralen beider Drehsinne (Grau).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 204,76 s, steht 7,88 s. Bild-zu-Bild k03-cue3-07. Physik: Bild der THESE. Nachweislich sortieren stehende Wellen nach Dichte/Groesse, nicht nach Haendigkeit; die Sortierung nach Chiralitaet ist Behauptung des Textes. Rico-Frage K4 (Offen 2). Traegt \"Sie takteten die Faltung der Proteine\" (209,9 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-33.png"
+      },
+      {
+        "id": "cue-4-35",
+        "t_start": 212.64,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N24): derselbe Tafel-Rahmen, Welle und Spiralen weg; graue gestrichelte Knotenlinien senkrecht (an den 13 Knoten) und waagerecht (6 Reihen), an jeder inneren Kreuzung ein goldener Punkt. Das Gitter einer zweidimensionalen stehenden Welle.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 212,64 s, steht 12,42 s. Bild-zu-Bild N23 (gleicher Rahmen). Physik: zwei gekreuzte stehende Wellen ergeben ein Rechteckgitter aus Knotenlinien (exakt). Steht ueber \"komplexe, geordnete Strukturen ... unausweichlich\" und \"Und dieses Prinzip setzte sich fort\".",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-35.png"
+      },
+      {
+        "id": "cue-4-37",
+        "t_start": 225.06,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N19): Faecher aus 4-22 in Weiss; dazu drei kleine spaetere Buesche in Gold, die aus bestehenden Linien sprossen (Ordovizium, Devon, Saeugetiere nach den Dinosauriern).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 225,06 s, steht 10,08 s. Bild-zu-Bild N18 (nicht unmittelbarer Vorgaenger). Physik: Lage auf der Zeitachse wie N16 (470, 390, 66 Mio. Jahre); die spaeteren Radiationen verzweigen innerhalb bestehender Staemme, darum Buesche an vorhandenen Linien, keine neuen Staemme. Keine Zahl im Bild.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-37.png"
+      },
+      {
+        "id": "cue-4-38",
+        "t_start": 235.14,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-4-Bild N11): Master-Kreis mit den fuenf goldenen Kratonen.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 235,14 s, steht 6,62 s. Rueckgriff: \"Sie gingen von Kratonen aus\" (239,1 s) = die Kratone auf dem Planeten (4-06).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-06.png"
+      },
+      {
+        "id": "cue-4-39",
+        "t_start": 241.76,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N13): Master-Kreis mit Innenkern, gestrichelte graue Drehachse senkrecht, kurze gestrichelte Aequatormarken links und rechts; EIN Kraton (weiss) bei 45 Grad rechts oben; ein goldener Bogenpfeil ausserhalb der Kontur zeigt Richtung Aequator.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 241,76 s, steht 5,72 s. Bild-zu-Bild N11 (unmittelbarer Vorgaenger, gleiche Geometrie). Bewusste Ausnahme von \"keine Achse, kein Aequator\" (Screening 4-09): ohne Aequator ist der Satz nicht zeigbar. Physik: Drift entlang der Oberflaeche, schematisch in der Schnittebene.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-39.png"
+      },
+      {
+        "id": "cue-4-40",
+        "t_start": 247.48,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N14): 4-39, der Kraton sitzt jetzt am Aequator (rechts auf Hoehe der Mitte), Umriss Gold, Pfeil weg.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 247,48 s, steht 5,98 s. Bild-zu-Bild 4-39. Traegt \"wo Wasser und Photonen im Ueberfluss vorhanden sind\" (249,9 s); Licht wird nicht gezeichnet (keine Lichtquelle, Bildlinie Regel 4).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-40.png"
+      },
+      {
+        "id": "cue-4-41",
+        "t_start": 253.46,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N15): Schlussbild: das Wellenmuster aus Kapitel 3 (k03-cue3-03) in Grau, darauf die fuenf Kratone aus 4-06 in Gold. Der Laser und seine Glocken in einem Bild.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 253,46 s, steht 5,74 s. Schlussbild vor der Tafel, darum weich 4.0 (wie 3-64). Bild-zu-Bild k03-cue3-03 + N11. Wird in Kapitel 5 als erstes Bild wiederaufgenommen (5-02).",
+        "blende": "weich 4.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-41.png"
+      },
+      {
+        "id": "cue-4-42",
+        "t_start": 259.2,
+        "typ": "tafel",
+        "inhalt": "Die Kratone sind die Taktgeber der Evolution.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 259,20 s, steht 9,02 s. Schlusstafel wie Kap. 2/3. Vorschlag a; Alternative b \"Die biologische Kreativität ist die Musik, die sie spielen.\" (letzter Satz, 263,1 s). Steht ueber beide Saetze bis zur Teil-Ueberschrift.",
+        "blende": "weich 1.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0
+      },
+      {
+        "id": "cue-4-ue3",
+        "t_start": 268.22,
+        "typ": "ueberschrift",
+        "inhalt": "Zweiter Teil. Das Elektron – die Kavitation im Vakuum",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 268,22 s, steht 6,74 s. Teil-Ueberschrift, im Audio mitgelesen (268,2-273,6 s): woertlich als Ueberschrift getippt, kein Bild. Anker ohne Gedankenstrich (der Strich ist im Alignment ein eigenes Token). Steht bis Audioende (275,0 s). Leitstand pruefen (Offen 5).",
+        "blende": "tippen",
+        "abblende": "weich 1.0"
       }
     ]
   },

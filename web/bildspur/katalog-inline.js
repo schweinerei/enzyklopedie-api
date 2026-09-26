@@ -132,9 +132,10 @@ window.KATALOG_INLINE = {
    "teil": "kapitel",
    "nr": "4",
    "titel": "Die Kratone: Die Glocken des planetaren Lasers",
-   "audio": null,
-   "status": "folgt",
-   "zugang": "frei"
+   "audio": "audio/de_traktat_k04.mp3",
+   "status": "bebildert",
+   "zugang": "frei",
+   "regie": "bildspur/traktat-de-k04.regie.json"
   },
   {
    "buch": "physik",
