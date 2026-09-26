@@ -1613,13 +1613,15 @@
             // ------------------------------------------------------------------
             const FLASH_MAX_PER_SEC = 3;         // harte Grenze (auch manuell, gilt fuer F+G zusammen)
             const FLASH_MIN_GAP_MS = 334;        // > 1000/3 ms: nie mehr als 3 in einer Sekunde
-            const FLASH_HOLD_MS = 90;            // Taste F: voll invertiert
-            const FLASH_FADE_MS = 180;           // Taste F: weich zurueck (kurzer harter Blitz)
+            // JOB-189b: Taste F = harter Strobe-Hit. Sofort voll, nach FLASH_F_HOLD_MS schlagartig aus (Snap,
+            // kein Fade) - soll blind von G (Nachgluehen) unterscheidbar sein.
+            const FLASH_F_HOLD_MS = 75;          // Taste F: 60-90 ms sichtbar, danach Snap auf 0
+            const FLASH_LEVEL_F = 1.0;           // Taste F: volle Invertierung (Strobe-Kontrast)
             // JOB-176: Taste G = langes Nachgluehen. Kurzer Hold, danach quadratischer Ease-out ueber 1500 ms
             // (Bereich 1,2-1,8 s laut Briefing; 1500 ms als Mitte, Ease-out statt linear macht den Ausklang weich/organisch).
             const FLASH_G_HOLD_MS = 60;
             const FLASH_G_FADE_MS = 1500;
-            const FLASH_LEVEL = 0.85;            // Negativ nie ganz weiss
+            const FLASH_LEVEL_G = 0.85;          // Negativ nie ganz weiss (unveraendert wie vor JOB-189b)
             const FLASH_AUTO_PAUSE_MS = [2000, 5500];   // zufaellige Pause zwischen AUTO-Flashes (Mittel ~3,75 s)
             const FLASH_SAT_THR = 0.16;          // mittlere Helligkeit des Trace-Puffers, ab der AUTO ausloest
             const flash = { active: false, t0: 0, kind: 'f', reset: false, restore: false, log: [], count: 0, autoCount: 0,
@@ -1677,9 +1679,8 @@
                     const f = 1 - t;
                     return f > 0 ? f * f : 0; // Ease-out: weicher, laenger sichtbarer Ausklang statt linear
                 }
-                if (ms < FLASH_HOLD_MS) return Math.max(0.5, Math.min(1, ms / 30));
-                const f = 1 - (ms - FLASH_HOLD_MS) / FLASH_FADE_MS;
-                return f > 0 ? f : 0;
+                // Strobe-Hit: kein Ramp, kein Fade - voller Pegel bis HOLD_MS, danach schlagartig 0.
+                return ms < FLASH_F_HOLD_MS ? 1 : 0;
             }
             function flashSaveFrame() {
                 const w = canvas.width, h = canvas.height;
@@ -1699,7 +1700,8 @@
                 gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
             }
             // Zeichnet die gesicherte Textur, s = 0: Originalbild (Rueckschreiben), s > 0: Richtung Negativ.
-            function flashDrawTex(s) {
+            // level: Invertierungsstaerke (F = FLASH_LEVEL_F, G = FLASH_LEVEL_G); bei s = 0 ohne Wirkung.
+            function flashDrawTex(s, level) {
                 const p = programs['flash'], loc = locations['flash'];
                 gl.disable(gl.BLEND);
                 gl.useProgram(p);
@@ -1711,7 +1713,7 @@
                 gl.uniform1i(loc.tex, 0);
                 gl.uniform2f(loc.ures, canvas.width, canvas.height);
                 gl.uniform1f(loc.s, s);
-                gl.uniform1f(loc.level, FLASH_LEVEL);
+                gl.uniform1f(loc.level, level === undefined ? FLASH_LEVEL_G : level);
                 gl.drawArrays(gl.TRIANGLES, 0, 6);
             }
             function flashSaturation() {
@@ -1776,7 +1778,7 @@
             function flashAfterFrame() {
                 if (flash.active) {
                     const s = flashEnv(performance.now() - flash.t0, flash.kind);
-                    if (s > 0) { flashSaveFrame(); flashDrawTex(s); flash.restore = true; }
+                    if (s > 0) { flashSaveFrame(); flashDrawTex(s, flash.kind === 'g' ? FLASH_LEVEL_G : FLASH_LEVEL_F); flash.restore = true; }
                     else flash.active = false;
                     return;
                 }
