@@ -1092,18 +1092,28 @@
             // Uebergang aus der Schwarzphase wieder hart aufpoppen statt weich aufzublenden).
             // Die Buehne hat #000-Hintergrund, bleibt also schwarz, bis das Bild bereit ist
             // (_wartefallsBild), statt kurz einen leeren Layer zu zeigen (JOB-50b).
-            this.buehne.querySelectorAll('.bs-element').forEach((n) => n.remove());
+            // JOB-178 (Rico 26.09. 15:16 "schwarz. auf mac. mit brave", beim Shutteln im Vollbild):
+            // bei Sofort-Wechseln bleibt das bisherige Bild stehen, bis das neue geladen ist, statt
+            // die Buehne vorher zu leeren. Ueberholt ein spaeterer Sprung dieses Element, wird es
+            // verworfen und nie gezeigt.
+            const vorher = sofort ? Array.from(this.buehne.querySelectorAll('.bs-element')) : [];
+            if (!sofort) this.buehne.querySelectorAll('.bs-element').forEach((n) => n.remove());
+            neuesEl.style.zIndex = '2';
             this.buehne.appendChild(neuesEl);
             this._positioniereLabels(neuesEl);
             this._starteTippenFallsNoetig(neuesEl, neueCue, blende, sofort);
 
             this._wartefallsBild(neuesEl, () => {
+                if (this.aktuelleCueObjekt !== neueCue || !neuesEl.isConnected) { neuesEl.remove(); return; }
                 if (sofort || reduziert) {
                     neuesEl.style.transitionDuration = '0s';
                     neuesEl.classList.add('bs-sichtbar');
                 } else {
                     this._fade(neuesEl, blende.sekunden, true);
                 }
+                vorher.forEach((n) => { if (n !== neuesEl) n.remove(); });
+                this.buehne.querySelectorAll('.bs-element').forEach((n) => { if (n !== neuesEl && !n.classList.contains('bs-sichtbar')) n.remove(); });
+                neuesEl.style.zIndex = '';
             });
         }
 
