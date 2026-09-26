@@ -625,21 +625,22 @@
                 const es = katalog.eintraege.filter(e => e.buch === b.id && e.sprache === nurSp);
                 if (!es.length) return;
                 const bid = 'b:' + b.id;
-                z.push({ id: bid, art: 'buch', ebene: 1, text: (b.titel || {})[ui] || (b.titel || {}).en || b.id, ordner: true, info: baumZaehle(es) });
+                // JOB-174: Buchtitel in der Hoersprache, nicht in der Seitensprache.
+                z.push({ id: bid, art: 'buch', ebene: 1, text: (b.titel || {})[nurSp] || (b.titel || {})[ui] || (b.titel || {}).en || b.id, ordner: true, info: baumZaehle(es) });
                 if (!baumOffen.has(bid)) return;
                 [nurSp].forEach(sp => {
                     const se = es.filter(e => e.sprache === sp);
                     if (!se.length) return;
+                    // JOB-174 (Rico 26.09. 14:38): keine eigene Sprach-Ebene mehr, die Sprache ist ueber
+                    // DE | EN | RU schon gewaehlt. Die IDs behalten den Sprachteil (offene Ordner bleiben gueltig).
                     const sid = `${bid}/${sp}`;
-                    z.push({ id: sid, art: 'sprache', ebene: 2, text: (sp === 'ru' ? 'РУ' : sp.toUpperCase()) + '/', ordner: true, info: baumZaehle(se), sprache: sp });
-                    if (!baumOffen.has(sid)) return;
                     (b.teile || []).forEach(tl => {
                         const te = se.filter(e => e.teil === tl.id);
                         if (!te.length) return;
                         const tid = `${sid}/${tl.id}`;
-                        z.push({ id: tid, art: 'teil', ebene: 3, text: ((tl.titel || {})[sp] || tl.id) + '/', ordner: true, info: baumZaehle(te) });
+                        z.push({ id: tid, art: 'teil', ebene: 2, text: ((tl.titel || {})[sp] || tl.id) + '/', ordner: true, info: baumZaehle(te) });
                         if (!baumOffen.has(tid)) return;
-                        te.forEach(e => z.push({ id: e.id, art: 'eintrag', ebene: 4, text: eintragText(e), eintrag: e }));
+                        te.forEach(e => z.push({ id: e.id, art: 'eintrag', ebene: 3, text: eintragText(e), eintrag: e }));
                     });
                 });
             });
