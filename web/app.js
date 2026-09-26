@@ -8,7 +8,7 @@
     const i18n = {
         en: {
             chat_header: ">_ run Enzyklopedia.sh",
-            api_lamp_online: "Encyclopedia reachable", api_lamp_offline: "currently unreachable",
+            api_lamp_online: "Encyclopedia reachable", api_lamp_offline: "currently unreachable", api_lamp_check: "checking connection",
             chat_welcome: "Connection established. I am the Enzyklopedia. What is your inquiry?",
             chat_subtext_1: "> Your dialogue expands the system as an anonymous node within the knowledge graph.",
             chat_subtext_2: "> Please use your native language – the Enzyklopedia strives for universal multilingualism.",
@@ -116,7 +116,7 @@
         },
         de: {
             chat_header: ">_ run Enzyklopedia.sh",
-            api_lamp_online: "Enzyklopädie erreichbar", api_lamp_offline: "gerade nicht erreichbar",
+            api_lamp_online: "Enzyklopädie erreichbar", api_lamp_offline: "gerade nicht erreichbar", api_lamp_check: "Verbindung wird geprüft",
             chat_welcome: "Verbindung hergestellt. Ich bin die Enzyklopedia. Was ist Ihr Anliegen?",
             chat_subtext_1: "> Ihr Dialog erweitert das System als anonymer Knoten innerhalb des Wissensgraphen.",
             chat_subtext_2: "> Bitte verwenden Sie Ihre Muttersprache – die Enzyklopedia strebt nach universeller Mehrsprachigkeit.",
@@ -224,7 +224,7 @@
         },
         ru: {
             chat_header: ">_ run Enzyklopedia.sh",
-            api_lamp_online: "Энциклопедия доступна", api_lamp_offline: "сейчас недоступна",
+            api_lamp_online: "Энциклопедия доступна", api_lamp_offline: "сейчас недоступна", api_lamp_check: "проверка соединения",
             chat_welcome: "Соединение установлено. Я Энциклопедия. В чем заключается ваш запрос?",
             chat_subtext_1: "> Ваш диалог расширяет систему как анонимный узел в графе знаний.",
             chat_subtext_2: "> Пожалуйста, используйте ваш родной язык – Энциклопедия стремится к универсальному многоязычию.",
@@ -375,6 +375,7 @@
             const lamp = document.getElementById('api-lamp');
             if (lamp) {
                 lamp.classList.toggle('is-online', !off);
+                lamp.classList.toggle('is-offline', off);   // grau erst nach Probe mit Retry, vorher nur Ring
                 const key = off ? 'api_lamp_offline' : 'api_lamp_online';
                 lamp.setAttribute('data-i18n-aria', key);
                 lamp.setAttribute('aria-label', t(key));
