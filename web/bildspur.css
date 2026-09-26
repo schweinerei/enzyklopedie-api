@@ -251,14 +251,19 @@
 }
 
 /* Tafel: ruhige Ueberbrueckungszeile zwischen zwei Skizzen (regie-format.md) — kleiner
-   und leiser als zitat (keine Pointe), monospace ohne Anfuehrungszeichen, ohne Rahmen/Box. */
+   und leiser als zitat (keine Pointe), monospace ohne Anfuehrungszeichen, ohne Rahmen/Box.
+   Farbe war var(--bs-accent) = #666666 und damit nur im Vollbild MIT Shader ueber die
+   .bs-shader-an-Regel weiter unten weiss (Befund Rico 26.09., JOB-186: "K5 textstellen
+   grau" - traf im Vollbild OHNE Shader jede Tafel in jedem Kapitel, nicht nur K5). Schlusstafel
+   bekam das schon 23.09. behoben (siehe unten); jetzt derselbe Fix fuer die normale Tafel:
+   immer weiss wie Ueberschrift/Formel/Schlusstafel, unabhaengig vom Shader-Zustand. */
 .bs-typ-tafel {
     font-family: 'Consolas', 'Courier New', Courier, monospace;
     font-size: 15px;
     font-weight: normal;
     text-transform: none;
     letter-spacing: 0.3px;
-    color: var(--bs-accent);
+    color: var(--bs-text);
     line-height: 1.5;
 }
 /* JOB-172 (Rico 26.09. 14:25 "zentrale Zitate, zu klein, man hat Probleme sie zu entziffern.

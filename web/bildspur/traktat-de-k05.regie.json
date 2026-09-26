@@ -152,12 +152,12 @@
    "schritte": [
     {
      "t": 100.451,
-     "katex": "a_e = {\\color{#ffcc33} \\frac{g-2}{2}}",
+     "katex": "\\begin{gathered}a_e = {\\color{#ffcc33} \\frac{g-2}{2}}\\end{gathered}",
      "zeigt": ""
     },
     {
      "t": 106.671,
-     "katex": "a_e = \\frac{g-2}{2}, \\qquad {\\color{#ffcc33} a_e^{\\text{Theorie}} = a_e^{\\text{Messung}} \\;\\; (\\text{zehn Dezimalstellen})}",
+     "katex": "\\begin{gathered}a_e = \\frac{g-2}{2}\\\\ {\\color{#ffcc33} a_e^{\\text{Theorie}} = a_e^{\\text{Messung}} \\;\\; (\\text{zehn Dezimalstellen})}\\end{gathered}",
      "zeigt": ""
     }
    ]
@@ -234,17 +234,17 @@
    "schritte": [
     {
      "t": 149.491,
-     "katex": "{\\color{#ffcc33} m_{\\text{träge}}} = \\frac{E_{\\text{Feld}}}{c^2}",
+     "katex": "\\begin{gathered}{\\color{#ffcc33} m_{\\text{träge}}} = \\frac{E_{\\text{Feld}}}{c^2}\\end{gathered}",
      "zeigt": ""
     },
     {
      "t": 152.351,
-     "katex": "m_{\\text{träge}} = {\\color{#ffcc33} \\frac{E_{\\text{Feld}}}{c^2}}",
+     "katex": "\\begin{gathered}m_{\\text{träge}} = {\\color{#ffcc33} \\frac{E_{\\text{Feld}}}{c^2}}\\end{gathered}",
      "zeigt": ""
     },
     {
      "t": 156.251,
-     "katex": "m_{\\text{träge}} = \\frac{E_{\\text{Feld}}}{c^2} \\;\\longrightarrow\\; {\\color{#ffcc33} \\infty}",
+     "katex": "\\begin{gathered}m_{\\text{träge}} = \\frac{E_{\\text{Feld}}}{c^2}\\\\ \\longrightarrow\\; {\\color{#ffcc33} \\infty}\\end{gathered}",
      "zeigt": ""
     }
    ]
