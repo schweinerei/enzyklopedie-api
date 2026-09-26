@@ -65,7 +65,7 @@
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
             sh4_name: "SH 4: SWINE",
-            sh4_hint: "SH 4: wild boars (line figures) trot along the bottom and top edge. Music running: bigger herd, faster trot.",
+            sh4_hint: "SH 4: wild boars (line figures) trot along the bottom edge and on top of open windows. Music running: bigger herd, faster trot.",
             flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
             flash_reduced: "Flash off: reduced motion is set", flash_wait: "Flash: max. 3 per second",
             flash_hint: "FLASH: short inverted flash over the shader picture (max. 3 per second). AUTO fires when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
@@ -174,7 +174,7 @@
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
             sh4_name: "SH 4: SCHWEINE",
-            sh4_hint: "SH 4: Wildschweine (Strichfiguren) traben am unteren und oberen Rand entlang. Bei laufender Musik: größere Rotte, schnellerer Trab.",
+            sh4_hint: "SH 4: Wildschweine (Strichfiguren) traben am unteren Rand und auf den Oberkanten offener Fenster. Bei laufender Musik: größere Rotte, schnellerer Trab.",
             flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
             flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
             flash_hint: "FLASH: kurzer Invers-Blitz über dem Shaderbild (höchstens 3 pro Sekunde). AUTO löst aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
@@ -283,7 +283,7 @@
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
             sh4_name: "SH 4: СВИНЬИ",
-            sh4_hint: "SH 4: кабаны (контурные фигуры) трусят вдоль нижнего и верхнего края. При музыке: стая больше, бег быстрее.",
+            sh4_hint: "SH 4: кабаны (контурные фигуры) трусят вдоль нижнего края и по верхним краям открытых окон. При музыке: стая больше, бег быстрее.",
             flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
             flash_reduced: "Вспышка выключена: включено уменьшение анимации", flash_wait: "Вспышка: не чаще 3 раз в секунду",
             flash_hint: "ВСПЫШКА: короткая инверсия картинки шейдера (не чаще 3 раз в секунду). АВТО срабатывает при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
@@ -1699,6 +1699,9 @@
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]), gl.STATIC_DRAW);
 
             // SH 4: Rotten-Simulation (Randlaeufer). Nur JS-Zustand; gezeichnet wird im Fragment-Shader.
+            // Tiere laufen ausschliesslich aufrecht: (a) unten (Handy ueber der unteren Leiste) und
+            // (b) auf den Oberkanten offener (nicht minimierter/fullscreen) .script-window-Fenster,
+            // Fuesse auf der Kante. Kein Kopfueber-Laeufer mehr (Rico 25.09.).
             const swine = { pigs: [], spawnIn: 0, t: 0, lvl: 0, init: false };
             const swineA = new Float32Array(20), swineB = new Float32Array(20);
             function swineLevel() {
@@ -1711,22 +1714,69 @@
             }
             // Figurlaenge (Schwanz bis Nase) ~3.1 Einheiten, +-10 % je Tier: Desktop ~135 Canvas-px (161-197 CSS-px), Handy ~80 Canvas-px (95-117 CSS-px)
             function swineUnit() { return Math.max(80, Math.min(135, Math.min(canvas.width, canvas.height) * 0.22)) / 3.1; }
-            function swineEdgeLen(edge) { return canvas.width; }   // nur unten/oben: seitlich gedrehte Tiere waeren unlesbar
-            function swineSpawn(edge, m, t, speedMul) {
-                swine.pigs.push({ edge, m, t, sc: 0.9 + Math.random() * 0.2, vm: speedMul * (0.9 + Math.random() * 0.2),
-                    mv: 1, gait: Math.random() * 6.28, hd: 0.12, root: 0, walk: 2 + Math.random() * 4, al: 0, rt: 0 });
+            // Schmalbildschirm (Handy): untere Fensterleiste freihalten, sonst laeuft die Bodenrotte unsichtbar dahinter.
+            let swineInsetB = 0, swineInsetAt = -1e9;
+            function swineInsets() {
+                const now = performance.now();
+                if (now - swineInsetAt < 500) return;
+                swineInsetAt = now; swineInsetB = 0;
+                if (window.innerWidth > 700) return;
+                const k = canvas.height / window.innerHeight, hh = window.innerHeight / 2;
+                document.querySelectorAll('.script-window:not(.minimized)').forEach(w => {
+                    const r = w.getBoundingClientRect();
+                    if (r.width < 1 || r.height < 1) return;
+                    if (r.top > hh) swineInsetB = Math.max(swineInsetB, (window.innerHeight - r.top) * k);
+                });
+                swineInsetB = Math.min(swineInsetB, canvas.height * 0.3);
             }
-            function swineSpawnGroup(n, inView) {
-                let edge = Math.random() < 0.65 ? 0 : 1; // unten (Fuesse am Rand), oben (kopfueber)
-                // Pro Kante hoechstens eine Rotte gleichzeitig (sonst laufen Tiere ineinander)
-                if (swine.pigs.some(p => p.edge === edge)) edge = 1 - edge;
-                if (swine.pigs.some(p => p.edge === edge)) return false;
+            // Laufflaechen: der Boden (volle Breite) plus die Oberkante jedes aktuell sichtbaren, offenen Fensters
+            // (nicht minimiert, nicht fullscreen, nicht zu schmal). getBoundingClientRect() live pro Frame, damit
+            // Verschieben/Groesse aendern/Minimieren/Schliessen sofort nachgefuehrt wird.
+            function swineSurfaces() {
+                const u = swineUnit();
+                const kx = canvas.width / window.innerWidth, ky = canvas.height / window.innerHeight;
+                const out = [{ id: 'floor', x0: 0, x1: canvas.width }];
+                // Alles, was sichtbar ueber einer Oberkante liegen kann (auch minimierte Kopfzeilen, Bildspur-Fenster):
+                // liegt davon etwas im Luftraum ueber der Kante, waere das Tier verdeckt -> Kante nicht benutzen.
+                const blockers = [...document.querySelectorAll('.script-window, #bildspur-fenster')].filter(b => b.getClientRects().length && getComputedStyle(b).visibility !== 'hidden').map(b => [b, b.getBoundingClientRect()]);
+                const airH = u * 1.6 / ky;
+                document.querySelectorAll('.script-window:not(.minimized):not(.fullscreen)').forEach(w => {
+                    if (w.offsetParent === null) return;   // display:none (z.B. geparktes Backlog-Fenster)
+                    const r = w.getBoundingClientRect();
+                    if (r.width < 10 || r.height < 10) return;
+                    if (r.top * ky < u * 1.6 || r.top > window.innerHeight - 20) return;   // kein Platz ueber der Kante / Oberkante nicht im Bild
+                    const x0 = Math.max(0, r.left) * kx, x1 = Math.min(window.innerWidth, r.right) * kx;
+                    if (x1 - x0 < u * 3.6) return;   // zu schmal fuer eine ganze Figur
+                    if (blockers.some(([b, q]) => b !== w && !b.contains(w) && q.width > 0 && q.left < r.right && q.right > r.left && q.bottom > r.top - airH && q.top < r.top - 2)) return;
+                    out.push({ id: 'win:' + w.id, x0, x1, y: canvas.height - r.top * ky + u * 0.05 });
+                });
+                return out;
+            }
+            function swineSpawn(surf, m, t, speedMul) {
+                swine.pigs.push({ surf, m, t, sc: 0.9 + Math.random() * 0.2, vm: speedMul * (0.9 + Math.random() * 0.2),
+                    mv: 1, gait: Math.random() * 6.28, hd: 0.12, root: 0, walk: 2 + Math.random() * 4, al: 0,
+                    leaving: false, x0: 0, x1: 0, y: 0 });
+            }
+            function swineSpawnGroup(n, inView, surfaces) {
+                // Pro Flaeche (Boden oder ein Fenster) hoechstens eine Rotte gleichzeitig (sonst laufen Tiere ineinander)
+                const free = surfaces.filter(s => !swine.pigs.some(p => p.surf === s.id && !p.leaving));
+                if (!free.length) return false;
+                const s = free[Math.floor(Math.random() * free.length)];
                 const m = Math.random() < 0.5 ? 1 : -1;
-                const u = swineUnit(), L = swineEdgeLen(edge);
-                let t0 = inView ? L * (0.15 + Math.random() * 0.5) : (m > 0 ? -3.2 * u : L + 3.2 * u);
+                const u = swineUnit();
+                let t0 = inView ? s.x0 + (s.x1 - s.x0) * (0.15 + Math.random() * 0.5) : (m > 0 ? s.x0 - 3.2 * u : s.x1 + 3.2 * u);
+                let gap = 4.5;
+                if (s.id !== 'floor') {
+                    // Fenster: die ganze Rotte entsteht AUF der Oberkante (einblenden), nie daneben in der Luft
+                    const mg = u * 0.6, room = s.x1 - s.x0 - 2 * mg;
+                    n = Math.max(1, Math.min(n, 1 + Math.floor(room / (gap * u))));
+                    const span = (n - 1) * gap * u;
+                    const lo = m > 0 ? s.x0 + mg + span : s.x0 + mg, hi = m > 0 ? s.x1 - mg : s.x1 - mg - span;
+                    t0 = lo + Math.max(0, hi - lo) * Math.random();
+                }
                 const vm = 0.95 + Math.random() * 0.1;
                 for (let k = 0; k < n; k++) {
-                    swineSpawn(edge, m, t0 - m * k * u * (3.7 + Math.random() * 0.8), vm);
+                    swineSpawn(s.id, m, t0 - m * k * u * (s.id !== 'floor' ? gap : 3.7 + Math.random() * 0.8), vm);
                     if (inView) swine.pigs[swine.pigs.length - 1].al = 1;
                 }
                 return true;
@@ -1737,66 +1787,69 @@
                 swine.lvl += (swineLevel() - swine.lvl) * Math.min(1, dt * 2);
                 const f = Math.min(8, 0.25 + 3 * spd) * (1 + 0.5 * swine.lvl);
                 const maxN = 3 + (swine.lvl > 0.3 ? 1 : 0) + (swine.lvl > 0.7 ? 1 : 0);
-                if (!swine.init) { swine.init = true; swineSpawnGroup(2, true); swine.spawnIn = 1.5; }
+                swineInsets();
+                const surfaces = swineSurfaces();
+                if (!swine.init) { swine.init = true; swineSpawnGroup(2, true, surfaces); swine.spawnIn = 1.5; }
                 swine.spawnIn -= dt;
                 if (swine.spawnIn <= 0 && swine.pigs.length < maxN) {
-                    const ok = swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false);
+                    const ok = swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false, surfaces);
                     swine.spawnIn = ok ? 2 + Math.random() * 5 : 1;
                 }
+                const W = canvas.width, H = canvas.height, mg = u * 0.15;
+                const ar = W / H;
+                // Player-Vollbild spiegelt das Canvas mit "cover" in eine 16:9-Buehne: der Boden-Laeufer bleibt im sichtbaren 16:9-Kern.
+                const sy = (ar < 1.7778 && ar > 1.2) ? (H - W / 1.7778) / 2 : 0;
                 for (let i = swine.pigs.length - 1; i >= 0; i--) {
-                    const p = swine.pigs[i], L = swineEdgeLen(p.edge);
-                    // Zustandswechsel: traben <-> stoebern (nur im sichtbaren Mittelstueck der Kante)
-                    p.walk -= dt;
-                    if (p.root > 0) { p.root -= dt; if (p.root <= 0) p.walk = 3 + Math.random() * 5; }
-                    else if (p.walk <= 0 && p.t > L * 0.12 && p.t < L * 0.88) p.root = 1.5 + Math.random() * 2.2;
-                    else if (p.walk <= 0) p.walk = 1;
-                    // Nicht auflaufen: bleibt das Tier vor mir stehen (Stoebern), warte ich hinter ihm
-                    const blocked = swine.pigs.some(q => q !== p && q.edge === p.edge && q.m === p.m && (q.t - p.t) * p.m > 0 && (q.t - p.t) * p.m < 3.5 * u * p.sc);
-                    const goal = (p.root > 0 || blocked) ? 0 : 1;
-                    p.mv += (goal - p.mv) * Math.min(1, dt * 3.5);
-                    const v = u * 1.0 * f * p.vm * p.mv;
-                    p.t += p.m * v * dt;
-                    p.gait += Math.min(9, 5.0 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
-                    const hdGoal = p.root > 0 ? 0.9 + 0.1 * Math.sin(swine.t * 9 + i) : 0.12 + 0.05 * Math.sin(p.gait * 2);
-                    p.hd += (hdGoal - p.hd) * Math.min(1, dt * 5);
-                    const out = 3.4 * u;
-                    p.al = Math.min(1, p.al + dt * 2);
-                    if ((p.m > 0 && p.t > L + out) || (p.m < 0 && p.t < -out)) swine.pigs.splice(i, 1);
+                    const p = swine.pigs[i];
+                    const bounds = p.surf === 'floor' ? { x0: 0, x1: W, y: mg + sy + swineInsetB } : surfaces.find(s => s.id === p.surf);
+                    if (bounds) {
+                        // Fenster verschoben: Tier faehrt mit (relative Lage auf der Kante bleibt)
+                        if (p.surf !== 'floor' && p.x1 > p.x0) p.t += bounds.x0 - p.x0;
+                        p.x0 = bounds.x0; p.x1 = bounds.x1; p.y = bounds.y;
+                        if (p.surf !== 'floor') { const mg2 = u * 0.55 * p.sc; p.t = Math.min(Math.max(p.t, p.x0 + mg2), p.x1 - mg2); }
+                    }
+                    else { swine.pigs.splice(i, 1); continue; }   // Flaeche weg (minimiert/geschlossen/verdeckt/zu schmal): sofort weg statt schweben
+                    if (!p.leaving) {
+                        const L0 = p.x0, L1 = p.x1;
+                        // Zustandswechsel: traben <-> stoebern (nur im sichtbaren Mittelstueck der Flaeche)
+                        p.walk -= dt;
+                        if (p.root > 0) { p.root -= dt; if (p.root <= 0) p.walk = 3 + Math.random() * 5; }
+                        else if (p.walk <= 0 && p.t > L0 + (L1 - L0) * 0.12 && p.t < L1 - (L1 - L0) * 0.12) p.root = 1.5 + Math.random() * 2.2;
+                        else if (p.walk <= 0) p.walk = 1;
+                        // Nicht auflaufen: bleibt das Tier vor mir stehen (Stoebern), warte ich hinter ihm
+                        const blocked = swine.pigs.some(q => q !== p && q.surf === p.surf && q.m === p.m && (q.t - p.t) * p.m > 0 && (q.t - p.t) * p.m < 3.5 * u * p.sc);
+                        const goal = (p.root > 0 || blocked) ? 0 : 1;
+                        p.mv += (goal - p.mv) * Math.min(1, dt * 3.5);
+                        const v = u * 1.0 * f * p.vm * p.mv;
+                        p.t += p.m * v * dt;
+                        p.gait += Math.min(9, 5.0 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
+                        const hdGoal = p.root > 0 ? 0.9 + 0.1 * Math.sin(swine.t * 9 + i) : 0.12 + 0.05 * Math.sin(p.gait * 2);
+                        p.hd += (hdGoal - p.hd) * Math.min(1, dt * 5);
+                        if (p.surf === 'floor') {
+                            const out = 3.4 * u;   // Boden ist die volle Canvas-Breite: einfach von der Buehne laufen lassen
+                            if ((p.m > 0 && p.t > L1 + out) || (p.m < 0 && p.t < L0 - out)) { swine.pigs.splice(i, 1); continue; }
+                        } else {
+                            // Fensterende: nie ueber die Kante hinaus (dahinter ist keine Flaeche) -> umdrehen oder verschwinden
+                            const margin = u * 0.55 * p.sc;
+                            if ((p.m > 0 && p.t > L1 - margin) || (p.m < 0 && p.t < L0 + margin)) {
+                                if (Math.random() < 0.5) p.m *= -1; else p.leaving = true;
+                            }
+                        }
+                    }
+                    const targetAl = p.leaving ? 0 : 1;
+                    p.al += (targetAl - p.al) * Math.min(1, dt * (p.leaving ? 3.2 : 2));
+                    if (p.leaving && p.al < 0.02) { swine.pigs.splice(i, 1); continue; }
                 }
-            }
-            // Schmalbildschirm (Handy): Fensterleisten oben/unten freihalten, sonst laufen die Tiere unsichtbar dahinter.
-            let swineInsetT = 0, swineInsetB = 0, swineInsetAt = -1e9;
-            function swineInsets() {
-                const now = performance.now();
-                if (now - swineInsetAt < 500) return;
-                swineInsetAt = now; swineInsetT = 0; swineInsetB = 0;
-                if (window.innerWidth > 700) return;
-                const k = canvas.height / window.innerHeight, hh = window.innerHeight / 2;
-                document.querySelectorAll('.script-window').forEach(w => {
-                    const r = w.getBoundingClientRect();
-                    if (r.width < 1 || r.height < 1) return;
-                    if (r.top > hh) swineInsetB = Math.max(swineInsetB, (window.innerHeight - r.top) * k);
-                    else swineInsetT = Math.max(swineInsetT, r.bottom * k);
-                });
-                swineInsetT = Math.min(swineInsetT, canvas.height * 0.3); swineInsetB = Math.min(swineInsetB, canvas.height * 0.3);
             }
             function swineUniforms(loc, dt, spd) {
                 swineStep(dt * 0.001, spd);
-                swineInsets();
-                const u = swineUnit(), W = canvas.width, H = canvas.height, mg = u * 0.15;
-                // Player-Vollbild spiegelt das Canvas mit "cover" in eine 16:9-Buehne: Randlaeufer bleiben im sichtbaren 16:9-Kern.
-                const ar = W / H;
-                const sy = (ar < 1.7778 && ar > 1.2) ? (H - W / 1.7778) / 2 : 0;
-                const sx = (ar > 1.7778 && ar < 2.6) ? (W - H * 1.7778) / 2 : 0;
+                const u = swineUnit();
                 swineA.fill(0); swineB.fill(0);
                 const n = Math.min(5, swine.pigs.length);
                 for (let i = 0; i < n; i++) {
                     const p = swine.pigs[i];
-                    // Kante: 0 unten (Fuesse zeigen zum Rand), 1 oben (kopfueber)
-                    let x, y, a, ax;
-                    if (p.edge === 0) { x = p.t; y = mg + sy + swineInsetB; a = 0; ax = 1; }
-                    else { x = p.t; y = H - mg - sy - swineInsetT; a = Math.PI; ax = -1; }
-                    swineA[i*4] = x; swineA[i*4+1] = y; swineA[i*4+2] = a; swineA[i*4+3] = p.m * ax * p.sc;
+                    // Immer aufrecht (Fuesse unten auf der Flaeche): keine Rotation, keine Kopfueber-Spiegelung mehr.
+                    swineA[i*4] = p.t; swineA[i*4+1] = p.y; swineA[i*4+2] = 0; swineA[i*4+3] = p.m * p.sc;
                     swineB[i*4] = p.gait; swineB[i*4+1] = p.mv; swineB[i*4+2] = p.hd; swineB[i*4+3] = p.al;
                 }
                 gl.uniform1f(loc.unit, u);
