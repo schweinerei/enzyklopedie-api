@@ -175,7 +175,7 @@
             settings_intensity: "INTENSITÄT",
             flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET", trace_hold_btn: "TRACE",
             flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
-            flash_hint: "Tasten F / G: F = kurzer Invers-Blitz, G = langsames Nachglühen — beide über dem Shaderbild (zusammen höchstens 3 pro Sekunde). Taste T: haelt die TRACE-Ausbrennung auf Maximum, solange gedrueckt, und laeuft beim Loslassen weich zum Sliderwert zurueck. AUTO löst den kurzen Blitz aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
+            flash_hint: "Tasten F / G: F = kurzer Invers-Blitz, G = langsames Nachglühen — beide über dem Shaderbild (zusammen höchstens 3 pro Sekunde). Taste T: hält die TRACE-Ausbrennung auf Maximum, solange gedrückt, und läuft beim Loslassen weich zum Sliderwert zurück. AUTO löst den kurzen Blitz aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
             
