@@ -705,7 +705,9 @@
                 if (i) { const sp = document.createElement('span'); sp.className = 'trenner'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = '|'; baumSpracheEl.appendChild(sp); }
                 const b = document.createElement('button'); b.type = 'button'; b.dataset.l = l; b.textContent = l.toUpperCase();
                 const ziel = cur ? eintragInSprache(cur, l) : null;
-                const ok = cur ? !!(ziel && ziel.audio && zugangErlaubt(ziel)) : audioDateien[l].length > 0 && !isRadioActive;
+                // Rico 26.09.: fehlt das laufende Kapitel in Sprache l, bleibt der Knopf trotzdem klickbar, sofern es
+                // in l ueberhaupt Audio gibt (z. B. RU: Roman ja, Physik noch nicht) - sonst kaeme man nie zum RU-Baum.
+                const ok = (cur && !!(ziel && ziel.audio && zugangErlaubt(ziel))) || (audioDateien[l].length > 0 && !isRadioActive);
                 const aktiv = cur ? cur.sprache === l : (!isRadioActive && l === aktuelleAudioSprache);
                 b.classList.toggle('aktiv', aktiv);
                 b.classList.toggle('aus', !ok);
@@ -723,7 +725,8 @@
             baumMeldung('');
             const f = stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
             const laeuft = !audioPlayer.paused && !audioPlayer.ended;
-            const ziel = f ? eintragInSprache(f.st.eintrag, l) : null;
+            const kand = f ? eintragInSprache(f.st.eintrag, l) : null;
+            const ziel = kand && kand.audio && zugangErlaubt(kand) ? kand : null;
             if (ziel) baumSpiele(ziel, 0, laeuft);
             else { aktuelleAudioSprache = l; loadAudioForLanguage(l, false); }
         });
