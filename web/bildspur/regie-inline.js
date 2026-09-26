@@ -1426,7 +1426,7 @@ window.BILDSPUR_INLINE["traktat-de-k04"] = {
     "kapitel": "k04",
     "sprache": "de",
     "audio_datei": "bildspur/audio/de_traktat_k04.mp3",
-    "audio_dauer_s": 274.99,
+    "audio_dauer_s": 267.87,
     "erzeugt_aus": "traktat-de-k04.regie.md",
     "alignment_quelle": "elevenlabs_forced_alignment",
     "header": {
@@ -1847,16 +1847,6 @@ window.BILDSPUR_INLINE["traktat-de-k04"] = {
         "blende": "weich 1.0",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0
-      },
-      {
-        "id": "cue-4-ue3",
-        "t_start": 268.22,
-        "typ": "ueberschrift",
-        "inhalt": "Zweiter Teil. Das Elektron – die Kavitation im Vakuum",
-        "dauer_hinweis": "bleibt",
-        "notiz": "t_start 268,22 s, steht 6,74 s. Teil-Ueberschrift, im Audio mitgelesen (268,2-273,6 s): woertlich als Ueberschrift getippt, kein Bild. Anker ohne Gedankenstrich (der Strich ist im Alignment ein eigenes Token). Steht bis Audioende (275,0 s). Leitstand pruefen (Offen 5).",
-        "blende": "tippen",
-        "abblende": "weich 1.0"
       }
     ]
   },
