@@ -1864,6 +1864,487 @@ window.BILDSPUR_INLINE["traktat-de-k04"] = {
   },
   "labels": null
 };
+window.BILDSPUR_INLINE["traktat-de-k05"] = {
+  "regie": {
+    "buch": "traktat",
+    "kapitel": "k05",
+    "sprache": "de",
+    "audio_datei": "bildspur/audio/de_traktat_k05.mp3",
+    "audio_dauer_s": 303.95,
+    "erzeugt_aus": "traktat-de-k05.regie.md",
+    "alignment_quelle": "elevenlabs_forced_alignment",
+    "header": {
+      "text": "Physik der Beziehungen · Kapitel 5. Die Krise der Quantenelektrodynamik"
+    },
+    "labels_datei": null,
+    "cues": [
+      {
+        "id": "cue-5-ue1",
+        "t_start": 0.0,
+        "typ": "ueberschrift",
+        "inhalt": "Zweiter Teil. Das Elektron – die Kavitation im Vakuum",
+        "dauer_hinweis": "7s",
+        "notiz": "Vorspann-Segment aus Kapitel 4 herausgeschnitten (vorspann-teil2-elektron-aus-k04.mp3, 7,030658 s, verlustarm per ffmpeg vor physik-de-k05.mp3 gesetzt). Format wie die entfernte Teil-Ueberschrift cue-4-ue3 (Kapitel 4, JOB-179). Kein Bild, steht bis Vorspannende, danach cue-1 (Kapiteltitel).",
+        "blende": "tippen",
+        "abblende": "weich 1.0"
+      },
+      {
+        "id": "cue-1",
+        "t_start": 7.551,
+        "typ": "ueberschrift",
+        "inhalt": "Die Krise der Quantenelektrodynamik",
+        "dauer_hinweis": "7s",
+        "notiz": "t_start 0,52 s, steht 7,34 s. Wie Kapitel 2-4 Cue 1. 7 s, danach 0,3 s Shader bis 5-02.",
+        "blende": "weich 1.0",
+        "abblende": "weich 1.0"
+      },
+      {
+        "id": "cue-5-02",
+        "t_start": 14.891,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, Kapitel-4-Schlussbild N15): der singende Planet, Wellenmuster grau, Kratone gold. Das Kapitel beginnt, wo Kapitel 4 endete.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 7,86 s, steht 5,52 s. Erstes Bild nach der Ueberschrift, darum weich 4.0 (wie 3-02). Rueckgriff mit Sinn: \"Der Weg vom singenden Planeten\" (5,8 s).",
+        "blende": "weich 4.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k04-cue4-41.png"
+      },
+      {
+        "id": "cue-5-03",
+        "t_start": 20.411,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N6): das Wellenmuster-Bild k03-cue3-03 auf ein Viertel verkleinert, gleiche Mitte 957/518, ringsum nur Schwarz. Der Blick geht nach aussen: der Planet wird klein.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 13,38 s, steht 8,44 s. Bild-zu-Bild k03-cue3-03 (reine Skalierung um die Master-Mitte). Keine Sterne, keine Galaxien (Bildlinie Regel 11): \"nach aussen\" ist nur der Massstab.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-03.png"
+      },
+      {
+        "id": "cue-5-04",
+        "t_start": 28.851,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N7): derselbe Planet auf 6 Prozent verkleinert (Radius 25 px): nur noch drei winzige Kreise, der innerste (Innenkern) als goldener Punkt. Fast nur noch ein Punkt in der Bildmitte.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 21,82 s, steht 8,88 s. Bild-zu-Bild 5-03 (unmittelbarer Vorgaenger). Der goldene Innenkern-Punkt wird in 5-06 zum Elektron (gleiche Stelle, gleiche Groesse). Der Uebergang Erde -> Quantenwelt ohne ein Wort: der Planet schrumpft auf den Punkt, an dem spaeter das Elektron sitzt (Master-Punkt = Erdmitte 957/518). Traegt \"im Herzen der fundamentalsten Bausteine der Materie\" (25,7 s).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-04.png"
+      },
+      {
+        "id": "cue-5-05",
+        "t_start": 37.731,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N3, V-Bild Diagramm): der Grundbaustein der QED als Feynman-Vertex: zwei Elektronenlinien mit Pfeil treffen sich in einem Punkt, von dem eine Wellenlinie (Photon) abgeht; der Vertex-Punkt in Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 30,70 s, steht 12,14 s. Neue Motivfamilie \"Diagramm\" (N3 -> N10 -> N11), Stil = Linienzeichnung wie alle Tafeln, ohne Buchstaben. Physik: der QED-Vertex (Elektron-Photon-Kopplung) ist die \"Wechselwirkung von Licht und Materie\". Traegt \"der Quantenelektrodynamik\" (38,2 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-05.png"
+      },
+      {
+        "id": "cue-5-06",
+        "t_start": 49.871,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N2): der Master-Punkt: ein einziger goldener Punkt in der Bildmitte 957/518, sonst nichts. Das Elektron.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 42,84 s, steht 12,54 s. Serien-Vorlage Master-Punkt (N1/N2): das Elektron sitzt genau dort, wo in Kapitel 1-4 die Erdmitte sass. Traegt \"Das Elektron, so lernen wir es in der Schule, ist ein Elementarteilchen\" und \"punktfoermiger Baustein\" (51,0 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-06.png"
+      },
+      {
+        "id": "cue-5-08",
+        "t_start": 62.411,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N1, V-Bild Master-Punkt): Punkt Weiss, zwoelf radiale Feldlinien bis zum Radius der alten Erdkontur, offene Pfeile zeigen ZUM Punkt; Feldlinien Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 55,38 s, steht 10,32 s. Bild-zu-Bild N2 (gleiche Mitte). Physik: negative Punktladung, Feldlinien radial nach innen, gleiche Winkelabstaende (Dichte faellt dann von selbst mit 1/r^2). Das Schulbild vom kreisenden Elektron (58,4 s \"den Atomkern umkreist\") wird bewusst NICHT gezeichnet: physikalisch ueberholt (Screening 5-02).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-08.png"
+      },
+      {
+        "id": "cue-5-09",
+        "t_start": 72.731,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N2): nur der goldene Punkt. Einfach, wohldefiniert.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 65,70 s, steht 5,58 s. Rueckgriff mit Sinn: \"einfaches Objekt\" = der nackte Punkt. Gleiche Geometrie wie 5-08, darum Ueberblendung.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-06.png"
+      },
+      {
+        "id": "cue-5-10",
+        "t_start": 78.311,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N8): Punkt mit den zwoelf Feldlinien aus 5-08 in Weiss, dazu ein kurzer goldener Pfeil senkrecht durch den Punkt (Spin).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 71,28 s, steht 10,78 s. Bild-zu-Bild N1. Physik: Spinpfeil ist Veranschaulichung (wie Kap. 3 N17), kein klassischer Kreisel; Masse ist nicht zeichenbar und wird nicht behauptet. Traegt \"mit extremer Praezision vermessen\" und \"Die Quantenelektrodynamik (QED)\" (77,5 s).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-10.png"
+      },
+      {
+        "id": "cue-5-11",
+        "t_start": 89.091,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N3): der Feynman-Vertex, Elektron trifft Photon.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 82,06 s, steht 11,36 s. Rueckgriff mit Sinn: der Satz definiert die QED woertlich als das, was N3 zeigt.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-05.png"
+      },
+      {
+        "id": "cue-5-12",
+        "t_start": 100.451,
+        "typ": "formel",
+        "inhalt": "a_e = \\frac{g-2}{2}, \\qquad a_e^{\\text{Theorie}} = a_e^{\\text{Messung}} \\;\\; (\\text{zehn Dezimalstellen})",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 93,42 s, steht 10,42 s. Schritte bei 93,42, 99,64 s. Formel statt Bild: das anomale Moment ist per Definition a_e = (g-2)/2 (g = g-Faktor des Elektrons; Dirac-Wert 2); die Uebereinstimmung \"auf zehn Dezimalstellen\" steht woertlich im Text. Keine Zahl, die der Text nicht nennt (der Messwert 0,00115965218... bleibt draussen). Leitstand pruefen (Offen 3): Definition ist nicht woertlich im Text.",
+        "blende": "hart",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "schritte": [
+          {
+            "t": 93.42,
+            "katex": "",
+            "zeigt": "a_e = (g-2)/2 hervorgehoben"
+          },
+          {
+            "t": 99.64,
+            "katex": "",
+            "zeigt": "vollstaendig: Theorie = Messung (zehn Dezimalstellen)"
+          }
+        ]
+      },
+      {
+        "id": "cue-5-13",
+        "t_start": 110.871,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N1): Punkt mit zwoelf goldenen Feldlinien. \"an diesem Bild zu zweifeln\" = das Bild des Punktes.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 103,84 s, steht 9,20 s. Rueckgriff mit Sinn: \"diesem Bild\" = das Punktbild (5-08).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-08.png"
+      },
+      {
+        "id": "cue-5-14",
+        "t_start": 120.071,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N9): Punkt mit 36 radialen Feldlinien (Weiss), ihre innersten Stuecke bis Radius 70 in Gold: dort draengen sich die Linien ohne Ende zusammen.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 113,04 s, steht 8,54 s. Bild-zu-Bild N1 (gleiche Mitte, 24 Linien mehr). Physik: Liniendichte = Feldstaerke ~ 1/r^2, im Punkt unbegrenzt; Gold sitzt auf der Stelle, an der die Theorie unendlich wird.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-14.png"
+      },
+      {
+        "id": "cue-5-15",
+        "t_start": 128.611,
+        "typ": "tafel",
+        "inhalt": "Es ist das Problem der Unendlichkeiten.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 121,58 s, steht 8,18 s. Tafel (woertlich, ganzer Satz). Steht ueber \"Betrachtet man das Elektron als das, was die Theorie im Kern postuliert\".",
+        "blende": "weich 2.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0
+      },
+      {
+        "id": "cue-5-16",
+        "t_start": 136.79,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N2): nur der goldene Punkt. Der perfekte, dimensionslose Punkt.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 129,76 s, steht 7,26 s. Rueckgriff auf dem Wort \"Punkt\". Traegt \"so ist dort die Ladungsdichte unendlich\" (133,7 s): Ladung ohne Ausdehnung = unendliche Dichte.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-06.png"
+      },
+      {
+        "id": "cue-5-17",
+        "t_start": 144.051,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N5, V-Bild Tafel K5): Tafel-Rahmen aus Kapitel 3 (leerer Resonator, Waende Weiss, Achse gestrichelt); die linke Wand steht fuer den Punkt; eine goldene Kurve steigt zur linken Wand hin ohne Grenze an (Hyperbel), nach rechts faellt sie auf die Achse zu.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 137,02 s, steht 5,44 s. Bild-zu-Bild k03-cue3-04. Physik: Feldenergie ausserhalb des Radius r einer Punktladung waechst wie 1/r (Hyperbel, keine Exponentialkurve); r = 0 an der linken Wand. Keine Achsenbeschriftung.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-17.png"
+      },
+      {
+        "id": "cue-5-18",
+        "t_start": 149.491,
+        "typ": "formel",
+        "inhalt": "m_{\\text{träge}} = \\frac{E_{\\text{Feld}}}{c^2} \\;\\longrightarrow\\; \\infty",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 142,46 s, steht 9,78 s. Schritte bei 142,46, 145,32, 149,22 s. Formel woertlich aus dem Satz: \"Die traege Masse ... ist der in diesem Feld gespeicherten Energie aequivalent\" = m = E/c^2 (spezielle Relativitaetstheorie); \"muesste ebenfalls unendlich sein\" = -> unendlich.",
+        "blende": "hart",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "schritte": [
+          {
+            "t": 142.46,
+            "katex": "",
+            "zeigt": "m_träge hervorgehoben"
+          },
+          {
+            "t": 145.32,
+            "katex": "",
+            "zeigt": "E_Feld / c^2 hervorgehoben"
+          },
+          {
+            "t": 149.22,
+            "katex": "",
+            "zeigt": "vollstaendig mit Pfeil -> unendlich"
+          }
+        ]
+      },
+      {
+        "id": "cue-5-19",
+        "t_start": 159.271,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N9): die goldene, unendlich dichte Mitte. Das nackte Elektron als Singularitaet.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 152,24 s, steht 9,08 s. Rueckgriff mit Sinn: \"eine Singularitaet\" (159,4 s) = die Stelle, die 5-14 gezeigt hat.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-14.png"
+      },
+      {
+        "id": "cue-5-20",
+        "t_start": 168.351,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N10): Feynman-Diagramm der Selbstenergie: eine waagerechte Elektronenlinie mit Pfeil, darueber ein Photon-Bogen (Wellenlinie), der an der Linie ausgesandt und wieder eingefangen wird; der Bogen in Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 161,32 s, steht 12,04 s. Bild-zu-Bild N3 (Stil). Physik: die Ein-Schleifen-Selbstenergie ist genau die divergente Groesse, die die Renormierung behandelt; das Elektron wechselwirkt mit seinem eigenen Feld. Traegt \"die Renormierung\" (171,3 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-20.png"
+      },
+      {
+        "id": "cue-5-21",
+        "t_start": 180.391,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N5): die goldene, zur Wand divergierende Kurve. \"die unendliche nackte Ladung und die unendliche Selbstenergie\".",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 173,36 s, steht 10,56 s. Rueckgriff: dieselbe Unendlichkeit wie 5-17, jetzt als die eine Seite der Rechnung. Ab hier Folge N5 -> N15 -> N16 im selben Rahmen.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-17.png"
+      },
+      {
+        "id": "cue-5-22",
+        "t_start": 190.951,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N15): die Kurve aus 5-17 jetzt Weiss; dazu ihr Spiegelbild unter der Achse (ebenso unendlich, entgegengesetzt) in Gold, um einen festen Betrag angehoben.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 183,92 s, steht 9,78 s. Bild-zu-Bild N5 (unmittelbarer Vorgaenger ist WA derselben Datei). Physik: schematisch, keine Messkurve; die Summe wird erst bei 247,5 s gezeigt (5-30), wenn der Text sie ausspricht. Traegt \"die von der Wechselwirkung des Elektrons mit dem Vakuum herruehrt\" (189,0 s).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-22.png"
+      },
+      {
+        "id": "cue-5-23",
+        "t_start": 200.731,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N2): der goldene Punkt allein im Leeren.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 193,70 s, steht 5,64 s. Rueckgriff mit Sinn: das Vakuum \"als leeres Nichts\" - der Punkt allein - direkt bevor der See erscheint (5-24).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-06.png"
+      },
+      {
+        "id": "cue-5-24",
+        "t_start": 206.371,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N4, V-Bild Vakuum): das ganze Bild voller kleiner virtueller Paare (Vollpunkt + Hohlpunkt, durch eine kurze Linie verbunden), zufaellig verteilt und gerichtet, Grau. Kein Elektron.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 199,34 s, steht 8,88 s. Neue Motivfamilie Vakuum (N4 -> N12 -> N13 -> N14 -> N17). Physik: \"so das Bild der QED\" - virtuelle Paare sind eine Veranschaulichung, keine beobachtbaren Teilchen. Vollpunkt = Elektron (negativ), Hohlpunkt = Positron (positiv): ohne Schrift unterscheidbar (Screening offen, hiermit festgelegt).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-24.png"
+      },
+      {
+        "id": "cue-5-25",
+        "t_start": 215.251,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N11): Feynman-Diagramm einer Vakuumschleife: ein geschlossener Kreis mit zwei Pfeilen im selben Umlaufsinn, ohne aeussere Linien, in Gold. Ein Paar entsteht und vergeht.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 208,22 s, steht 5,04 s. Bild-zu-Bild N3 (Stil Diagramm). Physik: die geschlossene Elektron-Positron-Schleife ohne aeussere Linien ist genau \"aus dem Nichts auftauchen und wieder verschwinden\".",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-25.png"
+      },
+      {
+        "id": "cue-5-26",
+        "t_start": 220.291,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N12): der See aus 5-24, in der Mitte das Elektron (weisser Punkt); in seiner Naehe sind die Paare radial ausgerichtet, Hohlpunkt (positiv) zum Elektron, nach aussen immer weniger geordnet; die ausgerichteten Paare in Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 213,26 s, steht 9,56 s. Bild-zu-Bild N4 (nicht unmittelbarer Vorgaenger). Physik: Vakuumpolarisation: das positive Ende zeigt zur negativen Ladung, die Ordnung nimmt nach aussen ab. Traegt \"und huellt sich in eine schuetzende Wolke\" (217,7 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-26.png"
+      },
+      {
+        "id": "cue-5-27",
+        "t_start": 229.851,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N13): 5-26 mit Paaren in Weiss; 24 radiale Feldlinien enden am Elektron: 16 kurze beginnen an den Hohlpunkten der Wolke (Gold), 8 lange kommen von weit aussen (Weiss).",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 222,82 s, steht 6,80 s. Bild-zu-Bild 5-26. Physik: Feldlinien enden nur an Ladungen; nahe am Elektron sieht man die volle (nackte) Ladung, die Wolke liefert einen Teil der Linien selbst. Qualitativ; in der QED waechst die Abschirmung logarithmisch.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-27.png"
+      },
+      {
+        "id": "cue-5-28",
+        "t_start": 236.651,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N14): 5-27 pixelgleich, Gold wandert: die 16 kurzen Linien Weiss, die 8 langen Linien Gold. Was der ferne Beobachter sieht.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 229,62 s, steht 8,34 s. Bild-zu-Bild 5-27. Gold-Logik: der Satz nennt die effektive Ladung = die Linien, die bis nach aussen reichen (Gauss: Linienzahl ~ eingeschlossene Ladung).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-28.png"
+      },
+      {
+        "id": "cue-5-29",
+        "t_start": 244.991,
+        "typ": "formel",
+        "inhalt": "e_{\\text{eff}} = \\underbrace{e_{\\text{nackt}}}_{\\infty} - \\underbrace{\\delta e_{\\text{Vakuum}}}_{\\infty}",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 237,96 s, steht 9,50 s. Schritte bei 237,96, 242,92 s. Formel woertlich aus Z. 9/11 des Textes: nackte Ladung (unendlich) minus Vakuumbeitrag (ebenso unendlich) = endliche effektive Ladung. Keine Zahl.",
+        "blende": "hart",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "schritte": [
+          {
+            "t": 237.96,
+            "katex": "",
+            "zeigt": "e_nackt und delta e_Vakuum (beide unendlich) hervorgehoben"
+          },
+          {
+            "t": 242.92,
+            "katex": "",
+            "zeigt": "vollstaendig: e_eff links hervorgehoben (endlich)"
+          }
+        ]
+      },
+      {
+        "id": "cue-5-30",
+        "t_start": 254.491,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N16): derselbe Tafel-Rahmen, beide divergierenden Kurven Grau; ihre Summe als waagerechte goldene Linie in festem Abstand ueber der Achse, von Wand zu Wand. Unendlich minus Unendlich ergibt etwas Endliches.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 247,46 s, steht 10,78 s. Bild-zu-Bild N15 (nicht unmittelbarer Vorgaenger). Amplitudenpflicht (Bildlinie Abschn. 14): die Goldlinie ist exakt die Summe beider Kurven. Traegt \"Aber sie wirft eine fundamentale, beunruhigende Frage auf\" (251,9 s).",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-30.png"
+      },
+      {
+        "id": "cue-5-31",
+        "t_start": 265.271,
+        "typ": "tafel",
+        "inhalt": "Shut up and calculate!",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 258,24 s, steht 9,94 s. Tafel, woertlich. Abweichung vom Default weich 2.0: das Diktum ist eine Pointe und sitzt auf dem Wort (Dramaturgie-Regel). Steht ueber \"Was, wenn dieser mathematische Trick kein blosses Rechenverfahren\".",
+        "blende": "hart",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0
+      },
+      {
+        "id": "cue-5-32",
+        "t_start": 275.211,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N14): die abgeschirmte Ladung, lange Feldlinien Gold. Der \"Trick\" als physikalische Wirklichkeit.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 268,18 s, steht 5,36 s. Rueckgriff mit Sinn: die physikalische Realitaet hinter der Rechnung ist das Abschirmbild.",
+        "blende": "weich 2.5",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-28.png"
+      },
+      {
+        "id": "cue-5-33",
+        "t_start": 280.571,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N12): die polarisierte Wolke, ausgerichtete Paare Gold.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 273,54 s, steht 5,60 s. Rueckgriff mit Sinn: \"die virtuelle Wolke\" = 5-26. Gleiche Geometrie wie 5-32, darum Ueberblendung.",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-26.png"
+      },
+      {
+        "id": "cue-5-34",
+        "t_start": 286.171,
+        "typ": "skizze",
+        "inhalt": "Motiv (Briefing N17): die Paare der Wolke ordnen sich auf fuenf konzentrische Ringe in gleichem Abstand, nach aussen schwaecher (kuerzere Paare); Ringpaare Gold, der Rest des Sees Grau.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[NEU] t_start 279,14 s, steht 6,06 s. Bild-zu-Bild N12. Physik: Bild der FRAGE des Textes (\"Was, wenn ... strukturiertes Objekt\") und Vorgriff auf Kapitel 6 (stehende Welle der Vakuumpolarisation). Lehrbuch-QED: die Polarisation faellt monoton ab, sie schwingt nicht. Falls als radiale stehende Welle: in 3D sin(kr)/r, also GLEICHE Ringabstaende, nach aussen abnehmend. Rico-Frage K5 (Offen 1).",
+        "blende": "weich 1.0 ueberblenden",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-34.png"
+      },
+      {
+        "id": "cue-5-35",
+        "t_start": 292.231,
+        "typ": "skizze",
+        "inhalt": "Wiederaufnahme (WA, N9): die goldene Mitte, in der die Feldlinien ohne Ende zusammenlaufen. Die Unendlichkeit als Fingerzeig.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "[WA] t_start 285,20 s, steht 5,72 s. Schlussbild vor der Tafel, darum weich 4.0. Rueckgriff mit Sinn: \"die Unendlichkeiten der Theorie\" = 5-14.",
+        "blende": "weich 4.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0,
+        "asset": "bildspur/assets/traktat-de-k05-cue5-14.png"
+      },
+      {
+        "id": "cue-5-36",
+        "t_start": 297.951,
+        "typ": "tafel",
+        "inhalt": "Der Fingerzeig auf eine tiefere, verborgene Schicht der Wirklichkeit.",
+        "dauer_hinweis": "bleibt",
+        "notiz": "t_start 290,92 s, steht 5,99 s. Schlusstafel wie Kap. 2-4 (letzte Worte, erstes Wort gross gesetzt wie 3-66). Vorschlag a; Alternative b \"Sie funktioniert. Sie ist ein mathematisches Meisterwerk.\" Steht bis Audioende (296,9 s).",
+        "blende": "weich 1.0",
+        "abblende": "weich 1.0",
+        "max_stand_s": 30.0
+      }
+    ]
+  },
+  "labels": null
+};
 window.BILDSPUR_INLINE["traktat-en-k01"] = {
   "regie": {
     "buch": "traktat",

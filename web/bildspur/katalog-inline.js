@@ -143,9 +143,10 @@ window.KATALOG_INLINE = {
    "teil": "kapitel",
    "nr": "5",
    "titel": "Die Krise der Quantenelektrodynamik",
-   "audio": null,
-   "status": "folgt",
-   "zugang": "frei"
+   "audio": "audio/de_traktat_k05.mp3",
+   "status": "bebildert",
+   "zugang": "frei",
+   "regie": "bildspur/traktat-de-k05.regie.json"
   },
   {
    "buch": "physik",
