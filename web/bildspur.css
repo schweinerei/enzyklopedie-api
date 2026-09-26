@@ -184,7 +184,7 @@
 
 .bs-typ-verortung {
     font-size: 15px;
-    color: var(--bs-accent);
+    color: var(--bs-text);   /* JOB-186: wie Tafel - im Vollbild ohne Shader sonst grau (#666) */
     letter-spacing: 0.5px;
     border-top: 1px dashed var(--bs-border);
     border-bottom: 1px dashed var(--bs-border);
