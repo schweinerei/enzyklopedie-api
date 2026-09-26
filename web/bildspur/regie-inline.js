@@ -1300,10 +1300,37 @@ window.BILDSPUR_INLINE["traktat-de-k03"] = {
         "typ": "rechnung",
         "inhalt": "u_B = \\frac{B^2}{2\\mu_0} \\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\approx 2500 \\cdot u_{\\mathrm{ph}}, \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}",
         "dauer_hinweis": "bleibt",
-        "notiz": "t_start 420,50 s, steht 17,12 s. Rechnung wie gesprochen: der Text nennt Feldstaerke, Ergebnis und \"das Zweieinhalbtausendfache\"; u_B = B^2/2mu_0 folgt zwingend (\"berechnet aus der geschaetzten Feldstaerke\"). Nachgerechnet: (2,5e-3 T)^2 / (2 x 4 pi x 1e-7) = 2,49 J/m^3; 2,5 / 1e-3 = 2500. Steht 17,1 s (laengster Abstand des Kapitels), mit Schritten nach 3,3 und 10,1 s. Formel-Marker (teil / htmlClass) setzt rico-webdev; der Konverter kennt das Feld nicht. JOB-168: leere Schritte entfernt (zeigten leere Buehne), volle Rechnung steht von Anfang an.",
+        "notiz": "t_start 420,50 s, steht 17,12 s. Rechnung wie gesprochen: der Text nennt Feldstaerke, Ergebnis und \"das Zweieinhalbtausendfache\"; u_B = B^2/2mu_0 folgt zwingend (\"berechnet aus der geschaetzten Feldstaerke\"). Nachgerechnet: (2,5e-3 T)^2 / (2 x 4 pi x 1e-7) = 2,49 J/m^3; 2,5 / 1e-3 = 2500. Steht 17,1 s (laengster Abstand des Kapitels), mit Schritten nach 3,3 und 10,1 s. Formel-Marker (teil / htmlClass) setzt rico-webdev; der Konverter kennt das Feld nicht. JOB-168: leere Schritte entfernt (zeigten leere Buehne), volle Rechnung steht von Anfang an. JOB-169 (Rico 26.09. 14:07 \"nicht interessant, ueberragt die Bildflaeche, Einzelschritte, gold worueber gesprochen wird\"): 5 Schritte an Wortzeiten (420,5 Energiedichte / 423,8 berechnet aus Feldstaerke / 427,4 von etwa 2,5 mT / 430,6 betraegt 2,5 J/m3 / 434,6 Zweieinhalbtausendfache), untereinander statt einer Zeile, gesprochener Teil gold #ffcc33.",
         "blende": "hart",
         "abblende": "weich 1.0",
-        "max_stand_s": 30.0
+        "max_stand_s": 30.0,
+        "schritte": [
+          {
+            "t": 420.5,
+            "katex": "\\begin{aligned}{\\color{#ffcc33} u_B}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 423.78,
+            "katex": "\\begin{aligned}u_B &= {\\color{#ffcc33}\\frac{B^2}{2\\mu_0}}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 427.4,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] {\\color{#ffcc33} B} &\\approx {\\color{#ffcc33} 2{,}5\\,\\mathrm{mT}}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 430.6,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2{,}5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx {\\color{#ffcc33} 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 434.6,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2{,}5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\\\[6pt] &\\approx {\\color{#ffcc33} 2500 \\cdot u_{\\mathrm{ph}}} \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}\\end{aligned}",
+            "zeigt": ""
+          }
+        ]
       },
       {
         "id": "cue-3-59",
