@@ -563,7 +563,41 @@
    "nr": "1",
    "titel": "The Hollow Cavity Resonator Earth",
    "audio": "audio/en_traktat_k01.mp3",
-   "status": "audio",
+   "status": "bebildert",
+   "zugang": "frei",
+   "regie": "bildspur/traktat-en-k01.regie.json"
+  },
+  {
+   "buch": "physik",
+   "sprache": "en",
+   "teil": "kapitel",
+   "nr": "2",
+   "titel": "The Condensation of the Inner Core",
+   "audio": "audio/en_traktat_k02.mp3",
+   "regie": "bildspur/traktat-en-k02.regie.json",
+   "status": "bebildert",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "en",
+   "teil": "kapitel",
+   "nr": "3",
+   "titel": "The Planetary Laser",
+   "audio": "audio/en_traktat_k03.mp3",
+   "regie": "bildspur/traktat-en-k03.regie.json",
+   "status": "bebildert",
+   "zugang": "frei"
+  },
+  {
+   "buch": "physik",
+   "sprache": "en",
+   "teil": "kapitel",
+   "nr": "4",
+   "titel": "The Cratons: The Bells of the Planetary Laser",
+   "audio": "audio/en_traktat_k04.mp3",
+   "regie": "bildspur/traktat-en-k04.regie.json",
+   "status": "bebildert",
    "zugang": "frei"
   },
   {

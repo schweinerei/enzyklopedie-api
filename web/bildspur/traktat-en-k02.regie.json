@@ -1,0 +1,179 @@
+{
+ "buch": "traktat",
+ "kapitel": "k02",
+ "sprache": "en",
+ "audio_datei": "audio/en_traktat_k02.mp3",
+ "audio_dauer_s": 329.42,
+ "erzeugt_aus": "b2-en-hoerbuch-master.txt (JOB-167)",
+ "alignment_quelle": "elevenlabs_forced_alignment",
+ "header": {
+  "text": "The Physics of Relations · Chapter 2. The Condensation of the Inner Core"
+ },
+ "labels_datei": null,
+ "cues": [
+  {
+   "id": "cue-1",
+   "t_start": 0.54,
+   "typ": "ueberschrift",
+   "inhalt": "The Condensation of the Inner Core",
+   "dauer_hinweis": "8s",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-1, DE-Anker t=0.52). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 1.0",
+   "abblende": "weich 1.0"
+  },
+  {
+   "id": "cue-2-01",
+   "t_start": 5.62,
+   "typ": "skizze",
+   "inhalt": "The fundamental tone in the still-full liquid core: master circle, a golden standing wave of four lens shapes from center to boundary, no inner core yet.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-01, DE-Anker t=9.38). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 4.0",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-01.png"
+  },
+  {
+   "id": "cue-2-02",
+   "t_start": 33.4,
+   "typ": "skizze",
+   "inhalt": "Same drawing, the wave dimmed to grey, a small open gold circle at the center where all four lenses meet.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-02, DE-Anker t=42.72). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-02.png"
+  },
+  {
+   "id": "cue-2-03",
+   "t_start": 50.98,
+   "typ": "skizze",
+   "inhalt": "The homogeneous sphere with unequal gravity arrows, now with a small open gold circle at the center where net force is zero.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-03, DE-Anker t=59.42). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-03.png"
+  },
+  {
+   "id": "cue-2-04",
+   "t_start": 75.04,
+   "typ": "skizze",
+   "inhalt": "The core noise fading softly toward the middle: the zone of stillness before the crystal.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-04, DE-Anker t=89.28). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 4.0",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-04.png"
+  },
+  {
+   "id": "cue-2-05",
+   "t_start": 79.9,
+   "typ": "skizze",
+   "inhalt": "The same image, a tiny golden crystal seed at the calm center: a triangular lattice of nineteen points.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-05, DE-Anker t=97.72). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 1.0 ueberblenden",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-05.png"
+  },
+  {
+   "id": "cue-2-09",
+   "t_start": 141.38,
+   "typ": "skizze",
+   "inhalt": "Split image: left the Earth with a full liquid core, right the same Earth with a solid inner core as a fine triangular lattice.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-09, DE-Anker t=165.08). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 4.0",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-09.png"
+  },
+  {
+   "id": "cue-2-10",
+   "t_start": 169.22,
+   "typ": "skizze",
+   "inhalt": "Master circle dimmed to grey, only the new inner-core boundary highlighted in gold, the inner core as a grey triangular lattice.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-10, DE-Anker t=190.42). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-10.png"
+  },
+  {
+   "id": "cue-2-11",
+   "t_start": 195.58,
+   "typ": "skizze",
+   "inhalt": "Zoomed view of the inner-core boundary: two wave bundles striking and reflecting off the inner-core arc, one reflection point marked in gold.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-11, DE-Anker t=221.88). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-11.png"
+  },
+  {
+   "id": "cue-2-12",
+   "t_start": 203.26,
+   "typ": "skizze",
+   "inhalt": "Two-walled cavity frame, the inner core as a block at its center with golden walls; each of the two shorter cavities holds a standing wave with two antinodes.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-12, DE-Anker t=230.2). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "hart",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-12.png"
+  },
+  {
+   "id": "cue-2-14",
+   "t_start": 235.0,
+   "typ": "skizze",
+   "inhalt": "Closest sphere packing seen from above: touching circles in a triangular lattice, a gold hexagon drawn around the central sphere.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-14, DE-Anker t=267.58). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-14.png"
+  },
+  {
+   "id": "cue-2-15",
+   "t_start": 248.06,
+   "typ": "skizze",
+   "inhalt": "The same lattice bent around the inner-core circle, enlarged; six lattice points at the rim marked in gold as five-neighbor defects.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-15, DE-Anker t=280.22). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-15.png"
+  },
+  {
+   "id": "cue-2-16",
+   "t_start": 277.46,
+   "typ": "skizze",
+   "inhalt": "The same inner-core circle, the lattice reduced to points, each vertical row displaced sideways in a sine wave, a gold line running through the displaced middle row.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-16, DE-Anker t=314.38). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 2.5",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-16.png"
+  },
+  {
+   "id": "cue-2-17",
+   "t_start": 313.52,
+   "typ": "skizze",
+   "inhalt": "Master circle with inner core: standing-wave pattern across all three shells in lens shapes—gold in the inner core, white in the liquid shell, grey in the mantle.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-17, DE-Anker t=347.52). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 4.0",
+   "abblende": "weich 1.0",
+   "asset": "bildspur/assets/traktat-de-k02-cue2-17.png"
+  },
+  {
+   "id": "cue-2-18",
+   "t_start": 324.1,
+   "typ": "tafel",
+   "inhalt": "It had acquired a voice.",
+   "dauer_hinweis": "bleibt",
+   "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-2-18, DE-Anker t=360.02). Bild/Asset/Blende unveraendert von DE uebernommen.",
+   "blende": "weich 1.0",
+   "abblende": "weich 1.0"
+  }
+ ],
+ "uebergang": "schwarz"
+}
