@@ -64,8 +64,6 @@
             settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh", vis_cmd_aria: "Command line", vis_cmd_on: "root@schweinerei:~# mixer, trace, flash, auto mod unlocked — type 'exit' to lock again", vis_cmd_off: "root@schweinerei:~# locked", vis_cmd_unknown: "command not found",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
-            sh4_name: "SH 4: SWINE",
-            sh4_hint: "SH 4: wild boars (line figures) trot along the bottom edge and on top of open windows. Music running: bigger herd, faster trot.",
             flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
             flash_reduced: "Flash off: reduced motion is set", flash_wait: "Flash: max. 3 per second",
             flash_hint: "FLASH: short inverted flash over the shader picture (max. 3 per second). AUTO fires when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
@@ -173,8 +171,6 @@
             settings_header: ">_ conf vis", badge_offline: "[OFFLINE]", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh", vis_cmd_aria: "Befehlszeile", vis_cmd_on: "root@schweinerei:~# mischpult, trace, flash, auto mod frei — 'exit' schliesst wieder ab", vis_cmd_off: "root@schweinerei:~# abgeschlossen", vis_cmd_unknown: "command not found",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
-            sh4_name: "SH 4: SCHWEINE",
-            sh4_hint: "SH 4: Wildschweine (Strichfiguren) traben am unteren Rand und auf den Oberkanten offener Fenster. Bei laufender Musik: größere Rotte, schnellerer Trab.",
             flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
             flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
             flash_hint: "FLASH: kurzer Invers-Blitz über dem Shaderbild (höchstens 3 pro Sekunde). AUTO löst aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
@@ -282,8 +278,6 @@
             settings_header: ">_ conf vis", badge_offline: "[ОФЛАЙН]", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh", vis_cmd_aria: "Командная строка", vis_cmd_on: "root@schweinerei:~# микшер, trace, flash, auto mod открыты — 'exit' снова закрывает", vis_cmd_off: "root@schweinerei:~# заблокировано", vis_cmd_unknown: "command not found",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
-            sh4_name: "SH 4: СВИНЬИ",
-            sh4_hint: "SH 4: кабаны (контурные фигуры) трусят вдоль нижнего края и по верхним краям открытых окон. При музыке: стая больше, бег быстрее.",
             flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
             flash_reduced: "Вспышка выключена: включено уменьшение анимации", flash_wait: "Вспышка: не чаще 3 раз в секунду",
             flash_hint: "ВСПЫШКА: короткая инверсия картинки шейдера (не чаще 3 раз в секунду). АВТО срабатывает при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
@@ -464,6 +458,7 @@
         
         // STANDARD SHADER SETTINGS
         let activeShader = parseInt(localStorage.getItem('active_shader')) || 0;
+        if(activeShader > 3) { activeShader = 0; localStorage.setItem('active_shader', 0); }
         let currentBrightness = parseFloat(localStorage.getItem('shader_brightness')) || 0.45;
         let storedSpeed = localStorage.getItem('shader_speed');
         let currentSpeed = storedSpeed !== null ? parseFloat(storedSpeed) : 0.2;
@@ -472,13 +467,13 @@
         // ADVANCED SHADER SETTINGS
         let isAdvancedMode = localStorage.getItem('adv_mode') === 'true';
         let currentAutoMode = localStorage.getItem('adv_auto_mode') || 'off'; // LFO State
-        let advIntensity = [0.0, 0.3, 0.3, 0.3, 0.5];
-        let advSpeed = [0.0, 1.5, 0.2, 0.2, 0.2];
-        let advHue = [0.0, 0.0, 0.0, 0.0, 0.0];
-        let advTime = [0.0, 0.0, 0.0, 0.0, 0.0];
+        let advIntensity = [0.0, 0.3, 0.3, 0.3];
+        let advSpeed = [0.0, 1.5, 0.2, 0.2];
+        let advHue = [0.0, 0.0, 0.0, 0.0];
+        let advTime = [0.0, 0.0, 0.0, 0.0];
         let advTrace = parseFloat(localStorage.getItem('adv_trace')) || 0.0;
         
-        for(let i=1; i<=4; i++) {
+        for(let i=1; i<=3; i++) {
             let sI = localStorage.getItem(`adv_intensity_${i}`);
             let sS = localStorage.getItem(`adv_speed_${i}`);
             let sH = localStorage.getItem(`adv_hue_${i}`);
@@ -492,7 +487,7 @@
         
         // Caching slider nodes for fast visual LFO updates
         const sliderNodes = { int: [], spd: [], hue: [] };
-        for(let i=1; i<=4; i++) {
+        for(let i=1; i<=3; i++) {
             sliderNodes.int[i] = document.querySelector(`.adv-intensity[data-target="${i}"]`);
             sliderNodes.spd[i] = document.querySelector(`.adv-speed[data-target="${i}"]`);
             sliderNodes.hue[i] = document.querySelector(`.adv-hue[data-target="${i}"]`);
@@ -1457,114 +1452,6 @@
                 }
             `;
 
-            // SWINE (Randlaeufer: Keiler als Konturfigur/Strichfigur aus Punktraster, JS simuliert Rotte/Trab/Stoebern)
-            const fragShader4 = `
-                precision highp float;
-                uniform vec2 u_resolution; uniform float u_time; uniform float u_brightness; uniform float u_hue; uniform float u_unit;
-                uniform vec4 u_pA[5]; // x, y (Auflagepunkt in Pixel), Kantenwinkel, Richtung*Skalierung
-                uniform vec4 u_pB[5]; // Gangphase, Bewegung 0..1, Kopf-runter 0..1, Deckkraft
-
-                vec3 hueShift(vec3 color, float hueOffset) {
-                    const vec3 k = vec3(0.57735, 0.57735, 0.57735);
-                    float cosAngle = cos(hueOffset * 6.2831853);
-                    return color * cosAngle + cross(k, color) * sin(hueOffset * 6.2831853) + k * dot(k, color) * (1.0 - cosAngle);
-                }
-                float sdSeg(vec2 p, vec2 a, vec2 b) {
-                    vec2 pa = p - a; vec2 ba = b - a;
-                    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-                    return length(pa - ba * h);
-                }
-                float sdCone(vec2 p, vec2 a, vec2 b, float r1, float r2) {
-                    vec2 pa = p - a; vec2 ba = b - a;
-                    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
-                    return length(pa - ba * h) - mix(r1, r2, h);
-                }
-                float sdEll(vec2 p, vec2 c, vec2 r) { return (length((p - c) / r) - 1.0) * min(r.x, r.y); }
-                // Duenner Strich-Bein (Hueft-, Knie-, Fusspunkt) mit Huf; wird unter dem Rumpf abgeschnitten.
-                float sdLeg(vec2 p, float hx, float ph, float mv, float kneeDir, float sw) {
-                    vec2 hip = vec2(hx, 0.60);
-                    vec2 foot = vec2(hx + 0.19 * mv * cos(ph), 0.06 + 0.13 * mv * max(0.0, -sin(ph)));
-                    vec2 knee = mix(hip, foot, 0.5) + vec2(0.06 * kneeDir, 0.0);
-                    float d = min(sdSeg(p, hip, knee), sdSeg(p, knee, foot)) - sw;
-                    d = min(d, sdSeg(p, foot - vec2(0.03, 0.0), foot + vec2(0.09, 0.0)) - sw * 1.2);
-                    return max(d, p.y - 0.58);
-                }
-                float topY(float x) {
-                    return max(1.0 + 0.50 * sqrt(max(0.0, 1.0 - pow((x - 0.22) / 0.62, 2.0))),
-                               0.94 + 0.38 * sqrt(max(0.0, 1.0 - pow((x + 0.5) / 0.5, 2.0))));
-                }
-                // Keiler im Profil, Einheiten: Nase bei x~1.8, Schwanz bei x~-1.3, Blick nach +x. Rueckgabe: Helligkeit 0..1.
-                float pig(vec2 pw, float gait, float mv, float hd, float hs, float sw) {   // sw = halbe Strichbreite (~1 Rasterzelle)
-                    vec2 p = pw;
-                    p.y += 0.04 - 0.03 * mv * sin(gait * 2.0);   // Rumpf sitzt tief (kurze Beine), wippt im Trab
-                    // Rumpf: Schulterbuckel vorne hoch, Ruecken faellt nach hinten ab
-                    float dB = min(sdEll(p, vec2(0.22, 1.0), vec2(0.62, 0.50)), sdEll(p, vec2(-0.5, 0.94), vec2(0.5, 0.38)));
-                    // Kopf: langer Keil am Hals (0.72,1.25); nickt im Takt, beim Stoebern nach unten
-                    float a = -0.16 - hd * 0.95 + 0.07 * mv * sin(gait * 2.0 + 1.0);
-                    vec2 q = p - vec2(0.72, 1.25);
-                    q = vec2(cos(a) * q.x + sin(a) * q.y, -sin(a) * q.x + cos(a) * q.y);
-                    float dH = sdCone(q, vec2(0.0, 0.0), vec2(0.90, -0.13), 0.33, 0.16);
-                    float outer = min(dB, dH);
-                    float v = 0.0;
-                    if(abs(outer) < sw * 1.3) v = 1.0;                           // Umriss
-                    else if(outer < -0.14 && hs < 0.05) v = 0.28;        // ganz sparsame Innenpunkte
-                    float f = 1e3;                                        // gefuellte Strichteile
-                    f = min(f, sdEll(q, vec2(1.03, -0.14), vec2(0.06, 0.16)));                  // Ruesselscheibe
-                    f = min(f, length(q - vec2(0.55, 0.03)) - sw);                            // Auge
-                    f = min(f, sdSeg(q, vec2(0.10, 0.26), vec2(0.15, 0.64)) - sw);            // Ohr, aufgestellt und spitz
-                    f = min(f, sdSeg(q, vec2(0.15, 0.64), vec2(0.34, 0.24)) - sw);
-                    f = min(f, sdSeg(q, vec2(0.62, -0.20), vec2(0.86, 0.12)) - sw);           // Hauer
-                    f = min(f, sdSeg(q, vec2(0.86, 0.12), vec2(0.80, 0.36)) - sw);
-                    // Beine: Trab = Diagonalpaare (vorne 0.66 mit hinten -0.80, vorne 0.26 mit hinten -0.40)
-                    f = min(f, sdLeg(pw, 0.66, gait, mv, 1.0, sw));
-                    f = min(f, sdLeg(pw, 0.26, gait + 3.14159, mv, 1.0, sw));
-                    f = min(f, sdLeg(pw, -0.40, gait + 3.14159, mv, -1.0, sw));
-                    f = min(f, sdLeg(pw, -0.80, gait, mv, -1.0, sw));
-                    // Schwanz: duenner Stiel mit Ringel
-                    f = min(f, sdSeg(p, vec2(-0.96, 1.10), vec2(-1.10, 1.30)) - sw);
-                    f = min(f, abs(length(p - vec2(-1.17, 1.41)) - 0.10) - sw);
-                    // Borstenkamm: sparsame Striche auf dem Ruecken
-                    if(p.x > -0.85 && p.x < 0.75) {
-                        float tp = topY(p.x);
-                        float fx = fract(p.x / 0.24 + 0.3);
-                        float ds = max(abs(fx - 0.5) * 0.24 - sw, max(p.y - (tp + 0.17), tp - 0.02 - p.y));
-                        f = min(f, ds);
-                    }
-                    if(f < 0.0) v = 1.0;
-                    return v;
-                }
-                float hash21(vec2 c) { return fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453); }
-
-                void main() {
-                    float unit = u_unit;
-                    float cell = max(2.0, floor(unit * 0.055 + 0.5));
-                    float sw = max(0.035, cell / unit * 0.62);   // Strichbreite ~1,2 Zellen
-                    vec2 cid = floor(gl_FragCoord.xy / cell);
-                    vec2 cc = (cid + 0.5) * cell;
-                    float dist = length(gl_FragCoord.xy - cc);
-                    float hs = hash21(cid);
-                    float v = 0.0;
-                    for(int i = 0; i < 5; i++) {
-                        float al = u_pB[i].w;
-                        if(al < 0.002) continue;
-                        float sc = abs(u_pA[i].w);
-                        float a = u_pA[i].z;
-                        vec2 xa = vec2(cos(a), sin(a));
-                        vec2 ya = vec2(-sin(a), cos(a));
-                        vec2 d = (cc - u_pA[i].xy) / (unit * sc);
-                        vec2 l = vec2(dot(d, xa) * sign(u_pA[i].w), dot(d, ya));
-                        if(l.x < -1.45 || l.x > 2.0 || l.y < -0.15 || l.y > 1.95) continue;
-                        v = max(v, pig(l, u_pB[i].x, u_pB[i].y, u_pB[i].z, hs, sw) * al);
-                    }
-                    if(v <= 0.0) { gl_FragColor = vec4(0.0); return; }
-                    float r = cell * 0.44;
-                    float dotm = smoothstep(r, r * 0.6, dist);
-                    vec3 baseCol = hueShift(vec3(0.0, 1.0, 0.3), u_hue);
-                    float intensity = clamp(v * dotm * u_brightness * 2.2, 0.0, 1.0);
-                    gl_FragColor = vec4(baseCol * intensity, intensity);
-                }
-            `;
-
             // ASTRO (TRUE 3D VOLUMETRIC RAYMARCHER)
             const fragShader3 = `
                 precision highp float;
@@ -1688,174 +1575,12 @@
                 };
             }
 
-            compile(1, fragShader1); compile(2, fragShader2); compile(3, fragShader3); compile(4, fragShader4);
-            locations[4].pA = gl.getUniformLocation(programs[4], 'u_pA');
-            locations[4].pB = gl.getUniformLocation(programs[4], 'u_pB');
-            locations[4].unit = gl.getUniformLocation(programs[4], 'u_unit');
+            compile(1, fragShader1); compile(2, fragShader2); compile(3, fragShader3);
             compile('fade', fragShaderFade);
 
             const buffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]), gl.STATIC_DRAW);
-
-            // SH 4: Rotten-Simulation (Randlaeufer). Nur JS-Zustand; gezeichnet wird im Fragment-Shader.
-            // Tiere laufen ausschliesslich aufrecht: (a) unten (Handy ueber der unteren Leiste) und
-            // (b) auf den Oberkanten offener (nicht minimierter/fullscreen) .script-window-Fenster,
-            // Fuesse auf der Kante. Kein Kopfueber-Laeufer mehr (Rico 25.09.).
-            const swine = { pigs: [], spawnIn: 0, t: 0, lvl: 0, init: false };
-            const swineA = new Float32Array(20), swineB = new Float32Array(20);
-            function swineLevel() {
-                // Pegel 0..1: ein Analyser-Haken (window.bsAudioLevel) hat Vorrang; sonst gilt "Musik laeuft" als 0.5.
-                try {
-                    if (typeof window.bsAudioLevel === 'function') return Math.max(0, Math.min(1, +window.bsAudioLevel() || 0));
-                    if (audioPlayer && !audioPlayer.paused && audioPlayer.currentTime > 0) return 0.5;
-                } catch (e) { /* ruhiger Standardtrab */ }
-                return 0;
-            }
-            // Figurlaenge (Schwanz bis Nase) ~3.1 Einheiten, +-10 % je Tier: Desktop ~135 Canvas-px (161-197 CSS-px), Handy ~80 Canvas-px (95-117 CSS-px)
-            function swineUnit() { return Math.max(80, Math.min(135, Math.min(canvas.width, canvas.height) * 0.22)) / 3.1; }
-            // Schmalbildschirm (Handy): untere Fensterleiste freihalten, sonst laeuft die Bodenrotte unsichtbar dahinter.
-            let swineInsetB = 0, swineInsetAt = -1e9;
-            function swineInsets() {
-                const now = performance.now();
-                if (now - swineInsetAt < 500) return;
-                swineInsetAt = now; swineInsetB = 0;
-                if (window.innerWidth > 700) return;
-                const k = canvas.height / window.innerHeight, hh = window.innerHeight / 2;
-                document.querySelectorAll('.script-window:not(.minimized)').forEach(w => {
-                    const r = w.getBoundingClientRect();
-                    if (r.width < 1 || r.height < 1) return;
-                    if (r.top > hh) swineInsetB = Math.max(swineInsetB, (window.innerHeight - r.top) * k);
-                });
-                swineInsetB = Math.min(swineInsetB, canvas.height * 0.3);
-            }
-            // Laufflaechen: der Boden (volle Breite) plus die Oberkante jedes aktuell sichtbaren, offenen Fensters
-            // (nicht minimiert, nicht fullscreen, nicht zu schmal). getBoundingClientRect() live pro Frame, damit
-            // Verschieben/Groesse aendern/Minimieren/Schliessen sofort nachgefuehrt wird.
-            function swineSurfaces() {
-                const u = swineUnit();
-                const kx = canvas.width / window.innerWidth, ky = canvas.height / window.innerHeight;
-                const out = [{ id: 'floor', x0: 0, x1: canvas.width }];
-                // Alles, was sichtbar ueber einer Oberkante liegen kann (auch minimierte Kopfzeilen, Bildspur-Fenster):
-                // liegt davon etwas im Luftraum ueber der Kante, waere das Tier verdeckt -> Kante nicht benutzen.
-                const blockers = [...document.querySelectorAll('.script-window, #bildspur-fenster')].filter(b => b.getClientRects().length && getComputedStyle(b).visibility !== 'hidden').map(b => [b, b.getBoundingClientRect()]);
-                const airH = u * 1.6 / ky;
-                document.querySelectorAll('.script-window:not(.minimized):not(.fullscreen)').forEach(w => {
-                    if (w.offsetParent === null) return;   // display:none (z.B. geparktes Backlog-Fenster)
-                    const r = w.getBoundingClientRect();
-                    if (r.width < 10 || r.height < 10) return;
-                    if (r.top * ky < u * 1.6 || r.top > window.innerHeight - 20) return;   // kein Platz ueber der Kante / Oberkante nicht im Bild
-                    const x0 = Math.max(0, r.left) * kx, x1 = Math.min(window.innerWidth, r.right) * kx;
-                    if (x1 - x0 < u * 3.6) return;   // zu schmal fuer eine ganze Figur
-                    if (blockers.some(([b, q]) => b !== w && !b.contains(w) && q.width > 0 && q.left < r.right && q.right > r.left && q.bottom > r.top - airH && q.top < r.top - 2)) return;
-                    out.push({ id: 'win:' + w.id, x0, x1, y: canvas.height - r.top * ky + u * 0.05 });
-                });
-                return out;
-            }
-            function swineSpawn(surf, m, t, speedMul) {
-                swine.pigs.push({ surf, m, t, sc: 0.9 + Math.random() * 0.2, vm: speedMul * (0.9 + Math.random() * 0.2),
-                    mv: 1, gait: Math.random() * 6.28, hd: 0.12, root: 0, walk: 2 + Math.random() * 4, al: 0,
-                    leaving: false, x0: 0, x1: 0, y: 0 });
-            }
-            function swineSpawnGroup(n, inView, surfaces) {
-                // Pro Flaeche (Boden oder ein Fenster) hoechstens eine Rotte gleichzeitig (sonst laufen Tiere ineinander)
-                const free = surfaces.filter(s => !swine.pigs.some(p => p.surf === s.id && !p.leaving));
-                if (!free.length) return false;
-                const s = free[Math.floor(Math.random() * free.length)];
-                const m = Math.random() < 0.5 ? 1 : -1;
-                const u = swineUnit();
-                let t0 = inView ? s.x0 + (s.x1 - s.x0) * (0.15 + Math.random() * 0.5) : (m > 0 ? s.x0 - 3.2 * u : s.x1 + 3.2 * u);
-                let gap = 4.5;
-                if (s.id !== 'floor') {
-                    // Fenster: die ganze Rotte entsteht AUF der Oberkante (einblenden), nie daneben in der Luft
-                    const mg = u * 0.6, room = s.x1 - s.x0 - 2 * mg;
-                    n = Math.max(1, Math.min(n, 1 + Math.floor(room / (gap * u))));
-                    const span = (n - 1) * gap * u;
-                    const lo = m > 0 ? s.x0 + mg + span : s.x0 + mg, hi = m > 0 ? s.x1 - mg : s.x1 - mg - span;
-                    t0 = lo + Math.max(0, hi - lo) * Math.random();
-                }
-                const vm = 0.95 + Math.random() * 0.1;
-                for (let k = 0; k < n; k++) {
-                    swineSpawn(s.id, m, t0 - m * k * u * (s.id !== 'floor' ? gap : 3.7 + Math.random() * 0.8), vm);
-                    if (inView) swine.pigs[swine.pigs.length - 1].al = 1;
-                }
-                return true;
-            }
-            function swineStep(dt, spd) {
-                const u = swineUnit();
-                swine.t += dt;
-                swine.lvl += (swineLevel() - swine.lvl) * Math.min(1, dt * 2);
-                const f = Math.min(8, 0.25 + 3 * spd) * (1 + 0.5 * swine.lvl);
-                const maxN = 3 + (swine.lvl > 0.3 ? 1 : 0) + (swine.lvl > 0.7 ? 1 : 0);
-                swineInsets();
-                const surfaces = swineSurfaces();
-                if (!swine.init) { swine.init = true; swineSpawnGroup(2, true, surfaces); swine.spawnIn = 1.5; }
-                swine.spawnIn -= dt;
-                if (swine.spawnIn <= 0 && swine.pigs.length < maxN) {
-                    const ok = swineSpawnGroup(1 + Math.floor(Math.random() * Math.min(3, maxN - swine.pigs.length)), false, surfaces);
-                    swine.spawnIn = ok ? 2 + Math.random() * 5 : 1;
-                }
-                const W = canvas.width, H = canvas.height, mg = u * 0.15;
-                const ar = W / H;
-                // Player-Vollbild spiegelt das Canvas mit "cover" in eine 16:9-Buehne: der Boden-Laeufer bleibt im sichtbaren 16:9-Kern.
-                const sy = (ar < 1.7778 && ar > 1.2) ? (H - W / 1.7778) / 2 : 0;
-                for (let i = swine.pigs.length - 1; i >= 0; i--) {
-                    const p = swine.pigs[i];
-                    const bounds = p.surf === 'floor' ? { x0: 0, x1: W, y: mg + sy + swineInsetB } : surfaces.find(s => s.id === p.surf);
-                    if (bounds) {
-                        // Fenster verschoben: Tier faehrt mit (relative Lage auf der Kante bleibt)
-                        if (p.surf !== 'floor' && p.x1 > p.x0) p.t += bounds.x0 - p.x0;
-                        p.x0 = bounds.x0; p.x1 = bounds.x1; p.y = bounds.y;
-                        if (p.surf !== 'floor') { const mg2 = u * 0.55 * p.sc; p.t = Math.min(Math.max(p.t, p.x0 + mg2), p.x1 - mg2); }
-                    }
-                    else { swine.pigs.splice(i, 1); continue; }   // Flaeche weg (minimiert/geschlossen/verdeckt/zu schmal): sofort weg statt schweben
-                    if (!p.leaving) {
-                        const L0 = p.x0, L1 = p.x1;
-                        // Zustandswechsel: traben <-> stoebern (nur im sichtbaren Mittelstueck der Flaeche)
-                        p.walk -= dt;
-                        if (p.root > 0) { p.root -= dt; if (p.root <= 0) p.walk = 3 + Math.random() * 5; }
-                        else if (p.walk <= 0 && p.t > L0 + (L1 - L0) * 0.12 && p.t < L1 - (L1 - L0) * 0.12) p.root = 1.5 + Math.random() * 2.2;
-                        else if (p.walk <= 0) p.walk = 1;
-                        // Nicht auflaufen: bleibt das Tier vor mir stehen (Stoebern), warte ich hinter ihm
-                        const blocked = swine.pigs.some(q => q !== p && q.surf === p.surf && q.m === p.m && (q.t - p.t) * p.m > 0 && (q.t - p.t) * p.m < 3.5 * u * p.sc);
-                        const goal = (p.root > 0 || blocked) ? 0 : 1;
-                        p.mv += (goal - p.mv) * Math.min(1, dt * 3.5);
-                        const v = u * 1.0 * f * p.vm * p.mv;
-                        p.t += p.m * v * dt;
-                        p.gait += Math.min(9, 5.0 * v / (u * p.sc)) * dt * (v > 0.01 ? 1 : 0);
-                        const hdGoal = p.root > 0 ? 0.9 + 0.1 * Math.sin(swine.t * 9 + i) : 0.12 + 0.05 * Math.sin(p.gait * 2);
-                        p.hd += (hdGoal - p.hd) * Math.min(1, dt * 5);
-                        if (p.surf === 'floor') {
-                            const out = 3.4 * u;   // Boden ist die volle Canvas-Breite: einfach von der Buehne laufen lassen
-                            if ((p.m > 0 && p.t > L1 + out) || (p.m < 0 && p.t < L0 - out)) { swine.pigs.splice(i, 1); continue; }
-                        } else {
-                            // Fensterende: nie ueber die Kante hinaus (dahinter ist keine Flaeche) -> umdrehen oder verschwinden
-                            const margin = u * 0.55 * p.sc;
-                            if ((p.m > 0 && p.t > L1 - margin) || (p.m < 0 && p.t < L0 + margin)) {
-                                if (Math.random() < 0.5) p.m *= -1; else p.leaving = true;
-                            }
-                        }
-                    }
-                    const targetAl = p.leaving ? 0 : 1;
-                    p.al += (targetAl - p.al) * Math.min(1, dt * (p.leaving ? 3.2 : 2));
-                    if (p.leaving && p.al < 0.02) { swine.pigs.splice(i, 1); continue; }
-                }
-            }
-            function swineUniforms(loc, dt, spd) {
-                swineStep(dt * 0.001, spd);
-                const u = swineUnit();
-                swineA.fill(0); swineB.fill(0);
-                const n = Math.min(5, swine.pigs.length);
-                for (let i = 0; i < n; i++) {
-                    const p = swine.pigs[i];
-                    // Immer aufrecht (Fuesse unten auf der Flaeche): keine Rotation, keine Kopfueber-Spiegelung mehr.
-                    swineA[i*4] = p.t; swineA[i*4+1] = p.y; swineA[i*4+2] = 0; swineA[i*4+3] = p.m * p.sc;
-                    swineB[i*4] = p.gait; swineB[i*4+1] = p.mv; swineB[i*4+2] = p.hd; swineB[i*4+3] = p.al;
-                }
-                gl.uniform1f(loc.unit, u);
-                gl.uniform4fv(loc.pA, swineA);
-                gl.uniform4fv(loc.pB, swineB);
-            }
 
 
             // ------------------------------------------------------------------
@@ -2095,7 +1820,7 @@
                         };
                         const c = lfo[currentAutoMode];
                         
-                        for(let i=1; i<=4; i++) {
+                        for(let i=1; i<=3; i++) {
                             const k = (i-1) % 3;
                             let phase = i * 2.3;
                             let nInt = c.ib + c.ia * Math.sin(t * c.fi[k] + phase);
@@ -2116,25 +1841,24 @@
                         }
                     }
 
-                    for(let i = 1; i <= 4; i++) {
+                    for(let i = 1; i <= 3; i++) {
                         advTime[i] += deltaTime * advSpeed[i] * BASE_SPEED_MULT;
-                        
+
                         if(advIntensity[i] > 0.0) {
                             const p = programs[i];
                             const loc = locations[i];
                             gl.useProgram(p);
-                            
+
                             gl.enableVertexAttribArray(loc.pos);
                             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
                             gl.vertexAttribPointer(loc.pos, 2, gl.FLOAT, false, 0, 0);
-                            
+
                             gl.uniform2f(loc.res, canvas.width, canvas.height);
                             gl.uniform1f(loc.time, advTime[i] * 0.001);
                             gl.uniform1f(loc.bright, advIntensity[i]);
-                            if(loc.min_b) gl.uniform1f(loc.min_b, 0.0); 
-                            if(loc.hue) gl.uniform1f(loc.hue, advHue[i]); 
-                            if(i === 4) swineUniforms(loc, deltaTime, advSpeed[4]);
-                            
+                            if(loc.min_b) gl.uniform1f(loc.min_b, 0.0);
+                            if(loc.hue) gl.uniform1f(loc.hue, advHue[i]);
+
                             gl.drawArrays(gl.TRIANGLES, 0, 6);
                         }
                     }
@@ -2155,13 +1879,12 @@
                     if(activeShader === 1) finalTime *= 1.6;
                     if(activeShader === 2) finalTime *= 0.75;
                     if(activeShader === 3) finalTime *= 0.35;
-                    
+
                     gl.uniform1f(loc.time, finalTime);
                     gl.uniform1f(loc.bright, Math.max(0.1, currentBrightness * (window.throneDim || 1)));
-                    if(loc.min_b) gl.uniform1f(loc.min_b, 0.1); 
-                    if(loc.hue) gl.uniform1f(loc.hue, 0.0); 
-                    if(activeShader === 4) swineUniforms(loc, deltaTime, currentSpeed);
-                    
+                    if(loc.min_b) gl.uniform1f(loc.min_b, 0.1);
+                    if(loc.hue) gl.uniform1f(loc.hue, 0.0);
+
                     gl.drawArrays(gl.TRIANGLES, 0, 6);
                 }
                 
@@ -2175,6 +1898,7 @@
 
             function setShader(id) {
                 activeShader = parseInt(id);
+                if(activeShader > 3 || activeShader < 0) activeShader = 0;
                 localStorage.setItem('active_shader', activeShader);
                 updateShaderUI();
                 
