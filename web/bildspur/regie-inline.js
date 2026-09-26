@@ -3150,25 +3150,35 @@ window.BILDSPUR_INLINE["traktat-en-k03"] = {
         "typ": "rechnung",
         "inhalt": "u_B = \\frac{B^2}{2\\mu_0} \\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\approx 2500 \\cdot u_{\\mathrm{ph}}, \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}",
         "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-58, DE-Anker t=420.5). Bild/Asset/Blende unveraendert von DE uebernommen.",
+        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-58, DE-Anker t=420.5). Bild/Asset/Blende unveraendert von DE uebernommen. JOB-169-EN: 5 Schritte wie DE, Zeiten proportional auf EN-Cue-Laenge umgerechnet (23.44 s), nicht wortgenau.",
         "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 420.5,
-            "katex": "",
-            "zeigt": "u_B (links) hervorgehoben"
+            "t": 380.18,
+            "katex": "\\begin{aligned}{\\color{#ffcc33} u_B}\\end{aligned}",
+            "zeigt": ""
           },
           {
-            "t": 423.78,
-            "katex": "",
-            "zeigt": "B^2/2mu_0 mit B = 2,5 mT hervorgehoben"
+            "t": 384.67,
+            "katex": "\\begin{aligned}u_B &= {\\color{#ffcc33}\\frac{B^2}{2\\mu_0}}\\end{aligned}",
+            "zeigt": ""
           },
           {
-            "t": 430.64,
-            "katex": "",
-            "zeigt": "vollstaendige Formel: 2,5 J/m^3 und das Verhaeltnis 2500 zu u_ph = 10^-3 J/m^3"
+            "t": 389.63,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] {\\color{#ffcc33} B} &\\approx {\\color{#ffcc33} 2.5\\,\\mathrm{mT}}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 394.01,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2.5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx {\\color{#ffcc33} 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}}\\end{aligned}",
+            "zeigt": ""
+          },
+          {
+            "t": 399.49,
+            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2.5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\\\[6pt] &\\approx {\\color{#ffcc33} 2500 \\cdot u_{\\mathrm{ph}}} \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}\\end{aligned}",
+            "zeigt": ""
           }
         ]
       },
