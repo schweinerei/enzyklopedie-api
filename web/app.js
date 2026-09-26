@@ -612,15 +612,22 @@
             baumOffen.add(b); baumOffen.add(s); baumOffen.add(`${s}/${e.teil}`);
         }
 
+        // JOB-173 (Rico 26.09. 14:32): der Baum zeigt nur die aktuelle Hoersprache (laufendes Stueck,
+        // sonst die gewaehlte Audiosprache), keine ausgegrauten Baeume der anderen Sprachen mehr.
+        function baumAnzeigeSprache() {
+            const f = isRadioActive ? null : stueckZuDatei(audioPlayer.getAttribute('data-last-played'));
+            const sp = f && f.st && f.st.eintrag && f.st.eintrag.sprache;
+            return BAUM_SPRACHEN.includes(sp) ? sp : aktuelleAudioSprache;
+        }
         function baumZeilen() {
-            const z = [], ui = aktuelleSprache;
+            const z = [], ui = aktuelleSprache, nurSp = baumAnzeigeSprache();
             katalog.buecher.forEach(b => {
-                const es = katalog.eintraege.filter(e => e.buch === b.id);
+                const es = katalog.eintraege.filter(e => e.buch === b.id && e.sprache === nurSp);
                 if (!es.length) return;
                 const bid = 'b:' + b.id;
                 z.push({ id: bid, art: 'buch', ebene: 1, text: (b.titel || {})[ui] || (b.titel || {}).en || b.id, ordner: true, info: baumZaehle(es) });
                 if (!baumOffen.has(bid)) return;
-                BAUM_SPRACHEN.forEach(sp => {
+                [nurSp].forEach(sp => {
                     const se = es.filter(e => e.sprache === sp);
                     if (!se.length) return;
                     const sid = `${bid}/${sp}`;
