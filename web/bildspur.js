@@ -273,6 +273,12 @@
             `;
             this.el = root;
             this.buehne = root.querySelector('.bs-buehne');
+            // JOB-172: Formel-/Rechnungstafeln passen sich an Hoehe UND Breite der Buehne an
+            // (CSS skaliert nur mit der Breite; 6-zeilige Rechnungen ragten im Fenster oben/unten raus).
+            if (global.ResizeObserver && this.buehne) {
+                this._formelRO = new ResizeObserver(() => this._passeFormelnEin());
+                this._formelRO.observe(this.buehne);
+            }
             this.kopf = root.querySelector('.bs-kopf');
             this.dunkel = root.querySelector('.bs-dunkel');
             this.debugCue = root.querySelector('.bs-debug-cue');
@@ -1430,6 +1436,20 @@
                 notiz.textContent = schritt.zeigt;
                 el.appendChild(notiz);
             }
+            global.requestAnimationFrame(() => this._passeFormelnEin());
+        }
+
+        _passeFormelnEin() {
+            if (!this.buehne) return;
+            const B = this.buehne, H = B.clientHeight * 0.9, W = B.clientWidth * 0.94;
+            if (!H || !W) return;
+            B.querySelectorAll('.bs-typ-formel, .bs-typ-rechnung').forEach(el => {
+                el.style.fontSize = '';
+                const h = el.scrollHeight, w = el.scrollWidth;
+                if (!h || !w) return;
+                const f = Math.min(1, H / h, W / w);
+                if (f < 1) el.style.fontSize = Math.max(9, parseFloat(global.getComputedStyle(el).fontSize) * f * 0.98) + 'px';
+            });
         }
 
         _katexRender(target, latex) {
