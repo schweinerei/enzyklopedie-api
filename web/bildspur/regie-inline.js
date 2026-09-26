@@ -2018,13 +2018,13 @@ window.BILDSPUR_INLINE["traktat-de-k05"] = {
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 93.42,
-            "katex": "",
+            "t": 100.451,
+            "katex": "a_e = {\\color{#ffcc33} \\frac{g-2}{2}}",
             "zeigt": "a_e = (g-2)/2 hervorgehoben"
           },
           {
-            "t": 99.64,
-            "katex": "",
+            "t": 106.671,
+            "katex": "a_e = \\frac{g-2}{2}, \\qquad {\\color{#ffcc33} a_e^{\\text{Theorie}} = a_e^{\\text{Messung}} \\;\\; (\\text{zehn Dezimalstellen})}",
             "zeigt": "vollstaendig: Theorie = Messung (zehn Dezimalstellen)"
           }
         ]
@@ -2100,18 +2100,18 @@ window.BILDSPUR_INLINE["traktat-de-k05"] = {
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 142.46,
-            "katex": "",
+            "t": 149.491,
+            "katex": "{\\color{#ffcc33} m_{\\text{träge}}} = \\frac{E_{\\text{Feld}}}{c^2}",
             "zeigt": "m_träge hervorgehoben"
           },
           {
-            "t": 145.32,
-            "katex": "",
+            "t": 152.351,
+            "katex": "m_{\\text{träge}} = {\\color{#ffcc33} \\frac{E_{\\text{Feld}}}{c^2}}",
             "zeigt": "E_Feld / c^2 hervorgehoben"
           },
           {
-            "t": 149.22,
-            "katex": "",
+            "t": 156.251,
+            "katex": "m_{\\text{träge}} = \\frac{E_{\\text{Feld}}}{c^2} \\;\\longrightarrow\\; {\\color{#ffcc33} \\infty}",
             "zeigt": "vollstaendig mit Pfeil -> unendlich"
           }
         ]
@@ -2248,13 +2248,13 @@ window.BILDSPUR_INLINE["traktat-de-k05"] = {
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 237.96,
-            "katex": "",
+            "t": 244.991,
+            "katex": "e_{\\text{eff}} = {\\color{#ffcc33} \\underbrace{e_{\\text{nackt}}}_{\\infty} - \\underbrace{\\delta e_{\\text{Vakuum}}}_{\\infty}}",
             "zeigt": "e_nackt und delta e_Vakuum (beide unendlich) hervorgehoben"
           },
           {
-            "t": 242.92,
-            "katex": "",
+            "t": 249.951,
+            "katex": "{\\color{#ffcc33} e_{\\text{eff}}} = \\underbrace{e_{\\text{nackt}}}_{\\infty} - \\underbrace{\\delta e_{\\text{Vakuum}}}_{\\infty}",
             "zeigt": "vollstaendig: e_eff links hervorgehoben (endlich)"
           }
         ]
