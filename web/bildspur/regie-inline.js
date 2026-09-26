@@ -1285,49 +1285,42 @@ window.BILDSPUR_INLINE["traktat-de-k03"] = {
       {
         "id": "cue-3-57",
         "t_start": 410.86,
-        "typ": "skizze",
-        "inhalt": "Wiederaufnahme (WA): Master-Kreis grau, Innenkerngrenze Gold (k02-cue2-10).",
-        "dauer_hinweis": "bleibt",
-        "notiz": "[WA] t_start 410,86 s, steht 9,64 s. Annahme: \"Kernoberflaeche\" = Oberflaeche des inneren Kerns (Quelle des Seeds). In der Geophysik heisst \"Kernoberflaeche\" sonst meist die Kern-Mantel-Grenze: Leitstand pruefen (offener Punkt 6).",
-        "blende": "weich 2.5",
-        "abblende": "weich 1.0",
-        "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k02-cue2-10.png"
-      },
-      {
-        "id": "cue-3-58",
-        "t_start": 420.5,
         "typ": "rechnung",
-        "inhalt": "u_B = \\frac{B^2}{2\\mu_0} \\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\approx 2500 \\cdot u_{\\mathrm{ph}}, \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}",
+        "inhalt": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2{,}5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2{,}5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx 2{,}5\\,\\mathrm{J/m^3}\\\\ \\frac{u_B}{u_{\\mathrm{ph}}} \\approx \\frac{2{,}5}{10^{-3}} = {\\color{#ffcc33} 2500}\\end{gathered}",
         "dauer_hinweis": "bleibt",
-        "notiz": "t_start 420,50 s, steht 17,12 s. Rechnung wie gesprochen: der Text nennt Feldstaerke, Ergebnis und \"das Zweieinhalbtausendfache\"; u_B = B^2/2mu_0 folgt zwingend (\"berechnet aus der geschaetzten Feldstaerke\"). Nachgerechnet: (2,5e-3 T)^2 / (2 x 4 pi x 1e-7) = 2,49 J/m^3; 2,5 / 1e-3 = 2500. Steht 17,1 s (laengster Abstand des Kapitels), mit Schritten nach 3,3 und 10,1 s. Formel-Marker (teil / htmlClass) setzt rico-webdev; der Konverter kennt das Feld nicht. JOB-168: leere Schritte entfernt (zeigten leere Buehne), volle Rechnung steht von Anfang an. JOB-169 (Rico 26.09. 14:07 \"nicht interessant, ueberragt die Bildflaeche, Einzelschritte, gold worueber gesprochen wird\"): 5 Schritte an Wortzeiten (420,5 Energiedichte / 423,8 berechnet aus Feldstaerke / 427,4 von etwa 2,5 mT / 430,6 betraegt 2,5 J/m3 / 434,6 Zweieinhalbtausendfache), untereinander statt einer Zeile, gesprochener Teil gold #ffcc33.",
+        "notiz": "Block A: Energiedichten u_ph, u_B, Verhaeltnis 2500 (ersetzt WA Master-Kreis und cue-3-58). JOB-170 (Rico 26.09. 14:10 Herleitung sichtbar, Anhang-Formeln zeigen): Formelfolge rico-buch bildspur/k03/formelfolge-k03-a13.md, Quelle A.13 Z.1601-1623.",
         "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
         "schritte": [
           {
+            "t": 410.9,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} u_{\\mathrm{ph}}}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 416.3,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx {\\color{#ffcc33} 10^{-3}\\,\\mathrm{J/m^3}}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
             "t": 420.5,
-            "katex": "\\begin{aligned}{\\color{#ffcc33} u_B}\\end{aligned}",
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ {\\color{#ffcc33} u_B = \\frac{B^2}{2\\mu_0}},\\quad B \\approx 2{,}5\\,\\mathrm{mT}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 423.78,
-            "katex": "\\begin{aligned}u_B &= {\\color{#ffcc33}\\frac{B^2}{2\\mu_0}}\\end{aligned}",
+            "t": 428.2,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad {\\color{#ffcc33} B \\approx 2{,}5\\,\\mathrm{mT}}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 427.4,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] {\\color{#ffcc33} B} &\\approx {\\color{#ffcc33} 2{,}5\\,\\mathrm{mT}}\\end{aligned}",
+            "t": 431.8,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2{,}5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2{,}5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx {\\color{#ffcc33} 2{,}5\\,\\mathrm{J/m^3}}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 430.6,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2{,}5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx {\\color{#ffcc33} 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}}\\end{aligned}",
-            "zeigt": ""
-          },
-          {
-            "t": 434.6,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2{,}5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2{,}5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2{,}5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\\\[6pt] &\\approx {\\color{#ffcc33} 2500 \\cdot u_{\\mathrm{ph}}} \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}\\end{aligned}",
+            "t": 435.1,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2{,}5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2{,}5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx 2{,}5\\,\\mathrm{J/m^3}\\\\ \\frac{u_B}{u_{\\mathrm{ph}}} \\approx \\frac{2{,}5}{10^{-3}} = {\\color{#ffcc33} 2500}\\end{gathered}",
             "zeigt": ""
           }
         ]
@@ -1359,37 +1352,58 @@ window.BILDSPUR_INLINE["traktat-de-k03"] = {
       {
         "id": "cue-3-61",
         "t_start": 451.06,
-        "typ": "formel",
-        "inhalt": "\\eta = \\frac{\\text{Stärke des kollektiven Treibers}}{\\text{thermische Relaxationsrate}} \\approx 3",
+        "typ": "rechnung",
+        "inhalt": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{Treiber}}{\\text{Relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2{,}5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2{,}5\\cdot 10^{-10}}{2{,}5} \\approx 3\\\\ {\\color{#ffcc33} \\eta / \\eta_c \\approx 3}\\end{gathered}",
         "dauer_hinweis": "bleibt",
-        "notiz": "t_start 451,06 s, steht 11,62 s. Formel nur aus Worten des Textes (Anhang 13 hat die ausfuehrliche Form eta = u_ph Lambda a / u_B; die gehoert in die Anhang-Regie, nicht hierher). Steht 11,6 s. JOB-168: leere Schritte entfernt (zeigten leere Buehne), volle Rechnung steht von Anfang an.",
+        "notiz": "Block C: eta-Herleitung A.13 Z.1603-1609 (ersetzt Worte-Formel und Schwellenbild 3-62). JOB-170 (Rico 26.09. 14:10 Herleitung sichtbar, Anhang-Formeln zeigen): Formelfolge rico-buch bildspur/k03/formelfolge-k03-a13.md, Quelle A.13 Z.1601-1623.",
         "blende": "hart",
         "abblende": "weich 1.0",
-        "max_stand_s": 30.0
-      },
-      {
-        "id": "cue-3-62",
-        "t_start": 462.68,
-        "typ": "skizze",
-        "inhalt": "Motiv (Briefing N27): Achse und Schwelle aus 3-51 pixelgleich, dazu eine goldene Marke beim Dreifachen des Schwellenabstands.",
-        "dauer_hinweis": "bleibt",
-        "notiz": "[NEU] t_start 462,68 s, steht 9,06 s. Bild-zu-Bild N22. Physik: lineare Achse, Schwelle eta = 1, Marke eta = 3; keine Ordnungsparameter-Kurve (steht nicht im Text).",
-        "blende": "weich 2.5",
-        "abblende": "weich 1.0",
         "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k03-cue3-62.png"
+        "schritte": [
+          {
+            "t": 451.06,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} \\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B}}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 455.0,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = {\\color{#ffcc33} \\frac{\\text{Treiber}}{\\text{Relaxation}}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2{,}5\\cdot 10^{-10}\\,\\mathrm{m}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 461.1,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{Treiber}}{\\text{Relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2{,}5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2{,}5\\cdot 10^{-10}}{2{,}5} \\approx {\\color{#ffcc33} 3}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 466.2,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{Treiber}}{\\text{Relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2{,}5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2{,}5\\cdot 10^{-10}}{2{,}5} \\approx 3\\\\ {\\color{#ffcc33} \\eta / \\eta_c \\approx 3}\\end{gathered}",
+            "zeigt": ""
+          }
+        ]
       },
       {
         "id": "cue-3-63",
         "t_start": 471.74,
-        "typ": "skizze",
-        "inhalt": "Motiv (Briefing N28): Aufsicht: das effektive Feld zeigt auf den Betrachter (Punkt im Kreis), der Spinpfeil in Gold liegt auf einem gestrichelten Praezessionskreis, ein kurzer Bogenpfeil zeigt den Umlaufsinn (gegen den Uhrzeiger). Die Landau-Lifshitz-Dynamik.",
+        "typ": "formel",
+        "inhalt": "\\begin{aligned}\\frac{\\partial \\mathbf{S}}{\\partial t} ={}& \\gamma\\,\\mathbf{S}\\times\\mathbf{B}_{\\mathrm{eff}}\\\\ &+ {\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\\\ &- \\frac{\\mathbf{S}}{\\tau_{\\mathrm{th}}}\\end{aligned}",
         "dauer_hinweis": "bleibt",
-        "notiz": "[NEU] t_start 471,74 s, steht 13,24 s. Physik: Praezession eines Elektronenmoments um das Feld, Umlaufsinn gegen den Uhrzeiger bei Blick gegen die Feldrichtung (nachgerechnet im Briefing). Zweitverwertung Anhang 13 Z. 1559. Steht 13,2 s.",
-        "blende": "weich 2.5",
+        "notiz": "Block D: Landau-Lifshitz A.13 Z.1620/1623; A.13 hat keinen ausgeschriebenen Hamiltonian -> Kopplungsterm leuchtet. JOB-170 (Rico 26.09. 14:10 Herleitung sichtbar, Anhang-Formeln zeigen): Formelfolge rico-buch bildspur/k03/formelfolge-k03-a13.md, Quelle A.13 Z.1601-1623.",
+        "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k03-cue3-63.png"
+        "schritte": [
+          {
+            "t": 471.74,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 481.3,
+            "katex": "\\begin{aligned}\\frac{\\partial \\mathbf{S}}{\\partial t} ={}& \\gamma\\,\\mathbf{S}\\times\\mathbf{B}_{\\mathrm{eff}}\\\\ &+ {\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\\\ &- \\frac{\\mathbf{S}}{\\tau_{\\mathrm{th}}}\\end{aligned}",
+            "zeigt": ""
+          }
+        ]
       },
       {
         "id": "cue-3-64",
@@ -3135,49 +3149,42 @@ window.BILDSPUR_INLINE["traktat-en-k03"] = {
       {
         "id": "cue-3-57",
         "t_start": 376.0,
-        "typ": "skizze",
-        "inhalt": "Master circle in grey, inner-core boundary in gold, reused.",
-        "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-57, DE-Anker t=410.86). Bild/Asset/Blende unveraendert von DE uebernommen.",
-        "blende": "weich 2.5",
-        "abblende": "weich 1.0",
-        "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k02-cue2-10.png"
-      },
-      {
-        "id": "cue-3-58",
-        "t_start": 380.18,
         "typ": "rechnung",
-        "inhalt": "u_B = \\frac{B^2}{2\\mu_0} \\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\approx 2500 \\cdot u_{\\mathrm{ph}}, \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}",
+        "inhalt": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2.5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2.5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx 2.5\\,\\mathrm{J/m^3}\\\\ \\frac{u_B}{u_{\\mathrm{ph}}} \\approx \\frac{2.5}{10^{-3}} = {\\color{#ffcc33} 2500}\\end{gathered}",
         "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-58, DE-Anker t=420.5). Bild/Asset/Blende unveraendert von DE uebernommen. JOB-169-EN: 5 Schritte wie DE, Zeiten proportional auf EN-Cue-Laenge umgerechnet (23.44 s), nicht wortgenau.",
+        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-57, DE-Anker t=410.86). Bild/Asset/Blende unveraendert von DE uebernommen. JOB-170-EN: Formelfolge wie DE (A.13), Zeiten proportional je Block, nicht wortgenau.",
         "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 380.18,
-            "katex": "\\begin{aligned}{\\color{#ffcc33} u_B}\\end{aligned}",
+            "t": 376.0,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} u_{\\mathrm{ph}}}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 384.67,
-            "katex": "\\begin{aligned}u_B &= {\\color{#ffcc33}\\frac{B^2}{2\\mu_0}}\\end{aligned}",
+            "t": 381.61,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx {\\color{#ffcc33} 10^{-3}\\,\\mathrm{J/m^3}}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 389.63,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] {\\color{#ffcc33} B} &\\approx {\\color{#ffcc33} 2.5\\,\\mathrm{mT}}\\end{aligned}",
+            "t": 385.95,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ {\\color{#ffcc33} u_B = \\frac{B^2}{2\\mu_0}},\\quad B \\approx 2.5\\,\\mathrm{mT}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 394.01,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2.5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx {\\color{#ffcc33} 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}}\\end{aligned}",
+            "t": 393.9,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad {\\color{#ffcc33} B \\approx 2.5\\,\\mathrm{mT}}\\end{gathered}",
             "zeigt": ""
           },
           {
-            "t": 399.49,
-            "katex": "\\begin{aligned}u_B &= \\frac{B^2}{2\\mu_0} \\\\[6pt] B &\\approx 2.5\\,\\mathrm{mT} \\\\[6pt] u_B &\\approx \\frac{(2.5\\,\\mathrm{mT})^2}{2\\mu_0} \\approx 2.5\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}} \\\\[6pt] &\\approx {\\color{#ffcc33} 2500 \\cdot u_{\\mathrm{ph}}} \\qquad u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\tfrac{\\mathrm{J}}{\\mathrm{m^3}}\\end{aligned}",
+            "t": 397.61,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2.5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2.5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx {\\color{#ffcc33} 2.5\\,\\mathrm{J/m^3}}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 401.02,
+            "katex": "\\begin{gathered}u_{\\mathrm{ph}} \\approx 10^{-3}\\,\\mathrm{J/m^3}\\\\ u_B = \\frac{B^2}{2\\mu_0},\\quad B \\approx 2.5\\,\\mathrm{mT}\\\\ u_B \\approx \\frac{(2.5\\cdot 10^{-3}\\,\\mathrm{T})^2}{2\\cdot 4\\pi\\cdot 10^{-7}} \\approx 2.5\\,\\mathrm{J/m^3}\\\\ \\frac{u_B}{u_{\\mathrm{ph}}} \\approx \\frac{2.5}{10^{-3}} = {\\color{#ffcc33} 2500}\\end{gathered}",
             "zeigt": ""
           }
         ]
@@ -3209,49 +3216,58 @@ window.BILDSPUR_INLINE["traktat-en-k03"] = {
       {
         "id": "cue-3-61",
         "t_start": 416.98,
-        "typ": "formel",
-        "inhalt": "\\eta = \\frac{\\text{strength of the collective driver}}{\\text{thermal relaxation rate}} \\approx 3",
+        "typ": "rechnung",
+        "inhalt": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{driver}}{\\text{relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2.5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2.5\\cdot 10^{-10}}{2.5} \\approx 3\\\\ {\\color{#ffcc33} \\eta / \\eta_c \\approx 3}\\end{gathered}",
         "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-61, DE-Anker t=451.06). Bild/Asset/Blende unveraendert von DE uebernommen.",
+        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-61, DE-Anker t=451.06). Bild/Asset/Blende unveraendert von DE uebernommen. JOB-170-EN: Formelfolge wie DE (A.13), Zeiten proportional je Block, nicht wortgenau.",
         "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
         "schritte": [
           {
-            "t": 451.06,
-            "katex": "",
-            "zeigt": "eta und der Bruch (Treiber / Relaxation)"
+            "t": 416.98,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} \\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B}}\\end{gathered}",
+            "zeigt": ""
           },
           {
-            "t": 460.58,
-            "katex": "",
-            "zeigt": "vollstaendig mit \"ungefaehr 3\""
+            "t": 420.43,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = {\\color{#ffcc33} \\frac{\\text{driver}}{\\text{relaxation}}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2.5\\cdot 10^{-10}\\,\\mathrm{m}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 425.78,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{driver}}{\\text{relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2.5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2.5\\cdot 10^{-10}}{2.5} \\approx {\\color{#ffcc33} 3}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 430.25,
+            "katex": "\\begin{gathered}\\eta = \\frac{u_{\\mathrm{ph}}\\,\\lambda\\,a}{u_B} = \\frac{\\text{driver}}{\\text{relaxation}}\\\\ \\lambda \\approx 3\\cdot 10^{13}\\,\\mathrm{m^{-1}},\\quad a \\approx 2.5\\cdot 10^{-10}\\,\\mathrm{m}\\\\ \\eta \\approx \\frac{10^{-3}\\cdot 3\\cdot 10^{13}\\cdot 2.5\\cdot 10^{-10}}{2.5} \\approx 3\\\\ {\\color{#ffcc33} \\eta / \\eta_c \\approx 3}\\end{gathered}",
+            "zeigt": ""
           }
         ]
       },
       {
-        "id": "cue-3-62",
-        "t_start": 425.44,
-        "typ": "skizze",
-        "inhalt": "The axis and threshold from before, plus a gold mark at three times the threshold distance: the coupling parameter eta.",
-        "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-62, DE-Anker t=462.68). Bild/Asset/Blende unveraendert von DE uebernommen.",
-        "blende": "weich 2.5",
-        "abblende": "weich 1.0",
-        "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k03-cue3-62.png"
-      },
-      {
         "id": "cue-3-63",
         "t_start": 435.1,
-        "typ": "skizze",
-        "inhalt": "Top-down view: the effective field points at the viewer (a dot in a circle), the gold spin arrow on a dashed precession path.",
+        "typ": "formel",
+        "inhalt": "\\begin{aligned}\\frac{\\partial \\mathbf{S}}{\\partial t} ={}& \\gamma\\,\\mathbf{S}\\times\\mathbf{B}_{\\mathrm{eff}}\\\\ &+ {\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\\\ &- \\frac{\\mathbf{S}}{\\tau_{\\mathrm{th}}}\\end{aligned}",
         "dauer_hinweis": "bleibt",
-        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-63, DE-Anker t=471.74). Bild/Asset/Blende unveraendert von DE uebernommen.",
-        "blende": "weich 2.5",
+        "notiz": "EN-Uebertragung JOB-167 (rico-webdev, 26.09.): Anker per ElevenLabs Forced Alignment auf inhaltlich gleiche Stelle im EN-Master gesetzt (DE-Cue cue-3-63, DE-Anker t=471.74). Bild/Asset/Blende unveraendert von DE uebernommen. JOB-170-EN: Formelfolge wie DE (A.13), Zeiten proportional je Block, nicht wortgenau.",
+        "blende": "hart",
         "abblende": "weich 1.0",
         "max_stand_s": 30.0,
-        "asset": "bildspur/assets/traktat-de-k03-cue3-63.png"
+        "schritte": [
+          {
+            "t": 435.1,
+            "katex": "\\begin{gathered}{\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\end{gathered}",
+            "zeigt": ""
+          },
+          {
+            "t": 440.14,
+            "katex": "\\begin{aligned}\\frac{\\partial \\mathbf{S}}{\\partial t} ={}& \\gamma\\,\\mathbf{S}\\times\\mathbf{B}_{\\mathrm{eff}}\\\\ &+ {\\color{#ffcc33} \\lambda\\,\\mathbf{S}\\times(\\nabla\\times\\mathbf{u})}\\\\ &- \\frac{\\mathbf{S}}{\\tau_{\\mathrm{th}}}\\end{aligned}",
+            "zeigt": ""
+          }
+        ]
       },
       {
         "id": "cue-3-64",
