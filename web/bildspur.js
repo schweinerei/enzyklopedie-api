@@ -1415,11 +1415,14 @@
                 el._bsNotizEl = notiz;
                 return;
             }
-            const katexStr = schritt ? schritt.katex : (cue.inhalt || '');
+            // Schritt ohne eigenes KaTeX (nur Regie-Notiz) zeigt die volle Formel, nie eine leere
+            // Buehne; die Notiz ist dann interne Regie und wird nicht angezeigt (JOB-168, K3 cue-3-58).
+            const schrittHatKatex = !!(schritt && schritt.katex);
+            const katexStr = schrittHatKatex ? schritt.katex : (cue.inhalt || '');
             const zielSpan = document.createElement('div');
             el.appendChild(zielSpan);
             this._katexRender(zielSpan, katexStr);
-            if (schritt && schritt.zeigt) {
+            if (schrittHatKatex && schritt.zeigt) {
                 const notiz = document.createElement('div');
                 notiz.style.cssText = 'font-size:11px;color:#666;margin-top:14px;';
                 notiz.textContent = schritt.zeigt;
