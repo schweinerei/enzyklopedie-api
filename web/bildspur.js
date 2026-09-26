@@ -94,6 +94,9 @@
     // JOB-53a (Ricos Befund 22.09. 14:27, "schwarzblenden ... blitzt schwarz"): Standard-
     // Ueberblendung fuer 'hart'/'tippen'-Wechsel, damit kein Layer mehr schwarz aufblitzt.
     const STANDARD_UEBERGANG_S = 0.4;
+    // JOB-171 (Rico 26.09. 14:21 "blende a", Probe): keine regulaere Ueberblendung laenger als 1 s,
+    // sonst stehen altes und neues Bild zu lange uebereinander. Regie-Werte 'weich 2.5' werden gekappt.
+    const MAX_UEBERGANG_S = 1.0;
 
     // JOB-53a (Ricos Befund "nach zehn sekunden wird alles langweilig"): maximale Standzeit
     // eines Cues, bevor die Buehne weich auf Schwarz abblendet. Pro Cue per Regie-Feld
@@ -1061,7 +1064,7 @@
             // Wechsels. 'weich' behält seine Regie-Dauer. Beides bleibt an JOB-51a gebunden
             // (nie laenger als die halbe Standzeit). Seek/Shuttle (sofort) bleibt hart/sofort.
             if (!sofort && !reduziert) {
-                const basisSekunden = blende.typ === 'weich' ? blende.sekunden : STANDARD_UEBERGANG_S;
+                const basisSekunden = blende.typ === 'weich' ? Math.min(blende.sekunden, MAX_UEBERGANG_S) : STANDARD_UEBERGANG_S;
                 blende = Object.assign({}, blende, { sekunden: this._effektiveDauer(neueCue, basisSekunden) });
             }
 
