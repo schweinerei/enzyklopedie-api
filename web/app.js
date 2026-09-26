@@ -8,6 +8,7 @@
     const i18n = {
         en: {
             chat_header: ">_ run Enzyklopedia.sh",
+            api_lamp_online: "Encyclopedia reachable", api_lamp_offline: "currently unreachable",
             chat_welcome: "Connection established. I am the Enzyklopedia. What is your inquiry?",
             chat_subtext_1: "> Your dialogue expands the system as an anonymous node within the knowledge graph.",
             chat_subtext_2: "> Please use your native language – the Enzyklopedia strives for universal multilingualism.",
@@ -115,6 +116,7 @@
         },
         de: {
             chat_header: ">_ run Enzyklopedia.sh",
+            api_lamp_online: "Enzyklopädie erreichbar", api_lamp_offline: "gerade nicht erreichbar",
             chat_welcome: "Verbindung hergestellt. Ich bin die Enzyklopedia. Was ist Ihr Anliegen?",
             chat_subtext_1: "> Ihr Dialog erweitert das System als anonymer Knoten innerhalb des Wissensgraphen.",
             chat_subtext_2: "> Bitte verwenden Sie Ihre Muttersprache – die Enzyklopedia strebt nach universeller Mehrsprachigkeit.",
@@ -222,6 +224,7 @@
         },
         ru: {
             chat_header: ">_ run Enzyklopedia.sh",
+            api_lamp_online: "Энциклопедия доступна", api_lamp_offline: "сейчас недоступна",
             chat_welcome: "Соединение установлено. Я Энциклопедия. В чем заключается ваш запрос?",
             chat_subtext_1: "> Ваш диалог расширяет систему как анонимный узел в графе знаний.",
             chat_subtext_2: "> Пожалуйста, используйте ваш родной язык – Энциклопедия стремится к универсальному многоязычию.",
@@ -366,10 +369,17 @@
         let apiOnline = null;   // null = unbekannt
         let apiEverOk = false;  // true, sobald ein echter Request durchging -> Health-Ping kann das nicht mehr überschreiben
 
-        // Offline-Badge: immer sichtbar, unabhängig vom Diagnose-Flag (das steuert nur #status-text).
+        // JOB-177: kein Text/Badge mehr, nur das kleine Laempchen im Chatkopf (gruen/grau).
         function setOffline(off) {
             apiOnline = !off;
-            document.getElementById('window-chat').classList.toggle('is-offline', off);
+            const lamp = document.getElementById('api-lamp');
+            if (lamp) {
+                lamp.classList.toggle('is-online', !off);
+                const key = off ? 'api_lamp_offline' : 'api_lamp_online';
+                lamp.setAttribute('data-i18n-aria', key);
+                lamp.setAttribute('aria-label', t(key));
+                lamp.title = t(key);
+            }
         }
 
         // Alle Backend-Aufrufe laufen hier durch. HOOK AP2: credentials:'include' ergänzen, sobald das Backend
@@ -1060,7 +1070,10 @@
             });
             document.querySelectorAll('[data-i18n-aria]').forEach(el => {
                 const key = el.getAttribute('data-i18n-aria');
-                if (i18n[lang] && i18n[lang][key]) el.setAttribute('aria-label', i18n[lang][key]);
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.setAttribute('aria-label', i18n[lang][key]);
+                    if (el.classList.contains('api-lamp')) el.title = i18n[lang][key];   // JOB-177: Tooltip fuer die Lampe
+                }
             });
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);

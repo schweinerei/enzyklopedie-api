@@ -365,6 +365,9 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
         /* ========================================== */
         .offline-badge { display: none; color: #dc3545; font-size: 11px; letter-spacing: 1px; margin-left: 10px; }
         .script-window.is-offline .offline-badge { display: inline; }
+        /* JOB-177: Laempchen statt Text-Badge fuer die Enzyklopaedie-Erreichbarkeit */
+        .api-lamp { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 10px; vertical-align: middle; background: #888; box-shadow: 0 0 3px rgba(0,0,0,0.6); }
+        .api-lamp.is-online { background: #28a745; box-shadow: 0 0 4px #28a745; }
         .format-btn { margin-left: 0; margin-right: 6px; margin-top: 8px; display: inline-block; }
         .item-status { margin-top: 8px; font-size: 14px; color: #bbbbbb; min-height: 1em; }
         .item-status a { color: #ffffff; border: 1px solid #28a745; padding: 3px 8px; text-decoration: none; }
@@ -396,7 +399,7 @@ Nicht angefasst (Auftrag): Chat-Streaming-Umbau (7c/AP1), Session-API (7b/AP2), 
 <!-- ========================================== -->
 <div class="script-window minimized" id="window-chat" data-anchor="top">
     <div class="window-header">
-        <span><span data-i18n="chat_header">>_ run Enzyklopedia.sh</span><span class="offline-badge" data-i18n="badge_offline">[OFFLINE]</span></span>
+        <span><span data-i18n="chat_header">>_ run Enzyklopedia.sh</span><span class="api-lamp" id="api-lamp" role="status" data-i18n-aria="api_lamp_offline" aria-label="currently unreachable"></span></span>
         <div class="window-controls">
             <button class="maximize-btn" aria-label="Maximize window" data-i18n-aria="aria_maximize">□</button>
             <button class="toggle-btn" aria-label="Minimize or restore window" data-i18n-aria="aria_minimize"></button>
