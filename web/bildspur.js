@@ -493,7 +493,8 @@
                     </div>
                     <div class="bs-shzeile bs-shflashzeile">
                         <span>TRACE</span>
-                        <button type="button" class="bs-shb bs-sh-flash" aria-label="FLASH">FLASH</button>
+                        <button type="button" class="bs-shb bs-sh-flash bs-sh-flash-1" aria-label="FLASH 1">FLASH 1</button>
+                        <button type="button" class="bs-shb bs-sh-flash bs-sh-flash-2" aria-label="FLASH 2">FLASH 2</button>
                         <button type="button" class="bs-shb bs-sh-flashauto" aria-pressed="false">AUTO</button>
                         <button type="button" class="bs-shb bs-sh-flashmode">INV+R</button>
                     </div>
@@ -523,8 +524,10 @@
                 this._shFeldAktualisieren(); this._shPlan();
             }));
             P.querySelector('.bs-sh-imbild').addEventListener('click', () => this._shSetze(!this._shAn));
-            // FLASH (JOB-129b): gleiche Original-Knoepfe der Seite, gleiche Ratenbegrenzung und reduced-motion-Sperre
-            P.querySelector('.bs-sh-flash').addEventListener('click', () => { api.klick('#adv-flash-btn'); this._shFeldAktualisieren(); });
+            // FLASH (JOB-176): direkt ueber die Shader-API ausloesen (gleiche Ratenbegrenzung und
+            // reduced-motion-Sperre wie Taste F/G und die ADVANCED-Knoepfe, ein gemeinsames Log).
+            P.querySelector('.bs-sh-flash-1').addEventListener('click', () => { api.flash(); this._shFeldAktualisieren(); });
+            P.querySelector('.bs-sh-flash-2').addEventListener('click', () => { api.flash2(); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-flashauto').addEventListener('click', () => { api.klick('#adv-flash-auto'); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-flashmode').addEventListener('click', () => { api.klick('#adv-flash-mode'); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-auto').addEventListener('click', () => { api.klick('#adv-auto-toggle'); this._shFeldAktualisieren(); });
@@ -584,8 +587,11 @@
             const fz = api.flashZustand ? api.flashZustand() : null;
             if (fz) {
                 const tr = (k, d) => (api.t ? api.t(k) : d);
-                const fb = P.querySelector('.bs-sh-flash');
-                fb.textContent = fz.hinweis ? tr(fz.reduced ? 'flash_reduced' : 'flash_wait', 'FLASH') : tr('flash_btn', 'FLASH');
+                const hinweisTxt = fz.hinweis ? tr(fz.reduced ? 'flash_reduced' : 'flash_wait', 'FLASH') : null;
+                const fb1 = P.querySelector('.bs-sh-flash-1');
+                fb1.textContent = hinweisTxt !== null ? hinweisTxt : tr('flash_btn_1', 'FLASH 1');
+                const fb2 = P.querySelector('.bs-sh-flash-2');
+                fb2.textContent = hinweisTxt !== null ? hinweisTxt : tr('flash_btn_2', 'FLASH 2');
                 const fa = P.querySelector('.bs-sh-flashauto');
                 fa.textContent = tr('flash_auto_short', 'AUTO'); fa.classList.toggle('bs-an', !!fz.auto);
                 fa.setAttribute('aria-pressed', fz.auto ? 'true' : 'false');

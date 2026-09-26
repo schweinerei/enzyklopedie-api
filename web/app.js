@@ -65,9 +65,9 @@
             settings_header: ">_ conf vis", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh", vis_cmd_aria: "Command line", vis_cmd_on: "root@schweinerei:~# mixer, trace, flash, auto mod unlocked — type 'exit' to lock again", vis_cmd_off: "root@schweinerei:~# locked", vis_cmd_unknown: "command not found",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
-            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
             flash_reduced: "Flash off: reduced motion is set", flash_wait: "Flash: max. 3 per second",
-            flash_hint: "FLASH: short inverted flash over the shader picture (max. 3 per second). AUTO fires when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
+            flash_hint: "Keys F / G: F = short inverted flash, G = slow afterglow fade — both over the shader picture (max. 3 per second combined). AUTO fires the short flash when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
             settings_speed: "SPEED",
             settings_battery: "> battery impact",
             
@@ -173,9 +173,9 @@
             settings_header: ">_ conf vis", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh", vis_cmd_aria: "Befehlszeile", vis_cmd_on: "root@schweinerei:~# mischpult, trace, flash, auto mod frei — 'exit' schliesst wieder ab", vis_cmd_off: "root@schweinerei:~# abgeschlossen", vis_cmd_unknown: "command not found",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
-            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
             flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
-            flash_hint: "FLASH: kurzer Invers-Blitz über dem Shaderbild (höchstens 3 pro Sekunde). AUTO löst aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
+            flash_hint: "Tasten F / G: F = kurzer Invers-Blitz, G = langsames Nachglühen — beide über dem Shaderbild (zusammen höchstens 3 pro Sekunde). AUTO löst den kurzen Blitz aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
             
@@ -281,9 +281,9 @@
             settings_header: ">_ conf vis", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh", vis_cmd_aria: "Командная строка", vis_cmd_on: "root@schweinerei:~# микшер, trace, flash, auto mod открыты — 'exit' снова закрывает", vis_cmd_off: "root@schweinerei:~# заблокировано", vis_cmd_unknown: "command not found",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
-            flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
+            flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_btn_1: "ВСПЫШКА 1", flash_btn_2: "ВСПЫШКА 2", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
             flash_reduced: "Вспышка выключена: включено уменьшение анимации", flash_wait: "Вспышка: не чаще 3 раз в секунду",
-            flash_hint: "ВСПЫШКА: короткая инверсия картинки шейдера (не чаще 3 раз в секунду). АВТО срабатывает при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
+            flash_hint: "Клавиши F / G: F = короткая инверсия, G = медленное угасание — обе поверх картинки шейдера (вместе не чаще 3 раз в секунду). АВТО запускает короткую вспышку при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
             settings_speed: "СКОРОСТЬ",
             settings_battery: "> расход батареи",
             
@@ -1611,14 +1611,18 @@
             // gesicherte Bild exakt zurueckschreiben (bei "Invers + Reset" stattdessen leeren -> Ausbrennung baut neu auf).
             // SH1-3 bleiben unberuehrt: ohne aktiven Flash laeuft kein einziger zusaetzlicher GL-Aufruf.
             // ------------------------------------------------------------------
-            const FLASH_MAX_PER_SEC = 3;         // harte Grenze (auch manuell)
+            const FLASH_MAX_PER_SEC = 3;         // harte Grenze (auch manuell, gilt fuer F+G zusammen)
             const FLASH_MIN_GAP_MS = 334;        // > 1000/3 ms: nie mehr als 3 in einer Sekunde
-            const FLASH_HOLD_MS = 90;            // voll invertiert
-            const FLASH_FADE_MS = 180;           // weich zurueck
+            const FLASH_HOLD_MS = 90;            // Taste F: voll invertiert
+            const FLASH_FADE_MS = 180;           // Taste F: weich zurueck (kurzer harter Blitz)
+            // JOB-176: Taste G = langes Nachgluehen. Kurzer Hold, danach quadratischer Ease-out ueber 1500 ms
+            // (Bereich 1,2-1,8 s laut Briefing; 1500 ms als Mitte, Ease-out statt linear macht den Ausklang weich/organisch).
+            const FLASH_G_HOLD_MS = 60;
+            const FLASH_G_FADE_MS = 1500;
             const FLASH_LEVEL = 0.85;            // Negativ nie ganz weiss
             const FLASH_AUTO_PAUSE_MS = [2000, 5500];   // zufaellige Pause zwischen AUTO-Flashes (Mittel ~3,75 s)
             const FLASH_SAT_THR = 0.16;          // mittlere Helligkeit des Trace-Puffers, ab der AUTO ausloest
-            const flash = { active: false, t0: 0, reset: false, restore: false, log: [], count: 0, autoCount: 0,
+            const flash = { active: false, t0: 0, kind: 'f', reset: false, restore: false, log: [], count: 0, autoCount: 0,
                             auto: localStorage.getItem('adv_flash_auto') === '1',
                             mode: localStorage.getItem('adv_flash_mode') === 'inv' ? 'inv' : 'reset',
                             notBefore: 0, nextCheck: 0, sat: 0, lvlAvg: 0, hintUntil: 0, tex: null, tw: 0, th: 0 };
@@ -1639,8 +1643,14 @@
             const flashMini = document.createElement('canvas'); flashMini.width = 16; flashMini.height = 9;
             const flashMiniCtx = flashMini.getContext('2d', { willReadFrequently: true });
             function flashReduced() { return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches); }
-            function flashEnv(ms) {
+            function flashEnv(ms, kind) {
                 if (ms < 0) return 0;
+                if (kind === 'g') {
+                    if (ms < FLASH_G_HOLD_MS) return Math.max(0.5, Math.min(1, ms / 30));
+                    const t = (ms - FLASH_G_HOLD_MS) / FLASH_G_FADE_MS;
+                    const f = 1 - t;
+                    return f > 0 ? f * f : 0; // Ease-out: weicher, laenger sichtbarer Ausklang statt linear
+                }
                 if (ms < FLASH_HOLD_MS) return Math.max(0.5, Math.min(1, ms / 30));
                 const f = 1 - (ms - FLASH_HOLD_MS) / FLASH_FADE_MS;
                 return f > 0 ? f : 0;
@@ -1694,10 +1704,13 @@
                 return -1;
             }
             function flashUi() {
-                const b = document.getElementById('adv-flash-btn'), a = document.getElementById('adv-flash-auto'), m = document.getElementById('adv-flash-mode');
-                if (!b) return;
+                const b1 = document.getElementById('adv-flash-btn-1'), b2 = document.getElementById('adv-flash-btn-2'),
+                      a = document.getElementById('adv-flash-auto'), m = document.getElementById('adv-flash-mode');
+                if (!b1) return;
                 const hint = performance.now() < flash.hintUntil;
-                b.textContent = hint ? t(flashReduced() ? 'flash_reduced' : 'flash_wait') : t('flash_btn');
+                const hintTxt = hint ? t(flashReduced() ? 'flash_reduced' : 'flash_wait') : null;
+                b1.textContent = hintTxt !== null ? hintTxt : t('flash_btn_1');
+                if (b2) b2.textContent = hintTxt !== null ? hintTxt : t('flash_btn_2');
                 a.textContent = t(flash.auto ? 'flash_auto_on' : 'flash_auto_off');
                 a.classList.toggle('active', flash.auto); a.setAttribute('aria-pressed', flash.auto ? 'true' : 'false');
                 m.textContent = t(flash.mode === 'inv' ? 'flash_mode_inv' : 'flash_mode_reset');
@@ -1708,8 +1721,10 @@
                 flashUi();
                 setTimeout(flashUi, 2600);
             }
-            // Ausloesen (manuell oder AUTO). false = nicht ausgeloest (reduced motion, Ratenbegrenzung, kein Renderlauf).
-            function flashTrigger(quelle) {
+            // Ausloesen (manuell oder AUTO). kind: 'f' = kurzer harter Blitz (Taste F), 'g' = Nachgluehen (Taste G).
+            // Ratenbegrenzung (max. 3/s) gilt fuer F+G gemeinsam (ein log-Array). false = nicht ausgeloest.
+            function flashTrigger(quelle, kind) {
+                kind = kind === 'g' ? 'g' : 'f';
                 if (flashReduced()) { if (quelle !== 'auto') flashMsg(); return false; }
                 if (!animationFrameId) return false;
                 const now = performance.now();
@@ -1720,7 +1735,7 @@
                 }
                 flash.log.push(now);
                 flash.count++; if (quelle === 'auto') flash.autoCount++;
-                flash.active = true; flash.t0 = now; flash.reset = flash.mode === 'reset';
+                flash.active = true; flash.t0 = now; flash.kind = kind; flash.reset = flash.mode === 'reset';
                 return true;
             }
             // Vor dem Fade/Clear des Frames: Flash-Bild des Vorframes zuruecknehmen. true = Puffer leeren statt Fade.
@@ -1734,7 +1749,7 @@
             // Nach dem Zeichnen des Frames: Flash-Bild darueberlegen.
             function flashAfterFrame() {
                 if (flash.active) {
-                    const s = flashEnv(performance.now() - flash.t0);
+                    const s = flashEnv(performance.now() - flash.t0, flash.kind);
                     if (s > 0) { flashSaveFrame(); flashDrawTex(s); flash.restore = true; }
                     else flash.active = false;
                     return;
@@ -1752,8 +1767,20 @@
                     if (flashTrigger('auto')) flash.notBefore = now + FLASH_AUTO_PAUSE_MS[0] + Math.random() * (FLASH_AUTO_PAUSE_MS[1] - FLASH_AUTO_PAUSE_MS[0]);
                 }
             }
-            const flashBtnEl = document.getElementById('adv-flash-btn');
-            if (flashBtnEl) flashBtnEl.addEventListener('click', () => flashTrigger('hand'));
+            const flashBtn1El = document.getElementById('adv-flash-btn-1');
+            if (flashBtn1El) flashBtn1El.addEventListener('click', () => flashTrigger('hand', 'f'));
+            const flashBtn2El = document.getElementById('adv-flash-btn-2');
+            if (flashBtn2El) flashBtn2El.addEventListener('click', () => flashTrigger('hand', 'g'));
+            // JOB-176: Tasten F (kurz) / G (Nachgluehen) loesen FLASH aus, sofern der Fokus nicht in einem
+            // Eingabefeld liegt (Chat, sudo-vis-Zeile, Suche) und kein Modifier gedrueckt ist. Kein Key-Repeat.
+            document.addEventListener('keydown', (e) => {
+                if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+                const k = e.key;
+                if (k !== 'f' && k !== 'F' && k !== 'g' && k !== 'G') return;
+                const ae = document.activeElement, tag = ae && ae.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (ae && ae.isContentEditable)) return;
+                if (flashTrigger('hand', (k === 'g' || k === 'G') ? 'g' : 'f')) e.preventDefault();
+            });
             const flashAutoEl = document.getElementById('adv-flash-auto');
             if (flashAutoEl) flashAutoEl.addEventListener('click', () => {
                 flash.auto = !flash.auto; localStorage.setItem('adv_flash_auto', flash.auto ? '1' : '0');
@@ -1963,7 +1990,8 @@
             window.bsShaderApi = {
                 canvas: () => canvas,
                 t: (k) => t(k),
-                flash: () => flashTrigger('hand'),
+                flash: () => flashTrigger('hand', 'f'),
+                flash2: () => flashTrigger('hand', 'g'),
                 flashZustand: () => ({ auto: flash.auto, mode: flash.mode, reduced: flashReduced(), hinweis: performance.now() < flash.hintUntil, zaehler: flash.count, autoZaehler: flash.autoCount, saettigung: flash.sat, aktiv: flash.active }),
                 laeuft: () => !!animationFrameId,
                 wahl: () => isAdvancedMode ? 'mix' : String(activeShader),
