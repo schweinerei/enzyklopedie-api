@@ -495,6 +495,7 @@
                         <span>TRACE</span>
                         <button type="button" class="bs-shb bs-sh-flash bs-sh-flash-1" aria-label="FLASH 1">FLASH 1</button>
                         <button type="button" class="bs-shb bs-sh-flash bs-sh-flash-2" aria-label="FLASH 2">FLASH 2</button>
+                        <button type="button" class="bs-shb bs-sh-trace" aria-label="TRACE" style="touch-action: none; user-select: none;">TRACE</button>
                         <button type="button" class="bs-shb bs-sh-flashauto" aria-pressed="false">AUTO</button>
                         <button type="button" class="bs-shb bs-sh-flashmode">INV+R</button>
                     </div>
@@ -528,6 +529,18 @@
             // reduced-motion-Sperre wie Taste F/G und die ADVANCED-Knoepfe, ein gemeinsames Log).
             P.querySelector('.bs-sh-flash-1').addEventListener('click', () => { api.flash(); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-flash-2').addEventListener('click', () => { api.flash2(); this._shFeldAktualisieren(); });
+            // TRACE-Halteknopf (JOB-189): Pointer-Events statt click, damit Halten/Loslassen (auch bei
+            // pointercancel/-leave) wie Taste T wirkt; setPointerCapture haelt den Loslassen-Zielort fest.
+            const traceBtn = P.querySelector('.bs-sh-trace');
+            traceBtn.addEventListener('pointerdown', (e) => {
+                try { traceBtn.setPointerCapture(e.pointerId); } catch (err) { /* kein Capture noetig */ }
+                api.traceHold(true); this._shFeldAktualisieren(); e.preventDefault();
+            });
+            const traceLoslassen = () => { api.traceHold(false); this._shFeldAktualisieren(); };
+            traceBtn.addEventListener('pointerup', traceLoslassen);
+            traceBtn.addEventListener('pointercancel', traceLoslassen);
+            traceBtn.addEventListener('pointerleave', traceLoslassen);
+            traceBtn.addEventListener('contextmenu', (e) => e.preventDefault());
             P.querySelector('.bs-sh-flashauto').addEventListener('click', () => { api.klick('#adv-flash-auto'); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-flashmode').addEventListener('click', () => { api.klick('#adv-flash-mode'); this._shFeldAktualisieren(); });
             P.querySelector('.bs-sh-auto').addEventListener('click', () => { api.klick('#adv-auto-toggle'); this._shFeldAktualisieren(); });
@@ -592,6 +605,8 @@
                 fb1.textContent = hinweisTxt !== null ? hinweisTxt : tr('flash_btn_1', 'FLASH 1');
                 const fb2 = P.querySelector('.bs-sh-flash-2');
                 fb2.textContent = hinweisTxt !== null ? hinweisTxt : tr('flash_btn_2', 'FLASH 2');
+                const tb = P.querySelector('.bs-sh-trace');
+                if (tb) tb.textContent = tr('trace_hold_btn', 'TRACE');
                 const fa = P.querySelector('.bs-sh-flashauto');
                 fa.textContent = tr('flash_auto_short', 'AUTO'); fa.classList.toggle('bs-an', !!fz.auto);
                 fa.setAttribute('aria-pressed', fz.auto ? 'true' : 'false');

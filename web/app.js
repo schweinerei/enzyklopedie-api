@@ -65,9 +65,9 @@
             settings_header: ">_ conf vis", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Simple", fmt_print: "[PRINT]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "NEXT", audio_bild: "IMAGE", baum_sprache_aria: "Audio language", baum_sprache_folgt: "coming", settings_fs_enter: "[ ENTER FULLSCREEN ]", settings_fs_exit: "[ EXIT FULLSCREEN ]", backlog_pending: "[PENDING]", backlog_paid: "[PAID TIER]", aria_maximize: "Maximize window", aria_minimize: "Minimize or restore window", aria_send: "Send", aria_mic: "Record voice input", aria_send_public: "Send public message", aria_upvote: "Upvote", audio_err_blocked: "Error: Stream blocked / offline", audio_err_cors: "Error: Stream unavailable / CORS", audio_err_file: "Error: File unavailable", audio_err_any: "Error: Stream/File unavailable", friends_auth: "> Authenticating token...", friends_download_secure: "[DOWNLOAD SECURE PAYLOAD]", friends_download: "[DOWNLOAD]", legal_contact: "Contact:", lang_header: ">_ lang.sh", vis_cmd_aria: "Command line", vis_cmd_on: "root@schweinerei:~# mixer, trace, flash, auto mod unlocked — type 'exit' to lock again", vis_cmd_off: "root@schweinerei:~# locked", vis_cmd_unknown: "command not found",
             settings_lang: "> system language",
             settings_intensity: "INTENSITY",
-            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: ON", flash_auto_off: "AUTO: OFF", flash_mode_inv: "INVERT", flash_mode_reset: "INVERT + RESET", trace_hold_btn: "TRACE",
             flash_reduced: "Flash off: reduced motion is set", flash_wait: "Flash: max. 3 per second",
-            flash_hint: "Keys F / G: F = short inverted flash, G = slow afterglow fade — both over the shader picture (max. 3 per second combined). AUTO fires the short flash when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
+            flash_hint: "Keys F / G: F = short inverted flash, G = slow afterglow fade — both over the shader picture (max. 3 per second combined). Key T: holds TRACE burn-in at maximum while pressed, eases back to the slider value on release. AUTO fires the short flash when the TRACE burn-in is saturated or the music peaks, at random pauses. Off when reduced motion is set.",
             settings_speed: "SPEED",
             settings_battery: "> battery impact",
             
@@ -173,9 +173,9 @@
             settings_header: ">_ conf vis", mode_standard: "Standard", mode_hardcore: "Hardcore", mode_simple: "Einfach", fmt_print: "[DRUCK]", fmt_digital: "[DIGITAL]", fmt_audio: "[AUDIO]", fmt_pdf: "[PDF]", audio_next: "WEITER", audio_bild: "BILD", baum_sprache_aria: "Hörsprache", baum_sprache_folgt: "folgt", settings_fs_enter: "[ VOLLBILD ]", settings_fs_exit: "[ VOLLBILD BEENDEN ]", backlog_pending: "[OFFEN]", backlog_paid: "[BEZAHLSTUFE]", aria_maximize: "Fenster maximieren", aria_minimize: "Fenster minimieren oder wiederherstellen", aria_send: "Senden", aria_mic: "Spracheingabe aufnehmen", aria_send_public: "Öffentliche Nachricht senden", aria_upvote: "Hochstimmen", audio_err_blocked: "Fehler: Stream blockiert / offline", audio_err_cors: "Fehler: Stream nicht verfügbar / CORS", audio_err_file: "Fehler: Datei nicht verfügbar", audio_err_any: "Fehler: Stream/Datei nicht verfügbar", friends_auth: "> Token wird geprüft...", friends_download_secure: "[SICHEREN DOWNLOAD LADEN]", friends_download: "[DOWNLOAD]", legal_contact: "Kontakt:", lang_header: ">_ lang.sh", vis_cmd_aria: "Befehlszeile", vis_cmd_on: "root@schweinerei:~# mischpult, trace, flash, auto mod frei — 'exit' schliesst wieder ab", vis_cmd_off: "root@schweinerei:~# abgeschlossen", vis_cmd_unknown: "command not found",
             settings_lang: "> systemsprache",
             settings_intensity: "INTENSITÄT",
-            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET",
+            flash_auto_short: "AUTO", flash_mode_inv_short: "INV", flash_mode_reset_short: "INV+R", flash_btn: "FLASH", flash_btn_1: "FLASH 1", flash_btn_2: "FLASH 2", flash_auto_on: "AUTO: AN", flash_auto_off: "AUTO: AUS", flash_mode_inv: "INVERS", flash_mode_reset: "INVERS + RESET", trace_hold_btn: "TRACE",
             flash_reduced: "Flash aus: reduzierte Bewegung ist eingestellt", flash_wait: "Flash: höchstens 3 pro Sekunde",
-            flash_hint: "Tasten F / G: F = kurzer Invers-Blitz, G = langsames Nachglühen — beide über dem Shaderbild (zusammen höchstens 3 pro Sekunde). AUTO löst den kurzen Blitz aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
+            flash_hint: "Tasten F / G: F = kurzer Invers-Blitz, G = langsames Nachglühen — beide über dem Shaderbild (zusammen höchstens 3 pro Sekunde). Taste T: haelt die TRACE-Ausbrennung auf Maximum, solange gedrueckt, und laeuft beim Loslassen weich zum Sliderwert zurueck. AUTO löst den kurzen Blitz aus, wenn die TRACE-Ausbrennung gesättigt ist oder die Musik Spitzen hat, in zufälligen Pausen. Aus, wenn reduzierte Bewegung eingestellt ist.",
             settings_speed: "TEMPO",
             settings_battery: "> akkuverbrauch",
             
@@ -281,9 +281,9 @@
             settings_header: ">_ conf vis", mode_standard: "Стандарт", mode_hardcore: "Хардкор", mode_simple: "Просто", fmt_print: "[ПЕЧАТЬ]", fmt_digital: "[ЦИФРА]", fmt_audio: "[АУДИО]", fmt_pdf: "[PDF]", audio_next: "ДАЛЕЕ", audio_bild: "КАДР", baum_sprache_aria: "Язык аудио", baum_sprache_folgt: "скоро", settings_fs_enter: "[ НА ВЕСЬ ЭКРАН ]", settings_fs_exit: "[ ВЫЙТИ ИЗ ПОЛНОЭКРАННОГО ]", backlog_pending: "[В ОЖИДАНИИ]", backlog_paid: "[ПЛАТНЫЙ УРОВЕНЬ]", aria_maximize: "Развернуть окно", aria_minimize: "Свернуть или восстановить окно", aria_send: "Отправить", aria_mic: "Записать голосовой ввод", aria_send_public: "Отправить публичное сообщение", aria_upvote: "Проголосовать", audio_err_blocked: "Ошибка: поток заблокирован / офлайн", audio_err_cors: "Ошибка: поток недоступен / CORS", audio_err_file: "Ошибка: файл недоступен", audio_err_any: "Ошибка: поток/файл недоступен", friends_auth: "> Проверка токена...", friends_download_secure: "[СКАЧАТЬ ЗАЩИЩЁННЫЙ ФАЙЛ]", friends_download: "[СКАЧАТЬ]", legal_contact: "Контакт:", lang_header: ">_ lang.sh", vis_cmd_aria: "Командная строка", vis_cmd_on: "root@schweinerei:~# микшер, trace, flash, auto mod открыты — 'exit' снова закрывает", vis_cmd_off: "root@schweinerei:~# заблокировано", vis_cmd_unknown: "command not found",
             settings_lang: "> системный язык",
             settings_intensity: "ИНТЕНСИВНОСТЬ",
-            flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_btn_1: "ВСПЫШКА 1", flash_btn_2: "ВСПЫШКА 2", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС",
+            flash_auto_short: "АВТО", flash_mode_inv_short: "ИНВ", flash_mode_reset_short: "ИНВ+С", flash_btn: "ВСПЫШКА", flash_btn_1: "ВСПЫШКА 1", flash_btn_2: "ВСПЫШКА 2", flash_auto_on: "АВТО: ВКЛ", flash_auto_off: "АВТО: ВЫКЛ", flash_mode_inv: "ИНВЕРС", flash_mode_reset: "ИНВЕРС + СБРОС", trace_hold_btn: "TRACE",
             flash_reduced: "Вспышка выключена: включено уменьшение анимации", flash_wait: "Вспышка: не чаще 3 раз в секунду",
-            flash_hint: "Клавиши F / G: F = короткая инверсия, G = медленное угасание — обе поверх картинки шейдера (вместе не чаще 3 раз в секунду). АВТО запускает короткую вспышку при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
+            flash_hint: "Клавиши F / G: F = короткая инверсия, G = медленное угасание — обе поверх картинки шейдера (вместе не чаще 3 раз в секунду). Клавиша T: удерживает выгорание TRACE на максимуме, пока нажата, и плавно возвращается к значению слайдера при отпускании. АВТО запускает короткую вспышку при насыщении следа TRACE или пиках музыки, с случайными паузами. Отключено при уменьшении анимации.",
             settings_speed: "СКОРОСТЬ",
             settings_battery: "> расход батареи",
             
@@ -1626,6 +1626,32 @@
                             auto: localStorage.getItem('adv_flash_auto') === '1',
                             mode: localStorage.getItem('adv_flash_mode') === 'inv' ? 'inv' : 'reset',
                             notBefore: 0, nextCheck: 0, sat: 0, lvlAvg: 0, hintUntil: 0, tex: null, tw: 0, th: 0 };
+            // JOB-189: Taste T = TRACE-Flash wie eine Flash-Taste am Lichtpult. Solange gehalten -> TRACE
+            // (advTrace) auf Maximum (Burn-in voll); beim Loslassen weicher Ruecklauf zum Sliderwert statt
+            // hartem Sprung. Der Slider-DOM-Wert und localStorage 'adv_trace' bleiben unberuehrt - nur der
+            // Laufzeitwert im Render-Loop wird ueberlagert (kein State-Leck in Slider/Speicher).
+            const TRACE_HOLD_MAX = 0.99;   // Slider-Maximum (siehe #adv-trace)
+            const TRACE_RELEASE_MS = 250;  // weicher Ruecklauf 200-300 ms laut Briefing
+            let traceHeld = false;
+            let traceReleaseT0 = 0;
+            function traceRuntimeValue(now) {
+                if (traceHeld) return TRACE_HOLD_MAX;
+                if (traceReleaseT0) {
+                    const f = (now - traceReleaseT0) / TRACE_RELEASE_MS;
+                    if (f < 1) return TRACE_HOLD_MAX + (advTrace - TRACE_HOLD_MAX) * f;
+                    traceReleaseT0 = 0;
+                }
+                return advTrace;
+            }
+            // Ausloesen: gleiche Freischaltung wie F/G (nur wirksam, wenn der Render-Loop laeuft) und
+            // gleiche reduced-motion-Sperre (kein zusaetzlicher Burn-in-Effekt bei reduzierter Bewegung).
+            function traceHoldSet(down) {
+                if (down && flashReduced()) return false;
+                if (!animationFrameId) return false;
+                if (down) { traceHeld = true; traceReleaseT0 = 0; }
+                else if (traceHeld) { traceHeld = false; traceReleaseT0 = performance.now(); }
+                return true;
+            }
             const fragShaderFlash = `
                 precision mediump float;
                 uniform sampler2D u_tex; uniform vec2 u_res; uniform float u_s; uniform float u_level;
@@ -1794,6 +1820,36 @@
             });
             flashUi();
 
+            // JOB-189: Taste T haelt TRACE auf Maximum, solange gedrueckt (kein Key-Repeat, kein Feld-Fokus,
+            // gleiche Ausnahmen wie F/G). keyup, window-blur und Tab-Wechsel (hidden) loesen zuverlaessig aus,
+            // damit nichts haengen bleibt, wenn z.B. beim Halten der Tab verlassen wird.
+            const traceBtnEls = document.querySelectorAll('#adv-trace-btn');
+            traceBtnEls.forEach((btn) => {
+                btn.addEventListener('pointerdown', (e) => {
+                    try { btn.setPointerCapture(e.pointerId); } catch (err) { /* kein Capture noetig */ }
+                    traceHoldSet(true);
+                    e.preventDefault();
+                });
+                const loslassen = () => traceHoldSet(false);
+                btn.addEventListener('pointerup', loslassen);
+                btn.addEventListener('pointercancel', loslassen);
+                btn.addEventListener('pointerleave', loslassen);
+                btn.addEventListener('contextmenu', (e) => e.preventDefault());
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+                if (e.key !== 't' && e.key !== 'T') return;
+                const ae = document.activeElement, tag = ae && ae.tagName;
+                if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (ae && ae.isContentEditable)) return;
+                if (traceHoldSet(true)) e.preventDefault();
+            });
+            document.addEventListener('keyup', (e) => {
+                if (e.key !== 't' && e.key !== 'T') return;
+                traceHoldSet(false);
+            });
+            window.addEventListener('blur', () => traceHoldSet(false));
+            document.addEventListener('visibilitychange', () => { if (document.hidden) traceHoldSet(false); });
+
             // F15: Canvas nur bei Resize dimensionieren, nicht pro Frame
             const RENDER_SCALE = 0.75;
             let resizeTimer = null;
@@ -1823,7 +1879,7 @@
 
                 gl.viewport(0, 0, canvas.width, canvas.height);
                 
-                const currentTrace = isAdvancedMode ? advTrace : 0.0;
+                const currentTrace = isAdvancedMode ? traceRuntimeValue(now) : 0.0;
 
                 const flashClear = flashBeforeFrame(currentTrace);   // JOB-129b: Vor-Flash-Bild zurueckschreiben
 
@@ -1992,6 +2048,7 @@
                 t: (k) => t(k),
                 flash: () => flashTrigger('hand', 'f'),
                 flash2: () => flashTrigger('hand', 'g'),
+                traceHold: (down) => traceHoldSet(!!down),
                 flashZustand: () => ({ auto: flash.auto, mode: flash.mode, reduced: flashReduced(), hinweis: performance.now() < flash.hintUntil, zaehler: flash.count, autoZaehler: flash.autoCount, saettigung: flash.sat, aktiv: flash.active }),
                 laeuft: () => !!animationFrameId,
                 wahl: () => isAdvancedMode ? 'mix' : String(activeShader),
