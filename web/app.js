@@ -634,13 +634,10 @@
                     // JOB-174 (Rico 26.09. 14:38): keine eigene Sprach-Ebene mehr, die Sprache ist ueber
                     // DE | EN | RU schon gewaehlt. Die IDs behalten den Sprachteil (offene Ordner bleiben gueltig).
                     const sid = `${bid}/${sp}`;
+                    // JOB-175 (Rico 26.09. 14:42): keine Teil-Ordner (Vorwort/Kapitel) mehr, nur die
+                    // Kapitelliste direkt unter dem Buch, in der Reihenfolge der Teile.
                     (b.teile || []).forEach(tl => {
-                        const te = se.filter(e => e.teil === tl.id);
-                        if (!te.length) return;
-                        const tid = `${sid}/${tl.id}`;
-                        z.push({ id: tid, art: 'teil', ebene: 2, text: ((tl.titel || {})[sp] || tl.id) + '/', ordner: true, info: baumZaehle(te) });
-                        if (!baumOffen.has(tid)) return;
-                        te.forEach(e => z.push({ id: e.id, art: 'eintrag', ebene: 3, text: eintragText(e), eintrag: e }));
+                        se.filter(e => e.teil === tl.id).forEach(e => z.push({ id: e.id, art: 'eintrag', ebene: 2, text: eintragText(e), eintrag: e }));
                     });
                 });
             });
